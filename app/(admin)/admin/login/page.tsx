@@ -1,4 +1,5 @@
-import { APP_CONFIG } from "@/lib/admin/config"
+import "@/styles/admin/theme.css"
+import { ADMIN_BRANDING } from "@/lib/admin/config"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/admin/ui/card"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -6,20 +7,20 @@ import { Button } from "@/components/admin/ui/button"
 import { Separator } from "@/components/admin/ui/separator"
 
 export const metadata = {
-  title: `Login — ${APP_CONFIG.name}`,
+  title: `Login — ${ADMIN_BRANDING.name}`,
 }
 
 export default function AdminLoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
+    <div data-admin-theme className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <div className="w-full max-w-sm space-y-6">
         {/* Brand mark */}
         <div className="flex flex-col items-center gap-2 text-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground text-lg font-bold">
-            {APP_CONFIG.shortName.slice(0, 1)}
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground text-lg font-bold select-none">
+            {ADMIN_BRANDING.shortName}
           </div>
-          <h1 className="text-xl font-semibold">{APP_CONFIG.name}</h1>
-          <p className="text-sm text-muted-foreground">{APP_CONFIG.description}</p>
+          <h1 className="text-xl font-semibold">{ADMIN_BRANDING.name}</h1>
+          <p className="text-sm text-muted-foreground">{ADMIN_BRANDING.description}</p>
         </div>
 
         <Card>
@@ -48,7 +49,7 @@ export default function AdminLoginPage() {
                   autoComplete="current-password"
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="button" className="w-full">
                 Sign in
               </Button>
             </form>
