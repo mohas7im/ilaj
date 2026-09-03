@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
 
-import { NAV_GROUPS, APP_CONFIG, type NavItem } from "@/lib/admin/config"
+import { NAV_GROUPS, ADMIN_BRANDING, type NavItem } from "@/lib/admin/config"
 import { Button } from "@/components/admin/ui/button"
 import {
   Sheet,
@@ -68,10 +68,10 @@ export function AdminMobileNav() {
         <SheetContent side="left" className="w-72 p-0">
           <SheetHeader className="border-b px-4 py-3">
             <SheetTitle className="flex items-center gap-2 text-base">
-              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-bold">
-                {APP_CONFIG.shortName.slice(0, 1)}
+              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-bold select-none">
+                {ADMIN_BRANDING.shortName}
               </div>
-              {APP_CONFIG.name}
+              {ADMIN_BRANDING.name}
             </SheetTitle>
           </SheetHeader>
 

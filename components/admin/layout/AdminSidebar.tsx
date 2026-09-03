@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { LogOut, ChevronsUpDown, CircleUser } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { APP_CONFIG, NAV_GROUPS, MOCK_USER, type NavItem } from "@/lib/admin/config"
+import { ADMIN_BRANDING, NAV_GROUPS, MOCK_USER, type NavItem } from "@/lib/admin/config"
 import {
   Sidebar,
   SidebarContent,
@@ -78,16 +78,17 @@ export function AdminSidebar() {
                 isCollapsed && "justify-center"
               )}
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold">
-                {APP_CONFIG.shortName.slice(0, 1)}
+              {/* Logo mark — shown always; full logo shown when expanded */}
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold select-none">
+                {ADMIN_BRANDING.shortName}
               </div>
               {!isCollapsed && (
-                <div className="flex flex-col leading-tight">
-                  <span className="text-sm font-semibold">
-                    {APP_CONFIG.name}
+                <div className="flex flex-col leading-tight overflow-hidden">
+                  <span className="truncate text-sm font-semibold">
+                    {ADMIN_BRANDING.name}
                   </span>
-                  <span className="text-xs text-muted-foreground">
-                    {APP_CONFIG.description}
+                  <span className="truncate text-xs text-muted-foreground">
+                    {ADMIN_BRANDING.description}
                   </span>
                 </div>
               )}
@@ -135,7 +136,7 @@ export function AdminSidebar() {
                     <div className="flex flex-col leading-tight">
                       <span className="text-sm font-medium">{MOCK_USER.name}</span>
                       <span className="text-xs text-muted-foreground">
-                        {MOCK_USER.role}
+                        {MOCK_USER.email}
                       </span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4" />

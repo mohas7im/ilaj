@@ -1,0 +1,106 @@
+/*
+ * ============================================================
+ *  ADMIN THEME  —  styles/admin/theme.css
+ * ============================================================
+ *
+ *  HOW TO REBRAND FOR A NEW CLIENT:
+ *  1. Change --admin-brand-* variables below (primary color)
+ *  2. Update lib/admin/config.ts (name, logo, description)
+ *  3. Replace public/admin/logo.svg + logo-mark.svg
+ *
+ *  Everything else (shadcn components, layout components,
+ *  dashboard widgets) remains untouched.
+ * ============================================================
+ *
+ *  SCOPING STRATEGY:
+ *  All overrides are scoped to [data-admin-theme] so they
+ *  never bleed into the public website.
+ *  The root :root block from globals.css (shadcn neutral
+ *  tokens) is kept as the foundation — we only override
+ *  what needs a client-specific brand accent.
+ * ============================================================
+ */
+
+/* ─── Brand accent tokens (client-specific) ─────────────────
+   Current client: Ilaj Dental Clinic
+   Brand: Teal/Cyan family — professional, clinical, modern.
+   Change ONLY these two blocks to rebrand for a new client.
+   ─────────────────────────────────────────────────────────── */
+
+[data-admin-theme] {
+  /* ── Typography: Poppins loaded via next/font in dashboard layout ── */
+  font-family: var(--font-admin, system-ui, sans-serif);
+
+  /* ── Brand primary — used for primary buttons, active nav,
+        selected states, focus rings ── */
+  --admin-brand:          oklch(0.54 0.18 200);   /* teal-600 equivalent */
+  --admin-brand-hover:    oklch(0.48 0.18 200);   /* slightly darker     */
+  --admin-brand-subtle:   oklch(0.96 0.04 200);   /* very light tint     */
+  --admin-brand-fg:       oklch(0.98 0   0  );    /* white on brand      */
+
+  /* ── Override shadcn primary to use brand color in admin ── */
+  --primary:              var(--admin-brand);
+  --primary-foreground:   var(--admin-brand-fg);
+  --ring:                 var(--admin-brand);
+
+  /* ── Sidebar brand accent ── */
+  --sidebar-primary:          var(--admin-brand);
+  --sidebar-primary-foreground: var(--admin-brand-fg);
+
+  /* ── Subtle refinements for admin feel (neutral base) ── */
+  --background:           oklch(0.98 0 0);        /* very light grey bg  */
+  --card:                 oklch(1    0 0);        /* pure white cards    */
+  --sidebar:              oklch(0.99 0 0);        /* near-white sidebar  */
+  --sidebar-border:       oklch(0.91 0 0);
+  --border:               oklch(0.91 0 0);
+
+  /* ── Radius: slightly tighter than website ── */
+  --radius: 0.5rem;
+}
+
+/* ─── Dark mode overrides (scoped) ──────────────────────────
+   Applied when .dark is also present on the html element.
+   ─────────────────────────────────────────────────────────── */
+
+.dark [data-admin-theme] {
+  --admin-brand:           oklch(0.62 0.16 200);  /* lighter teal in dark */
+  --admin-brand-hover:     oklch(0.68 0.16 200);
+  --admin-brand-subtle:    oklch(0.22 0.06 200);
+  --admin-brand-fg:        oklch(0.10 0    0  );  /* dark text on brand   */
+
+  --primary:               var(--admin-brand);
+  --primary-foreground:    var(--admin-brand-fg);
+  --ring:                  var(--admin-brand);
+
+  --sidebar-primary:           var(--admin-brand);
+  --sidebar-primary-foreground: var(--admin-brand-fg);
+
+  --background:            oklch(0.13 0 0);
+  --card:                  oklch(0.18 0 0);
+  --sidebar:               oklch(0.16 0 0);
+  --sidebar-border:        oklch(1 0 0 / 8%);
+  --border:                oklch(1 0 0 / 10%);
+}
+
+/* ─── Admin utility classes ──────────────────────────────────
+   Use these directly in admin components for brand-colored
+   accents without touching shadcn internals.
+   ─────────────────────────────────────────────────────────── */
+
+[data-admin-theme] .admin-brand-text {
+  color: var(--admin-brand);
+}
+
+[data-admin-theme] .admin-brand-bg {
+  background-color: var(--admin-brand);
+  color: var(--admin-brand-fg);
+}
+
+[data-admin-theme] .admin-brand-bg-subtle {
+  background-color: var(--admin-brand-subtle);
+  color: var(--admin-brand);
+}
+
+[data-admin-theme] .admin-focus-brand {
+  outline-color: var(--admin-brand);
+}
