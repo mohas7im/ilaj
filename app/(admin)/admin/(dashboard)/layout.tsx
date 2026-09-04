@@ -12,7 +12,9 @@ export default function DashboardLayout({
       <SidebarProvider>
         <AdminSidebar />
         <SidebarInset>
-          <main className="flex flex-1 flex-col gap-4 overflow-auto p-4 md:p-6">
+
+          {/* Page content */}
+          <main className="flex flex-1 flex-col gap-6 p-4 md:p-6">
             {children}
           </main>
         </SidebarInset>

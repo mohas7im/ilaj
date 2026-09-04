@@ -85,11 +85,6 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: CalendarDays,
       },
       {
-        title: "Patients",
-        href: "/admin/patients",
-        icon: Users,
-      },
-      {
         title: "Doctors",
         href: "/admin/doctors",
         icon: Stethoscope,

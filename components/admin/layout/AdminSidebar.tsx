@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LogOut, ChevronsUpDown, CircleUser } from "lucide-react"
+import { LogOut, ChevronsUpDown, CircleUser, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { ADMIN_BRANDING, NAV_GROUPS, MOCK_USER, type NavItem } from "@/lib/admin/config"
@@ -16,8 +16,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
-  SidebarSeparator,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/admin/ui/sidebar"
 import {
@@ -78,26 +77,45 @@ export function AdminSidebar() {
                 isCollapsed && "justify-center"
               )}
             >
-              {/* Logo mark — shown always; full logo shown when expanded */}
+              {/* Logo mark — always visible */}
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold select-none">
                 {ADMIN_BRANDING.shortName}
               </div>
+
+              {/* Brand name + toggle — only when expanded */}
               {!isCollapsed && (
-                <div className="flex flex-col leading-tight overflow-hidden">
-                  <span className="truncate text-sm font-semibold">
-                    {ADMIN_BRANDING.name}
-                  </span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    {ADMIN_BRANDING.description}
-                  </span>
-                </div>
+                <>
+                  <div className="flex flex-col leading-tight overflow-hidden flex-1 min-w-0">
+                    <span className="truncate text-sm font-semibold">
+                      {ADMIN_BRANDING.name}
+                    </span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      {ADMIN_BRANDING.description}
+                    </span>
+                  </div>
+                  {/* Collapse button — inside sidebar header */}
+                  <SidebarTrigger
+                    className="ml-auto h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
+                    aria-label="Collapse sidebar"
+                  >
+                    <PanelLeftClose className="h-4 w-4" />
+                  </SidebarTrigger>
+                </>
+              )}
+
+              {/* Expand button — shown as a tooltip icon when collapsed */}
+              {isCollapsed && (
+                <SidebarTrigger
+                  className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
+                  aria-label="Expand sidebar"
+                >
+                  <PanelLeftOpen className="h-4 w-4" />
+                </SidebarTrigger>
               )}
             </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-
-      <SidebarSeparator />
 
       {/* ── Navigation ── */}
       <SidebarContent>
@@ -117,7 +135,6 @@ export function AdminSidebar() {
 
       {/* ── Footer / User ── */}
       <SidebarFooter>
-        <SidebarSeparator />
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
@@ -179,7 +196,7 @@ export function AdminSidebar() {
         </SidebarMenu>
       </SidebarFooter>
 
-      <SidebarRail />
+      {/* SidebarRail removed — toggle is now the button in the header */}
     </Sidebar>
   )
 }
