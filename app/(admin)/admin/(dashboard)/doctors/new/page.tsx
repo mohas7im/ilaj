@@ -5,13 +5,12 @@ export const metadata = { title: "Add Doctor" }
 
 export default function NewDoctorPage() {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
         title="Add Doctor"
         description="Create a new doctor profile."
-        actions={[{ label: "Back", href: "/admin/doctors", variant: "outline" }]}
       />
-      <div className="max-w-2xl">
+      <div className="max-w-2xl mx-auto">
         <DoctorForm />
       </div>
     </div>

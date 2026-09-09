@@ -15,7 +15,6 @@ export default async function InquiryDetailPage({ params }: Props) {
       <PageHeader
         title={`Inquiry — ${inquiry.name}`}
         description={inquiry.subject}
-        actions={[{ label: "Back", href: "/admin/inquiries", variant: "outline" }]}
       />
       <div className="max-w-2xl">
         <InquiryDetails inquiry={inquiry} />

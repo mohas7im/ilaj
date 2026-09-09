@@ -1,6 +1,5 @@
 import {
   LayoutDashboard,
-  CalendarDays,
   Users,
   Stethoscope,
   Briefcase,
@@ -79,11 +78,6 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Management",
     items: [
-      {
-        title: "Appointments",
-        href: "/admin/appointments",
-        icon: CalendarDays,
-      },
       {
         title: "Doctors",
         href: "/admin/doctors",

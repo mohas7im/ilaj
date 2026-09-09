@@ -1,5 +1,4 @@
-import Link from "next/link"
-import { CalendarPlus, UserPlus, Stethoscope, Briefcase } from "lucide-react"
+import { UserPlus, Stethoscope, Briefcase } from "lucide-react"
 
 import { PageHeader } from "@/components/admin/common/PageHeader"
 import { DashboardSection } from "@/components/admin/dashboard/DashboardSection"
@@ -19,10 +18,9 @@ import {
 // ─── Quick action definitions ──────────────────────────────────────────────────
 
 const QUICK_ACTIONS: QuickAction[] = [
-  { label: "New Appointment", href: "/admin/appointments/new", icon: CalendarPlus },
-  { label: "Add Patient",     href: "/admin/patients/new",     icon: UserPlus },
   { label: "Add Doctor",      href: "/admin/doctors/new",      icon: Stethoscope },
   { label: "Add Service",     href: "/admin/services/new",     icon: Briefcase },
+  { label: "Add Patient",     href: "/admin/patients/new",     icon: UserPlus },
 ]
 
 // ─── Dashboard Page ───────────────────────────────────────────────────────────
@@ -36,8 +34,8 @@ export default function DashboardPage() {
         description="Overview of your clinic's activity and performance."
         actions={[
           {
-            label: "+ New Appointment",
-            href: "/admin/appointments/new",
+            label: "+ Add Doctor",
+            href: "/admin/doctors/new",
           },
         ]}
       />

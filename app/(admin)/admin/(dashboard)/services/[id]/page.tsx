@@ -11,13 +11,12 @@ export default async function ServiceDetailPage({ params }: Props) {
   if (!service) notFound()
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
         title={service.name}
         description="Service details and configuration."
-        actions={[{ label: "Back", href: "/admin/services", variant: "outline" }]}
       />
-      <div className="max-w-2xl">
+      <div className="max-w-2xl mx-auto">
         <ServiceDetails service={service} />
       </div>
     </div>
