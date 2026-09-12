@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, Stethoscope, Calendar, Clock } from "lucide-react"
+import { ArrowRight, Eye } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -45,46 +45,70 @@ export function RecentInquiries({ inquiries }: RecentInquiriesProps) {
             <TableHeader>
               <TableRow>
                 <TableHead>Patient</TableHead>
-                <TableHead>Treatment</TableHead>
+                <TableHead className="hidden sm:table-cell">Treatment</TableHead>
                 <TableHead className="hidden md:table-cell">Preferred Slot</TableHead>
-                <TableHead className="text-right">Received</TableHead>
+                <TableHead className="hidden lg:table-cell">Email</TableHead>
+                <TableHead className="hidden lg:table-cell">Phone</TableHead>
+                <TableHead className="hidden sm:table-cell">Received</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {inquiries.map((inquiry) => {
-                const displayName = inquiry.fullName || inquiry.name
+                const displayName = inquiry.fullName || inquiry.name || "Anonymous"
                 return (
                   <TableRow key={inquiry.id}>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-7 w-7 shrink-0">
+                      <div className="flex items-center gap-2.5">
+                        <Avatar className="h-8 w-8 shrink-0">
                           <AvatarFallback className="text-xs">
                             {initials(displayName)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium">{displayName}</span>
-                          <span className="text-xs text-muted-foreground">{inquiry.email}</span>
+                          <span className="font-medium text-sm">{displayName}</span>
+                          <span className="text-xs text-muted-foreground sm:hidden">
+                            {inquiry.phone || inquiry.email}
+                          </span>
                         </div>
                       </div>
                     </TableCell>
 
-                    <TableCell>
-                      <div className="flex items-center gap-1.5 text-xs font-medium">
-                        <Stethoscope className="h-3 w-3 text-primary shrink-0" />
-                        <span>{inquiry.treatment}</span>
-                      </div>
+                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
+                      {inquiry.treatment || inquiry.subject || "General Checkup"}
                     </TableCell>
 
-                    <TableCell className="hidden md:table-cell text-xs text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3 text-muted-foreground" />
-                        <span>{inquiry.preferredDate}</span>
-                      </div>
+                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                      {inquiry.preferredDate || "—"}
+                      {inquiry.preferredTime ? ` • ${inquiry.preferredTime}` : ""}
                     </TableCell>
 
-                    <TableCell className="text-right text-xs text-muted-foreground">
-                      {inquiry.time}
+                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                      {inquiry.email}
+                    </TableCell>
+
+                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                      {inquiry.phone || "—"}
+                    </TableCell>
+
+                    <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">
+                      {inquiry.createdAt
+                        ? new Date(inquiry.createdAt).toLocaleDateString()
+                        : inquiry.time || "Recent"}
+                    </TableCell>
+
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="outline"
+                          size="icon-sm"
+                          title="View details"
+                          aria-label={`View inquiry from ${displayName}`}
+                          render={<Link href={`/admin/inquiries/${inquiry.id}`} />}
+                        >
+                          <Eye className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 )

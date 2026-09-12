@@ -10,8 +10,9 @@ import {
 import { Button } from "@/components/admin/ui/button"
 import { Badge } from "@/components/admin/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar"
-import { EmptyState } from "@/components/admin/EmptyState"
-import { ConfirmDialog } from "@/components/admin/ConfirmDialog"
+import { EmptyState } from "@/components/admin/ui/empty-state"
+import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
+import { cn } from "@/lib/utils"
 import { SERVICE_STATUS_CONFIG } from "../_services/service.service"
 import type { Service } from "../_types/service.types"
 import type { ServiceFilterState } from "./ServiceFilters"
@@ -29,27 +30,27 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
   const [services, setServices] = useState<Service[]>(initialServices)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  const filtered = services.filter((s) => {
-    if (filters) {
-      const q = filters.search.toLowerCase().trim()
-      const matchesQuery =
-        !q ||
-        s.name.toLowerCase().includes(q) ||
-        (s.description?.toLowerCase().includes(q) ?? false)
-      const matchesStatus =
-        filters.status === "all" || s.status === filters.status
-      return matchesQuery && matchesStatus
-    }
-    return true
-  })
+  const filtered = services
+    .filter((s) => {
+      if (filters) {
+        const q = filters.search.toLowerCase().trim()
+        const matchesQuery =
+          !q ||
+          s.name.toLowerCase().includes(q) ||
+          (s.description?.toLowerCase().includes(q) ?? false)
+        const matchesStatus =
+          filters.status === "all" || s.status === filters.status
+        return matchesQuery && matchesStatus
+      }
+      return true
+    })
+    .sort((a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999))
 
   const handleDelete = async () => {
     if (deleteId) {
       try {
         await fetch(`/api/services/${deleteId}`, { method: "DELETE" })
-      } catch {
-        // Fallback
-      }
+      } catch {}
       setServices((prev) => prev.filter((s) => s.id !== deleteId))
       setDeleteId(null)
     }
@@ -64,12 +65,14 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
           action={{ label: "Add Service", href: "/admin/services/create" }}
         />
       ) : (
-        <div className="rounded-md border">
+        <div className="rounded-md border bg-card">
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-32 text-center">Display Order</TableHead>
                 <TableHead>Service</TableHead>
                 <TableHead className="hidden sm:table-cell">Description</TableHead>
+                <TableHead className="hidden md:table-cell">Home Page</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -78,12 +81,19 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
               {filtered.map((svc) => {
                 const { label, variant } = SERVICE_STATUS_CONFIG[svc.status]
                 return (
-                  <TableRow key={svc.id}>
-                    <TableCell>
+                  <TableRow key={svc.id} className="[&>td]:py-4">
+                    <TableCell className="text-sm font-medium text-foreground text-center select-none">
+                      {svc.displayOrder ?? 1}
+                    </TableCell>
+                    <TableCell className="whitespace-normal">
                       <div className="flex items-center gap-2.5">
                         <Avatar className="h-9 w-9 shrink-0 rounded-md">
                           {svc.image ? (
-                            <AvatarImage src={svc.image} alt={svc.name} className="object-cover" />
+                            <AvatarImage
+                              src={svc.image}
+                              alt={svc.name}
+                              className="object-cover"
+                            />
                           ) : null}
                           <AvatarFallback className="text-xs rounded-md bg-muted text-muted-foreground font-medium">
                             {initials(svc.name)}
@@ -92,15 +102,27 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
                         <div className="flex flex-col">
                           <span className="font-medium text-sm">{svc.name}</span>
                           {svc.description && (
-                            <span className="text-xs text-muted-foreground sm:hidden line-clamp-1">
+                            <span className="text-xs text-muted-foreground sm:hidden leading-relaxed mt-0.5">
                               {svc.description}
                             </span>
                           )}
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground max-w-xs md:max-w-md">
-                      <p className="line-clamp-2">{svc.description || "—"}</p>
+                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground max-w-md lg:max-w-xl whitespace-normal leading-relaxed">
+                      <p className="leading-relaxed">{svc.description || "—"}</p>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      <span
+                        className={cn(
+                          "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium",
+                          svc.showInHomePage
+                            ? "bg-primary/10 text-primary border border-primary/20"
+                            : "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        {svc.showInHomePage ? "Yes" : "No"}
+                      </span>
                     </TableCell>
                     <TableCell>
                       <Badge variant={variant}>{label}</Badge>

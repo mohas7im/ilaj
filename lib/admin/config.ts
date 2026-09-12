@@ -1,6 +1,5 @@
 import {
   LayoutDashboard,
-  Users,
   Stethoscope,
   Briefcase,
   MessageSquare,
@@ -75,16 +74,6 @@ export const NAV_GROUPS: NavGroup[] = [
         title: "Dashboard",
         href: "/admin/dashboard",
         icon: LayoutDashboard,
-      },
-    ],
-  },
-  {
-    label: "Clinic Operations",
-    items: [
-      {
-        title: "Patients",
-        href: "/admin/patients",
-        icon: Users,
       },
     ],
   },

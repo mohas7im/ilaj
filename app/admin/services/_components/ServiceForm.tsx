@@ -12,6 +12,7 @@ import {
   Select, SelectContent, SelectItem,
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
+import { Switch } from "@/components/admin/ui/switch"
 import { SERVICE_STATUS_CONFIG } from "../_services/service.service"
 import type { Service, ServiceStatus } from "../_types/service.types"
 
@@ -30,11 +31,13 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
     name:           initialData?.name           ?? "",
     description:    initialData?.description    ?? "",
     status:         initialData?.status         ?? ("active" as ServiceStatus),
+    displayOrder:   initialData?.displayOrder   ?? 1,
+    showInHomePage: initialData?.showInHomePage ?? false,
     image:          initialData?.image          ?? "",
     secondaryImage: initialData?.secondaryImage ?? "",
   })
 
-  const set = (key: keyof typeof form, value: string) =>
+  const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
   const handleImageChange = (
@@ -104,13 +107,14 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
               />
             </div>
 
-            <div className="space-y-1.5 sm:col-span-2">
+            {/* Status */}
+            <div className="space-y-1.5 sm:col-span-1">
               <Label htmlFor="status">Status</Label>
               <Select
                 value={form.status}
                 onValueChange={(v) => set("status", (v ?? "active") as ServiceStatus)}
               >
-                <SelectTrigger id="status" aria-label="Select status">
+                <SelectTrigger id="status" className="w-full" aria-label="Select status">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -121,6 +125,41 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Display Order */}
+            <div className="space-y-1.5 sm:col-span-1">
+              <Label htmlFor="displayOrder">
+                Display Order <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="displayOrder"
+                type="number"
+                min={1}
+                value={form.displayOrder}
+                onChange={(e) =>
+                  set("displayOrder", parseInt(e.target.value, 10) || 1)
+                }
+                placeholder="e.g. 1"
+                required
+              />
+            </div>
+
+            {/* Show on Home Page */}
+            <div className="flex items-center justify-between rounded-lg border p-3.5 bg-muted/20 sm:col-span-2">
+              <div className="space-y-0.5">
+                <Label htmlFor="showInHomePage" className="text-sm font-medium cursor-pointer">
+                  Show on Home Page
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Display this service as a highlight on the clinic homepage.
+                </p>
+              </div>
+              <Switch
+                id="showInHomePage"
+                checked={form.showInHomePage}
+                onCheckedChange={(checked) => set("showInHomePage", checked)}
+              />
             </div>
 
             <div className="space-y-1.5 sm:col-span-2">

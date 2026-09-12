@@ -32,6 +32,7 @@ export type DashboardInquiry = {
   subject: string
   status: "new" | "contacted" | "resolved"
   time: string
+  createdAt?: string
 }
 
 export const MOCK_STATS: StatItem[] = [
@@ -70,6 +71,7 @@ export const MOCK_RECENT_INQUIRIES: DashboardInquiry[] = [
     subject: "Dental Implants",
     status: "new",
     time: "10m ago",
+    createdAt: "2024-09-04T08:30:00Z",
   },
   {
     id: "2",
@@ -83,6 +85,7 @@ export const MOCK_RECENT_INQUIRIES: DashboardInquiry[] = [
     subject: "Teeth Cleaning & Whitening",
     status: "contacted",
     time: "1h ago",
+    createdAt: "2024-09-03T14:15:00Z",
   },
   {
     id: "3",
@@ -96,18 +99,21 @@ export const MOCK_RECENT_INQUIRIES: DashboardInquiry[] = [
     subject: "Orthodontic Braces",
     status: "new",
     time: "3h ago",
+    createdAt: "2024-09-03T11:00:00Z",
   },
   {
     id: "4",
     fullName: "Tariq Hussain",
     name: "Tariq Hussain",
     email: "tariq@example.com",
+    phone: "+92 312 3456789",
     treatment: "Root Canal Treatment",
     preferredDate: "2024-09-14",
     preferredTime: "11:00 AM - 12:00 PM",
     subject: "Root Canal Treatment",
     status: "resolved",
     time: "Yesterday",
+    createdAt: "2024-09-02T16:45:00Z",
   },
   {
     id: "5",
@@ -121,6 +127,7 @@ export const MOCK_RECENT_INQUIRIES: DashboardInquiry[] = [
     subject: "Pediatric Dental Care",
     status: "contacted",
     time: "2 days ago",
+    createdAt: "2024-09-01T09:20:00Z",
   },
 ]
 

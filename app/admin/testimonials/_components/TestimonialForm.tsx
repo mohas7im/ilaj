@@ -130,10 +130,10 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
                 value={form.status}
                 onValueChange={(v) => set("status", (v ?? "published") as TestimonialStatus)}
               >
-                <SelectTrigger id="status" aria-label="Select status">
+                <SelectTrigger id="status" className="w-full" aria-label="Select status">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="min-w-[280px]">
                   <SelectItem value="published">Published (Visible on website)</SelectItem>
                   <SelectItem value="draft">Draft (Hidden)</SelectItem>
                 </SelectContent>
@@ -156,27 +156,6 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
             </div>
           </div>
 
-          {/* Live Card Preview */}
-          <div className="pt-2">
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-2">
-              Preview Card
-            </Label>
-            <div className="rounded-2xl border bg-card p-6 max-w-md shadow-xs">
-              <div className="flex items-center gap-1.5 pb-2">
-                <Star className="h-4 w-4 fill-red-500 text-red-500" />
-                <span className="text-sm font-semibold">{form.rating || "5"}/5</span>
-              </div>
-              <p className="text-sm text-foreground/90 leading-relaxed italic">
-                &ldquo;{form.review || "Patient testimonial quote will appear here..."}&rdquo;
-              </p>
-              <div className="pt-4 mt-3 border-t border-border/40">
-                <h4 className="font-semibold text-sm text-foreground">{form.patientName || "Patient Name"}</h4>
-                <p className="text-[11px] font-medium tracking-wider text-muted-foreground uppercase pt-0.5">
-                  {form.treatment || "TREATMENT NAME"}
-                </p>
-              </div>
-            </div>
-          </div>
 
           {/* Form Actions */}
           <div className="flex items-center justify-end gap-2 pt-2 border-t">

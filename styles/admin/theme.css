@@ -23,20 +23,18 @@
 
 /* ─── Brand accent tokens (client-specific) ─────────────────
    Current client: Ilaj Dental Clinic
-   Brand: Teal/Cyan family — professional, clinical, modern.
-   Change ONLY these two blocks to rebrand for a new client.
+   Brand: #DA251F (Vibrant Crimson Red)
    ─────────────────────────────────────────────────────────── */
 
 [data-admin-theme] {
   /* ── Typography: Poppins loaded via next/font in dashboard layout ── */
   font-family: var(--font-admin, system-ui, sans-serif);
 
-  /* ── Brand primary — used for primary buttons, active nav,
-        selected states, focus rings ── */
-  --admin-brand:          oklch(0.54 0.18 200);   /* teal-600 equivalent */
-  --admin-brand-hover:    oklch(0.48 0.18 200);   /* slightly darker     */
-  --admin-brand-subtle:   oklch(0.96 0.04 200);   /* very light tint     */
-  --admin-brand-fg:       oklch(0.98 0   0  );    /* white on brand      */
+  /* ── Brand primary — #DA251F ── */
+  --admin-brand:          #DA251F;
+  --admin-brand-hover:    #b81f1a;
+  --admin-brand-subtle:   rgba(218, 37, 31, 0.08);
+  --admin-brand-fg:       #ffffff;
 
   /* ── Override shadcn primary to use brand color in admin ── */
   --primary:              var(--admin-brand);
@@ -44,8 +42,11 @@
   --ring:                 var(--admin-brand);
 
   /* ── Sidebar brand accent ── */
-  --sidebar-primary:          var(--admin-brand);
-  --sidebar-primary-foreground: var(--admin-brand-fg);
+  --sidebar-primary:              var(--admin-brand);
+  --sidebar-primary-foreground:   var(--admin-brand-fg);
+  --sidebar-accent:               rgba(218, 37, 31, 0.08);
+  --sidebar-accent-foreground:    var(--admin-brand);
+  --sidebar-ring:                 var(--admin-brand);
 
   /* ── Subtle refinements for admin feel (neutral base) ── */
   --background:           oklch(0.98 0 0);        /* very light grey bg  */
@@ -63,10 +64,10 @@
    ─────────────────────────────────────────────────────────── */
 
 .dark [data-admin-theme] {
-  --admin-brand:           oklch(0.62 0.16 200);  /* lighter teal in dark */
-  --admin-brand-hover:     oklch(0.68 0.16 200);
-  --admin-brand-subtle:    oklch(0.22 0.06 200);
-  --admin-brand-fg:        oklch(0.10 0    0  );  /* dark text on brand   */
+  --admin-brand:           #E83A34;  /* slightly brighter crimson in dark */
+  --admin-brand-hover:     #F04E48;
+  --admin-brand-subtle:    rgba(232, 58, 52, 0.18);
+  --admin-brand-fg:        #ffffff;
 
   --primary:               var(--admin-brand);
   --primary-foreground:    var(--admin-brand-fg);
@@ -74,12 +75,64 @@
 
   --sidebar-primary:           var(--admin-brand);
   --sidebar-primary-foreground: var(--admin-brand-fg);
+  --sidebar-accent:            rgba(232, 58, 52, 0.16);
+  --sidebar-accent-foreground: #ffffff;
 
   --background:            oklch(0.13 0 0);
   --card:                  oklch(0.18 0 0);
   --sidebar:               oklch(0.16 0 0);
   --sidebar-border:        oklch(1 0 0 / 8%);
   --border:                oklch(1 0 0 / 10%);
+}
+
+/* ─── Sidebar button accents ──────────────────────────────────
+   Active navigation buttons use solid #DA251F with white text.
+   Hover states use subtle brand tint.
+   ─────────────────────────────────────────────────────────── */
+
+[data-admin-theme] [data-sidebar="menu-button"][data-active="true"],
+[data-admin-theme] [data-sidebar="menu-button"][data-active] {
+  background-color: var(--admin-brand) !important;
+  color: var(--admin-brand-fg) !important;
+  font-weight: 500;
+}
+
+[data-admin-theme] [data-sidebar="menu-button"][data-active="true"] svg,
+[data-admin-theme] [data-sidebar="menu-button"][data-active] svg {
+  color: var(--admin-brand-fg) !important;
+}
+
+[data-admin-theme] [data-sidebar="menu-button"][data-active="true"]:hover,
+[data-admin-theme] [data-sidebar="menu-button"][data-active]:hover {
+  background-color: var(--admin-brand-hover) !important;
+  color: var(--admin-brand-fg) !important;
+}
+
+[data-admin-theme] [data-sidebar="menu-button"]:hover:not([data-active="true"]):not([data-active]) {
+  background-color: var(--admin-brand-subtle);
+  color: var(--admin-brand);
+}
+
+[data-admin-theme] [data-sidebar="menu-button"]:hover:not([data-active="true"]):not([data-active]) svg {
+  color: var(--admin-brand);
+}
+
+[data-admin-theme] [data-sidebar="menu-sub-button"][data-active="true"],
+[data-admin-theme] [data-sidebar="menu-sub-button"][data-active] {
+  background-color: var(--admin-brand) !important;
+  color: var(--admin-brand-fg) !important;
+  font-weight: 500;
+}
+
+[data-admin-theme] [data-sidebar="menu-sub-button"][data-active="true"]:hover,
+[data-admin-theme] [data-sidebar="menu-sub-button"][data-active]:hover {
+  background-color: var(--admin-brand-hover) !important;
+  color: var(--admin-brand-fg) !important;
+}
+
+[data-admin-theme] [data-sidebar="menu-sub-button"]:hover:not([data-active="true"]):not([data-active]) {
+  background-color: var(--admin-brand-subtle);
+  color: var(--admin-brand);
 }
 
 /* ─── Admin utility classes ──────────────────────────────────

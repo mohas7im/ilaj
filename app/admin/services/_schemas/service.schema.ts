@@ -5,6 +5,8 @@ export const serviceSchema = z.object({
   slug: z.string().optional(),
   description: z.string().optional(),
   status: z.enum(["active", "inactive"]).default("active"),
+  displayOrder: z.coerce.number().min(1, "Display order must be at least 1").default(1),
+  showInHomePage: z.boolean().default(false),
   image: z.string().optional(),
   secondaryImage: z.string().optional(),
 })

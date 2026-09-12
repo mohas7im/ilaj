@@ -9,8 +9,8 @@ import {
 } from "@/components/admin/ui/table"
 import { Button } from "@/components/admin/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar"
-import { EmptyState } from "@/components/admin/EmptyState"
-import { ConfirmDialog } from "@/components/admin/ConfirmDialog"
+import { EmptyState } from "@/components/admin/ui/empty-state"
+import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
 import type { Doctor } from "../_types/doctor.types"
 import type { DoctorFilterState } from "./DoctorFilters"
 
@@ -41,11 +41,7 @@ export function DoctorTable({ doctors: initialDoctors, filters }: DoctorTablePro
 
   const handleDelete = async () => {
     if (deleteId) {
-      try {
-        await fetch(`/api/doctors/${deleteId}`, { method: "DELETE" })
-      } catch {
-        // Fallback
-      }
+      try { await fetch(`/api/doctors/${deleteId}`, { method: "DELETE" }) } catch {}
       setDoctors((prev) => prev.filter((d) => d.id !== deleteId))
       setDeleteId(null)
     }
@@ -60,7 +56,7 @@ export function DoctorTable({ doctors: initialDoctors, filters }: DoctorTablePro
           action={{ label: "Add Doctor", href: "/admin/doctors/create" }}
         />
       ) : (
-        <div className="rounded-md border">
+        <div className="rounded-md border bg-card">
           <Table>
             <TableHeader>
               <TableRow>
@@ -76,9 +72,7 @@ export function DoctorTable({ doctors: initialDoctors, filters }: DoctorTablePro
                   <TableCell>
                     <div className="flex items-center gap-2.5">
                       <Avatar className="h-9 w-9 shrink-0">
-                        {doctor.image ? (
-                          <AvatarImage src={doctor.image} alt={doctor.name} />
-                        ) : null}
+                        {doctor.image ? <AvatarImage src={doctor.image} alt={doctor.name} /> : null}
                         <AvatarFallback className="text-xs">{initials(doctor.name)}</AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">
@@ -99,23 +93,10 @@ export function DoctorTable({ doctors: initialDoctors, filters }: DoctorTablePro
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="outline"
-                        size="icon-sm"
-                        title="Edit doctor"
-                        aria-label={`Edit ${doctor.name}`}
-                        render={<Link href={`/admin/doctors/${doctor.id}/edit`} />}
-                      >
+                      <Button variant="outline" size="icon-sm" title="Edit doctor" aria-label={`Edit ${doctor.name}`} render={<Link href={`/admin/doctors/${doctor.id}/edit`} />}>
                         <Pencil className="h-4 w-4" aria-hidden="true" />
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="icon-sm"
-                        title="Delete doctor"
-                        aria-label={`Delete ${doctor.name}`}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
-                        onClick={() => setDeleteId(doctor.id)}
-                      >
+                      <Button variant="outline" size="icon-sm" title="Delete doctor" aria-label={`Delete ${doctor.name}`} className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30" onClick={() => setDeleteId(doctor.id)}>
                         <Trash2 className="h-4 w-4" aria-hidden="true" />
                       </Button>
                     </div>

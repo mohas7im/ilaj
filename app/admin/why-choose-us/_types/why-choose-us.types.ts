@@ -1,6 +1,7 @@
 export type WhyChooseUsItem = {
   id: string
   title: string
+  displayOrder: number
 }
 
 export type WhyChooseUsSection = {

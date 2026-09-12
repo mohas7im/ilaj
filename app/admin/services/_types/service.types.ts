@@ -8,6 +8,8 @@ export interface Service {
   image?: string
   secondaryImage?: string
   status: ServiceStatus
+  displayOrder?: number
+  showInHomePage?: boolean
   isActive?: boolean
   createdAt?: string
   updatedAt?: string
