@@ -3,7 +3,7 @@
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Upload, X, ImageIcon } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -28,13 +28,15 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
   const secondaryFileInputRef = useRef<HTMLInputElement>(null)
 
   const [form, setForm] = useState({
-    name:           initialData?.name           ?? "",
-    description:    initialData?.description    ?? "",
-    status:         initialData?.status         ?? ("active" as ServiceStatus),
-    displayOrder:   initialData?.displayOrder   ?? 1,
-    showInHomePage: initialData?.showInHomePage ?? false,
-    image:          initialData?.image          ?? "",
-    secondaryImage: initialData?.secondaryImage ?? "",
+    name:              initialData?.name              ?? "",
+    description:       initialData?.description       ?? "",
+    status:            initialData?.status            ?? ("active" as ServiceStatus),
+    displayOrder:      initialData?.displayOrder      ?? 1,
+    showInHomePage:    initialData?.showInHomePage    ?? false,
+    image:             initialData?.image             ?? "",
+    imageAlt:          initialData?.imageAlt          ?? "",
+    secondaryImage:    initialData?.secondaryImage    ?? "",
+    secondaryImageAlt: initialData?.secondaryImageAlt ?? "",
   })
 
   const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) =>
@@ -84,12 +86,18 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
       // Fallback redirect for client-side demo
     }
     router.push("/admin/services")
+    router.refresh()
   }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-base">{isEdit ? "Edit Service" : "Add Service"}</CardTitle>
+        <CardDescription>
+          {isEdit
+            ? "Update dental service information, status, and photos."
+            : "Add a new dental service and clinical procedure to the catalog."}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -178,9 +186,6 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
           <div className="space-y-3 pt-2">
             <div>
               <Label className="text-sm font-semibold">Service Images</Label>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Upload two images for this service (Primary cover image and secondary detail/procedure photo).
-              </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -188,21 +193,17 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
               <div className="space-y-3 p-4 rounded-lg border border-dashed border-border bg-muted/20">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium">1. Primary Image</span>
-                  <span className="text-[11px] text-muted-foreground">Main cover photo</span>
                 </div>
 
                 <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-md border bg-muted/40">
                   {form.image ? (
                     <img
                       src={form.image}
-                      alt="Primary service preview"
+                      alt={form.imageAlt || "Primary service preview"}
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <div className="flex flex-col items-center gap-1.5 text-muted-foreground">
-                      <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
-                      <span className="text-xs">No image selected</span>
-                    </div>
+                    <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
                   )}
                 </div>
 
@@ -236,27 +237,36 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                     </Button>
                   )}
                 </div>
+
+                {/* Primary Image Alt Text */}
+                <div className="space-y-1.5 pt-2 border-t border-border/60">
+                  <Label htmlFor="imageAlt" className="text-xs">
+                    Image Alt Text
+                  </Label>
+                  <Input
+                    id="imageAlt"
+                    value={form.imageAlt}
+                    onChange={(e) => set("imageAlt", e.target.value)}
+                    placeholder="e.g. Modern dental checkup room and examination unit"
+                  />
+                </div>
               </div>
 
               {/* Secondary Image */}
               <div className="space-y-3 p-4 rounded-lg border border-dashed border-border bg-muted/20">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium">2. Secondary Image</span>
-                  <span className="text-[11px] text-muted-foreground">Procedure / detail photo</span>
                 </div>
 
                 <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-md border bg-muted/40">
                   {form.secondaryImage ? (
                     <img
                       src={form.secondaryImage}
-                      alt="Secondary service preview"
+                      alt={form.secondaryImageAlt || "Secondary service preview"}
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <div className="flex flex-col items-center gap-1.5 text-muted-foreground">
-                      <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
-                      <span className="text-xs">No image selected</span>
-                    </div>
+                    <ImageIcon className="h-8 w-8 text-muted-foreground/40" />
                   )}
                 </div>
 
@@ -289,6 +299,19 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                       Remove
                     </Button>
                   )}
+                </div>
+
+                {/* Secondary Image Alt Text */}
+                <div className="space-y-1.5 pt-2 border-t border-border/60">
+                  <Label htmlFor="secondaryImageAlt" className="text-xs">
+                    Secondary Image Alt Text
+                  </Label>
+                  <Input
+                    id="secondaryImageAlt"
+                    value={form.secondaryImageAlt}
+                    onChange={(e) => set("secondaryImageAlt", e.target.value)}
+                    placeholder="e.g. Clinical procedure and equipment demonstration"
+                  />
                 </div>
               </div>
             </div>

@@ -6,6 +6,7 @@ export const doctorSchema = z.object({
   specialization: z.string().min(1, "Specialization is required"),
   bio: z.string().optional(),
   image: z.string().optional(),
+  imageAlt: z.string().optional(),
   isActive: z.boolean().default(true),
 })
 

@@ -3,7 +3,7 @@
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Upload, X, ImageIcon } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -31,6 +31,7 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
     specialization: initialData?.specialization ?? "",
     bio:            initialData?.bio            ?? "",
     image:          initialData?.image          ?? "",
+    imageAlt:       initialData?.imageAlt       ?? "",
   })
 
   const set = (key: keyof typeof form, value: string) =>
@@ -75,22 +76,30 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
       // Fallback
     }
     router.push("/admin/doctors")
+    router.refresh()
   }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-base">{isEdit ? "Edit Doctor" : "Add Doctor"}</CardTitle>
+        <CardDescription>
+          {isEdit
+            ? "Update practitioner details, profile photo, and clinical credentials."
+            : "Add a new dental specialist or practitioner to the clinic team."}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Profile Photo Upload */}
-          <div className="space-y-2">
-            <Label>Profile Photo</Label>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-lg border border-dashed border-border bg-muted/20">
+          <div className="space-y-3 p-4 rounded-lg border border-dashed border-border bg-muted/20">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">
+              Profile Photo
+            </Label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <Avatar className="h-16 w-16 shrink-0 border border-border/60 shadow-xs">
                 {form.image ? (
-                  <AvatarImage src={form.image} alt={form.name || "Doctor photo"} />
+                  <AvatarImage src={form.image} alt={form.imageAlt || form.name || "Doctor photo"} />
                 ) : null}
                 <AvatarFallback className="text-muted-foreground bg-muted">
                   {form.name ? (
@@ -140,6 +149,19 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                 </p>
               </div>
             </div>
+
+            {/* Profile Photo Alt Text */}
+            <div className="space-y-1.5 pt-2 border-t border-border/60">
+              <Label htmlFor="imageAlt" className="text-xs">
+                Photo Alt Text
+              </Label>
+              <Input
+                id="imageAlt"
+                value={form.imageAlt}
+                onChange={(e) => set("imageAlt", e.target.value)}
+                placeholder="e.g. Portrait photo of Dr. Full Name in medical uniform"
+              />
+            </div>
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
@@ -188,7 +210,7 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
             />
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
+          <div className="flex items-center justify-end gap-2 pt-2 border-t">
             <Button type="button" variant="outline" onClick={() => router.push("/admin/doctors")}>
               Cancel
             </Button>

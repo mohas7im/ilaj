@@ -15,8 +15,15 @@ export default async function DoctorEditPage({ params }: Props) {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={`Edit ${doctor.name}`}
-        description={`${doctor.designation} • ${doctor.specialization}`}
+        title="Edit Doctor"
+        description="Update doctor profile details, credentials, and practice information."
+        actions={[
+          {
+            label: "Back to Doctors",
+            href: "/admin/doctors",
+            variant: "outline",
+          },
+        ]}
       />
       <div className="max-w-2xl mx-auto">
         <DoctorForm mode="edit" initialData={doctor} />

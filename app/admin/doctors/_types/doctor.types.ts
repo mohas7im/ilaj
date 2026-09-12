@@ -5,6 +5,7 @@ export interface Doctor {
   specialization: string
   bio?: string
   image?: string
+  imageAlt?: string
   isActive?: boolean
   createdAt?: string
   updatedAt?: string

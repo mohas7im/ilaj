@@ -17,6 +17,7 @@ export let MOCK_SERVICES: Service[] = [
     displayOrder: 1,
     showInHomePage: true,
     image: "/admin/clinic-gallery-room.jpg",
+    imageAlt: "Modern dental checkup consultation room and diagnostic unit",
     createdAt: "2023-01-01T00:00:00Z",
   },
   {
@@ -27,6 +28,7 @@ export let MOCK_SERVICES: Service[] = [
     displayOrder: 2,
     showInHomePage: true,
     image: "/admin/login-showcase.jpg",
+    imageAlt: "Dental cleaning and teeth scaling procedure equipment",
     createdAt: "2023-01-01T00:00:00Z",
   },
   {
@@ -37,6 +39,7 @@ export let MOCK_SERVICES: Service[] = [
     displayOrder: 3,
     showInHomePage: true,
     image: "/admin/clinic-gallery-room.jpg",
+    imageAlt: "Endodontic therapy equipment and treatment chair",
     createdAt: "2023-01-01T00:00:00Z",
   },
   {
@@ -47,6 +50,7 @@ export let MOCK_SERVICES: Service[] = [
     displayOrder: 4,
     showInHomePage: true,
     image: "/admin/login-showcase.jpg",
+    imageAlt: "Titanium dental implant and restorative porcelain crown",
     createdAt: "2023-01-01T00:00:00Z",
   },
   {
@@ -57,6 +61,7 @@ export let MOCK_SERVICES: Service[] = [
     displayOrder: 5,
     showInHomePage: false,
     image: "/admin/clinic-gallery-room.jpg",
+    imageAlt: "Custom transparent aligners for orthodontic smile alignment",
     createdAt: "2023-01-01T00:00:00Z",
   },
   {
@@ -67,6 +72,7 @@ export let MOCK_SERVICES: Service[] = [
     displayOrder: 6,
     showInHomePage: false,
     image: "/admin/login-showcase.jpg",
+    imageAlt: "Cosmetic laser teeth whitening treatment system",
     createdAt: "2023-02-01T00:00:00Z",
   },
 ]

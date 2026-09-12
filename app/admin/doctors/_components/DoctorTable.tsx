@@ -72,7 +72,7 @@ export function DoctorTable({ doctors: initialDoctors, filters }: DoctorTablePro
                   <TableCell>
                     <div className="flex items-center gap-2.5">
                       <Avatar className="h-9 w-9 shrink-0">
-                        {doctor.image ? <AvatarImage src={doctor.image} alt={doctor.name} /> : null}
+                        {doctor.image ? <AvatarImage src={doctor.image} alt={doctor.imageAlt || doctor.name} /> : null}
                         <AvatarFallback className="text-xs">{initials(doctor.name)}</AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">

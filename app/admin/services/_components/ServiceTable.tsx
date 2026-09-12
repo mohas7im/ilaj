@@ -91,7 +91,7 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
                           {svc.image ? (
                             <AvatarImage
                               src={svc.image}
-                              alt={svc.name}
+                              alt={svc.imageAlt || svc.name}
                               className="object-cover"
                             />
                           ) : null}

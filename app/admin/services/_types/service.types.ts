@@ -6,7 +6,9 @@ export interface Service {
   slug?: string
   description?: string
   image?: string
+  imageAlt?: string
   secondaryImage?: string
+  secondaryImageAlt?: string
   status: ServiceStatus
   displayOrder?: number
   showInHomePage?: boolean
