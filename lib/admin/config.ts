@@ -9,6 +9,7 @@ import {
   Star,
   LineChart,
   Images,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react"
 
@@ -21,7 +22,7 @@ import {
 //  2. Change brand colors in styles/admin/theme.css
 //  3. Replace public/admin/logo.svg + logo-mark.svg
 //
-//  Do NOT edit AdminSidebar, AdminHeader, or any other
+//  Do NOT edit AdminSidebar or any other
 //  layout/dashboard component just to change client branding.
 // ============================================================
 
@@ -72,8 +73,18 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       {
         title: "Dashboard",
-        href: "/admin",
+        href: "/admin/dashboard",
         icon: LayoutDashboard,
+      },
+    ],
+  },
+  {
+    label: "Clinic Operations",
+    items: [
+      {
+        title: "Patients",
+        href: "/admin/patients",
+        icon: Users,
       },
     ],
   },
@@ -108,6 +119,11 @@ export const NAV_GROUPS: NavGroup[] = [
         title: "Testimonials",
         href: "/admin/testimonials",
         icon: Star,
+      },
+      {
+        title: "Why Choose Us",
+        href: "/admin/why-choose-us",
+        icon: Sparkles,
       },
     ],
   },

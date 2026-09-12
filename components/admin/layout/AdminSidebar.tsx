@@ -153,8 +153,8 @@ function NavMenuItem({ item }: { item: NavItem }) {
   if (!item.href) return null
 
   const isActive =
-    item.href === "/admin"
-      ? pathname === "/admin"
+    item.href === "/admin" || item.href === "/admin/dashboard"
+      ? pathname === "/admin" || pathname === "/admin/dashboard"
       : pathname.startsWith(item.href)
 
   return (
