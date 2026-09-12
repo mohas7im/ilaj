@@ -5,23 +5,23 @@ import { getInquiryById } from "../_services/inquiry.service"
 
 type Props = { params: Promise<{ id: string }> }
 
-export const metadata = { title: "Inquiry Details" }
+export const metadata = { title: "View Enquiry" }
 
 export default async function InquiryDetailPage({ params }: Props) {
   const { id } = await params
   const inquiry = await getInquiryById(id)
   if (!inquiry) notFound()
 
-  const displayName = inquiry.fullName || inquiry.name || "Inquiry"
-  const treatment = inquiry.treatment || inquiry.subject || "Appointment Request"
-
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <PageHeader
-        title={`Inquiry — ${displayName}`}
-        description={`Treatment: ${treatment}`}
+        title="View Enquiry"
+        description="Review patient consultation and treatment request details."
+        actions={[
+          { label: "Back to Inquiries", href: "/admin/inquiries", variant: "outline" },
+        ]}
       />
-      <div className="max-w-3xl">
+      <div className="max-w-2xl w-full mx-auto">
         <InquiryDetails inquiry={inquiry} />
       </div>
     </div>
