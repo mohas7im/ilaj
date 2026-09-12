@@ -48,6 +48,8 @@ type DataTableProps<T extends object> = {
     href?: string
     onClick?: () => void
   }
+  className?: string
+  tableClassName?: string
 }
 
 type SortState = { key: string; dir: "asc" | "desc" } | null
@@ -64,6 +66,8 @@ export function DataTable<T extends object>({
   emptyTitle = "No results found",
   emptyDescription = "Try adjusting your search or add a new record.",
   emptyAction,
+  className,
+  tableClassName,
 }: DataTableProps<T>) {
   const [query, setQuery] = useState("")
   const [sort, setSort] = useState<SortState>(null)
@@ -96,7 +100,7 @@ export function DataTable<T extends object>({
   }
 
   return (
-    <div className="space-y-3">
+    <div className={cn("space-y-3", className)}>
       {/* Search bar */}
       {searchable && (
         <div className="relative max-w-xs">
@@ -121,7 +125,7 @@ export function DataTable<T extends object>({
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-md border">
+      <div className={cn("overflow-x-auto rounded-md border bg-card", tableClassName)}>
         <Table>
           <TableHeader>
             <TableRow>
