@@ -1,8 +1,16 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LogOut, ChevronsUpDown, CircleUser, PanelLeftClose, PanelLeftOpen } from "lucide-react"
+import {
+  LogOut,
+  ChevronsUpDown,
+  CircleUser,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ChevronRight,
+} from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { ADMIN_BRANDING, NAV_GROUPS, MOCK_USER, type NavItem } from "@/lib/admin/config"
@@ -16,9 +24,17 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarTrigger,
   useSidebar,
 } from "@/components/admin/ui/sidebar"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/admin/ui/collapsible"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +49,109 @@ import { Avatar, AvatarFallback } from "@/components/admin/ui/avatar"
 
 function NavMenuItem({ item }: { item: NavItem }) {
   const pathname = usePathname()
+  const { state } = useSidebar()
+  const isCollapsed = state === "collapsed"
+
+  const hasSubItems = Boolean(item.items && item.items.length > 0)
+  const isAnyChildActive = Boolean(
+    item.items?.some(
+      (sub) => pathname === sub.href || pathname.startsWith(sub.href)
+    )
+  )
+  const [open, setOpen] = useState(isAnyChildActive)
+
+  useEffect(() => {
+    if (isAnyChildActive) {
+      setOpen(true)
+    }
+  }, [isAnyChildActive])
+
+  if (hasSubItems) {
+    if (isCollapsed) {
+      return (
+        <SidebarMenuItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  isActive={isAnyChildActive}
+                >
+                  <item.icon />
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              }
+            />
+            <DropdownMenuContent side="right" align="start" className="min-w-44">
+              <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {item.items!.map((subItem) => {
+                const isSubActive =
+                  pathname === subItem.href || pathname.startsWith(subItem.href)
+                return (
+                  <DropdownMenuItem
+                    key={subItem.href}
+                    render={<Link href={subItem.href} />}
+                    className={cn(
+                      isSubActive &&
+                        "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                    )}
+                  >
+                    {subItem.title}
+                  </DropdownMenuItem>
+                )
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarMenuItem>
+      )
+    }
+
+    return (
+      <SidebarMenuItem>
+        <Collapsible open={open} onOpenChange={setOpen} className="w-full">
+          <CollapsibleTrigger
+            render={
+              <SidebarMenuButton
+                tooltip={item.title}
+                isActive={isAnyChildActive}
+              >
+                <item.icon />
+                <span>{item.title}</span>
+                <ChevronRight
+                  className={cn(
+                    "ml-auto size-4 transition-transform duration-200",
+                    open && "rotate-90"
+                  )}
+                />
+              </SidebarMenuButton>
+            }
+          />
+          <CollapsibleContent>
+            <SidebarMenuSub>
+              {item.items!.map((subItem) => {
+                const isSubActive =
+                  pathname === subItem.href || pathname.startsWith(subItem.href)
+                return (
+                  <SidebarMenuSubItem key={subItem.href}>
+                    <SidebarMenuSubButton
+                      render={<Link href={subItem.href} />}
+                      isActive={isSubActive}
+                    >
+                      <span>{subItem.title}</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                )
+              })}
+            </SidebarMenuSub>
+          </CollapsibleContent>
+        </Collapsible>
+      </SidebarMenuItem>
+    )
+  }
+
+  if (!item.href) return null
+
   const isActive =
     item.href === "/admin"
       ? pathname === "/admin"
@@ -126,7 +245,7 @@ export function AdminSidebar() {
             )}
             <SidebarMenu>
               {group.items.map((item) => (
-                <NavMenuItem key={item.href} item={item} />
+                <NavMenuItem key={item.href ?? item.title} item={item} />
               ))}
             </SidebarMenu>
           </SidebarGroup>

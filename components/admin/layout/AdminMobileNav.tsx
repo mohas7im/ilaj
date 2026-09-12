@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu } from "lucide-react"
+import { Menu, ChevronDown } from "lucide-react"
 
 import { NAV_GROUPS, ADMIN_BRANDING, type NavItem } from "@/lib/admin/config"
 import { Button } from "@/components/admin/ui/button"
@@ -13,6 +13,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/admin/ui/sheet"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/admin/ui/collapsible"
 import { cn } from "@/lib/utils"
 
 // ─── Mobile Nav Item ──────────────────────────────────────────────────────────
@@ -25,6 +30,62 @@ function MobileNavItem({
   onSelect: () => void
 }) {
   const pathname = usePathname()
+  const isAnyChildActive = Boolean(
+    item.items?.some(
+      (sub) => pathname === sub.href || pathname.startsWith(sub.href)
+    )
+  )
+  const [open, setOpen] = useState(isAnyChildActive)
+
+  if (item.items && item.items.length > 0) {
+    return (
+      <Collapsible open={open} onOpenChange={setOpen} className="w-full">
+        <CollapsibleTrigger
+          className={cn(
+            "flex w-full items-center justify-between rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+            isAnyChildActive
+              ? "bg-sidebar-accent text-sidebar-accent-foreground"
+              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <item.icon className="h-4 w-4 shrink-0" />
+            <span>{item.title}</span>
+          </div>
+          <ChevronDown
+            className={cn(
+              "h-4 w-4 shrink-0 transition-transform duration-200",
+              open && "rotate-180"
+            )}
+          />
+        </CollapsibleTrigger>
+        <CollapsibleContent className="pl-7 pt-1 space-y-1">
+          {item.items.map((sub) => {
+            const isSubActive =
+              pathname === sub.href || pathname.startsWith(sub.href)
+            return (
+              <Link
+                key={sub.href}
+                href={sub.href}
+                onClick={onSelect}
+                className={cn(
+                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
+                  isSubActive
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                )}
+              >
+                <span>{sub.title}</span>
+              </Link>
+            )
+          })}
+        </CollapsibleContent>
+      </Collapsible>
+    )
+  }
+
+  if (!item.href) return null
+
   const isActive =
     item.href === "/admin"
       ? pathname === "/admin"
@@ -85,7 +146,7 @@ export function AdminMobileNav() {
                 )}
                 {group.items.map((item) => (
                   <MobileNavItem
-                    key={item.href}
+                    key={item.href ?? item.title}
                     item={item}
                     onSelect={() => setOpen(false)}
                   />

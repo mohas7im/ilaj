@@ -8,6 +8,7 @@ import {
   Settings,
   Star,
   LineChart,
+  Images,
   type LucideIcon,
 } from "lucide-react"
 
@@ -24,40 +25,41 @@ import {
 //  layout/dashboard component just to change client branding.
 // ============================================================
 
-// ─── Branding ─────────────────────────────────────────────────────────────────
+// ─── Branding Configuration ───────────────────────────────────────────────────
+// Edit this block to rebrand the admin panel for a new clinic / doctor.
+// Logo images: place SVG files in public/admin/ and update paths below.
 
-export type AdminBranding = {
-  /** Full application name shown in sidebar header and page titles */
-  name: string
-  /** Short name (1-2 chars) used for the logo-mark fallback */
-  shortName: string
-  /** Subtitle shown under the name in the sidebar */
-  description: string
-  /** Path to the full logo SVG (shown when sidebar is expanded) */
-  logo: string
-  /** Path to the logo mark / icon SVG (shown when sidebar is collapsed) */
-  logoMark: string
-  /** Path to admin favicon */
-  favicon: string
-}
-
-export const ADMIN_BRANDING: AdminBranding = {
-  name: "Ilaj",
-  shortName: "IL",
-  description: "Dental Clinic Administration",
+export const ADMIN_BRANDING = {
+  /** Full clinic / practice name */
+  name: "Ilaj Dental Clinic",
+  /** Short abbreviation used when the sidebar is collapsed */
+  shortName: "ID",
+  /** Practice category shown under the name in the sidebar header */
+  description: "Dental Practice Management",
+  /** Path to full logo image — shown when sidebar is expanded */
   logo: "/admin/logo.svg",
+  /** Path to compact logo mark — shown when sidebar is collapsed */
   logoMark: "/admin/logo-mark.svg",
+  /** Favicon path */
   favicon: "/admin/favicon.ico",
 }
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 
-export type NavItem = {
+export type NavSubItem = {
   title: string
   href: string
+  icon?: LucideIcon
+}
+
+export type NavItem = {
+  title: string
+  href?: string
   icon: LucideIcon
   /** Optional badge count shown in sidebar (e.g. pending items) */
   badge?: number
+  /** Sub-navigation items for dropdown/collapsible menus */
+  items?: NavSubItem[]
 }
 
 export type NavGroup = {
@@ -87,6 +89,20 @@ export const NAV_GROUPS: NavGroup[] = [
         title: "Services",
         href: "/admin/services",
         icon: Briefcase,
+      },
+      {
+        title: "Gallery",
+        icon: Images,
+        items: [
+          {
+            title: "Clinic Gallery",
+            href: "/admin/gallery/clinic",
+          },
+          {
+            title: "Patient Gallery",
+            href: "/admin/gallery/patient",
+          },
+        ],
       },
       {
         title: "Testimonials",

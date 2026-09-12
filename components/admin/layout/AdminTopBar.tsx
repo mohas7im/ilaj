@@ -11,7 +11,14 @@ function usePageTitle(): string {
   const pathname = usePathname()
   for (const group of NAV_GROUPS) {
     for (const item of group.items) {
-      if (item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href)) {
+      if (item.items) {
+        for (const subItem of item.items) {
+          if (pathname === subItem.href || pathname.startsWith(subItem.href)) {
+            return subItem.title
+          }
+        }
+      }
+      if (item.href && (item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href))) {
         return item.title
       }
     }
