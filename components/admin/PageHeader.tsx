@@ -1,1 +1,1 @@
-export { PageHeader } from "./common/PageHeader"
+export { PageHeader } from "./ui/page-header"

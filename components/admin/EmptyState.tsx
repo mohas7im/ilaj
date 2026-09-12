@@ -1,1 +1,1 @@
-export { EmptyState } from "./common/EmptyState"
+export { EmptyState } from "./ui/empty-state"

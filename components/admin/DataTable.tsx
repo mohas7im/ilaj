@@ -1,1 +1,1 @@
-export { DataTable } from "./common/DataTable"
+export { DataTable, type ColumnDef } from "./ui/data-table"

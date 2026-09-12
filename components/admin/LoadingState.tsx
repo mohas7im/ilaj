@@ -1,1 +1,1 @@
-export { LoadingState } from "./common/LoadingState"
+export { LoadingState, TableLoadingState } from "./ui/loading-state"

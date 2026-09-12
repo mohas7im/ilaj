@@ -12,14 +12,15 @@ import {
 } from "@/components/admin/ui/table"
 import { Input } from "@/components/admin/ui/input"
 import { Button } from "@/components/admin/ui/button"
-import { EmptyState } from "./EmptyState"
+import { EmptyState } from "@/components/admin/ui/empty-state"
+import { cn } from "@/lib/utils"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type ColumnDef<T> = {
   /** Unique key — must match a key of T or be a custom string */
   key: string
-  header: string
+  header: ReactNode
   /** Custom cell renderer. Falls back to `row[key]` stringified */
   cell?: (row: T) => ReactNode
   /** Allow sorting on this column */
@@ -28,7 +29,7 @@ export type ColumnDef<T> = {
   className?: string
 }
 
-type DataTableProps<T extends Record<string, any>> = {
+type DataTableProps<T extends object> = {
   data: T[]
   columns: ColumnDef<T>[]
   /** Row key extractor */
@@ -42,13 +43,18 @@ type DataTableProps<T extends Record<string, any>> = {
   /** Empty state config */
   emptyTitle?: string
   emptyDescription?: string
+  emptyAction?: {
+    label: string
+    href?: string
+    onClick?: () => void
+  }
 }
 
 type SortState = { key: string; dir: "asc" | "desc" } | null
 
 // ─── DataTable ────────────────────────────────────────────────────────────────
 
-export function DataTable<T extends Record<string, any>>({
+export function DataTable<T extends object>({
   data,
   columns,
   rowKey,
@@ -57,6 +63,7 @@ export function DataTable<T extends Record<string, any>>({
   searchKeys,
   emptyTitle = "No results found",
   emptyDescription = "Try adjusting your search or add a new record.",
+  emptyAction,
 }: DataTableProps<T>) {
   const [query, setQuery] = useState("")
   const [sort, setSort] = useState<SortState>(null)
@@ -66,7 +73,7 @@ export function DataTable<T extends Record<string, any>>({
   const filtered = searchable && query
     ? data.filter((row) =>
         keys.some((k) =>
-          String(row[k] ?? "").toLowerCase().includes(query.toLowerCase())
+          String((row as Record<string, any>)[k as string] ?? "").toLowerCase().includes(query.toLowerCase())
         )
       )
     : data
@@ -74,8 +81,8 @@ export function DataTable<T extends Record<string, any>>({
   // ── Sort ──────────────────────────────────────────────────────────────────
   const sorted = sort
     ? [...filtered].sort((a, b) => {
-        const av = String(a[sort.key] ?? "")
-        const bv = String(b[sort.key] ?? "")
+        const av = String((a as Record<string, any>)[sort.key] ?? "")
+        const bv = String((b as Record<string, any>)[sort.key] ?? "")
         return sort.dir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av)
       })
     : filtered
@@ -126,8 +133,11 @@ export function DataTable<T extends Record<string, any>>({
                   {col.sortable ? (
                     <button
                       onClick={() => toggleSort(col.key)}
-                      className="flex items-center gap-1 font-medium hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      aria-label={`Sort by ${col.header}`}
+                      className={cn(
+                        "flex items-center gap-1 font-medium hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        col.className?.includes("text-right") && "ml-auto"
+                      )}
+                      aria-label={`Sort by ${typeof col.header === "string" ? col.header : col.key}`}
                     >
                       {col.header}
                       {sort?.key === col.key ? (
@@ -151,7 +161,12 @@ export function DataTable<T extends Record<string, any>>({
             {sorted.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={columns.length} className="p-0">
-                  <EmptyState title={emptyTitle} description={emptyDescription} />
+                  <EmptyState
+                    title={emptyTitle}
+                    description={emptyDescription}
+                    action={emptyAction}
+                    className="border-0 rounded-none bg-transparent"
+                  />
                 </TableCell>
               </TableRow>
             ) : (
@@ -159,7 +174,7 @@ export function DataTable<T extends Record<string, any>>({
                 <TableRow key={rowKey(row)}>
                   {columns.map((col) => (
                     <TableCell key={col.key} className={col.className}>
-                      {col.cell ? col.cell(row) : String(row[col.key] ?? "—")}
+                      {col.cell ? col.cell(row) : String((row as Record<string, any>)[col.key] ?? "—")}
                     </TableCell>
                   ))}
                 </TableRow>

@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react"
 import { Inbox } from "lucide-react"
 import { Button } from "@/components/admin/ui/button"
+import { cn } from "@/lib/utils"
 import Link from "next/link"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -14,6 +15,7 @@ type EmptyStateProps = {
     href?: string
     onClick?: () => void
   }
+  className?: string
 }
 
 // ─── EmptyState ───────────────────────────────────────────────────────────────
@@ -23,10 +25,14 @@ export function EmptyState({
   description = "Nothing to show here yet.",
   icon: Icon = Inbox,
   action,
+  className,
 }: EmptyStateProps) {
   return (
     <div
-      className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed bg-muted/30 px-6 py-16 text-center"
+      className={cn(
+        "flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed bg-muted/30 px-6 py-16 text-center",
+        className
+      )}
       role="status"
       aria-label={title}
     >
