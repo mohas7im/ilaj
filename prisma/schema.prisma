@@ -1,0 +1,22 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// TODO: Define models for all features:
+//   - Doctor
+//   - Service (ClinicService)
+//   - GalleryItem
+//   - Testimonial
+//   - WhyChooseUs
+//   - Inquiry
+//   - Appointment
+//   - SeoMetadata
+//   - Settings
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
