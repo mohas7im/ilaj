@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id                  Int       @id @default(autoincrement())
+  email               String    @unique
+  username            String?   @unique
+  passwordHash        String
+  totpSecretEncrypted String?
+  twoFactorEnabled    Boolean   @default(false)
+  createdAt           DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("admin")
+}
+
+model Session {
+  id        String   @id
+  adminId   Int
+  expiresAt DateTime @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@map("session")
+}
+
+model RecoveryCode {
+  id        Int       @id @default(autoincrement())
+  adminId   Int
+  codeHash  String
+  usedAt    DateTime? @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@map("recoveryCode")
+}
