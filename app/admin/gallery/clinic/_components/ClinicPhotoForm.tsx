@@ -3,7 +3,7 @@
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
+import { Card, CardContent } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -100,16 +100,6 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base">
-          {isEdit ? "Edit Clinic Photo" : "Add Clinic Photo"}
-        </CardTitle>
-        <CardDescription>
-          {isEdit
-            ? "Update photo details, image asset, alt text, and description."
-            : "Upload a new photo showcasing clinic facilities, suites, and premises."}
-        </CardDescription>
-      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-5">
           {error && (

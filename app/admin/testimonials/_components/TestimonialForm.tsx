@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Star } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
+import { Card, CardContent } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -62,12 +62,6 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base">{isEdit ? "Edit Testimonial" : "Add Testimonial"}</CardTitle>
-        <CardDescription>
-          Record patient feedback, star rating, and completed treatment.
-        </CardDescription>
-      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">

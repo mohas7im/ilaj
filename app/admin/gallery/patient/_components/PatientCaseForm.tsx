@@ -3,7 +3,7 @@
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
+import { Card, CardContent } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -119,16 +119,6 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base">
-          {isEdit ? "Edit Before & After Case" : "Add Before & After Case"}
-        </CardTitle>
-        <CardDescription>
-          {isEdit
-            ? "Update transformation case details, before/after images, and accessibility texts."
-            : "Upload before and after photos showcasing patient smile transformations."}
-        </CardDescription>
-      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (

@@ -3,7 +3,7 @@
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Upload, X, ImageIcon } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
+import { Card, CardContent } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -81,16 +81,54 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base">{isEdit ? "Edit Doctor" : "Add Doctor"}</CardTitle>
-        <CardDescription>
-          {isEdit
-            ? "Update practitioner details, profile photo, and clinical credentials."
-            : "Add a new dental specialist or practitioner to the clinic team."}
-        </CardDescription>
-      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="name">Full Name <span className="text-destructive">*</span></Label>
+              <Input
+                id="name"
+                value={form.name}
+                onChange={(e) => set("name", e.target.value)}
+                placeholder="Dr. Full Name"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="designation">Designation <span className="text-destructive">*</span></Label>
+              <Input
+                id="designation"
+                value={form.designation}
+                onChange={(e) => set("designation", e.target.value)}
+                placeholder="e.g. BDS, MDS"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="specialization">Specialization <span className="text-destructive">*</span></Label>
+              <Input
+                id="specialization"
+                value={form.specialization}
+                onChange={(e) => set("specialization", e.target.value)}
+                placeholder="e.g. Orthodontics"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="bio">Bio</Label>
+            <Textarea
+              id="bio"
+              value={form.bio}
+              onChange={(e) => set("bio", e.target.value)}
+              placeholder="Brief professional biography, qualifications, and experience..."
+              rows={4}
+            />
+          </div>
+
           {/* Profile Photo Upload */}
           <div className="space-y-3 p-4 rounded-lg border border-dashed border-border bg-muted/20">
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">
@@ -162,52 +200,6 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                 placeholder="e.g. Portrait photo of Dr. Full Name in medical uniform"
               />
             </div>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="name">Full Name <span className="text-destructive">*</span></Label>
-              <Input
-                id="name"
-                value={form.name}
-                onChange={(e) => set("name", e.target.value)}
-                placeholder="Dr. Full Name"
-                required
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="designation">Designation <span className="text-destructive">*</span></Label>
-              <Input
-                id="designation"
-                value={form.designation}
-                onChange={(e) => set("designation", e.target.value)}
-                placeholder="e.g. BDS, MDS"
-                required
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="specialization">Specialization <span className="text-destructive">*</span></Label>
-              <Input
-                id="specialization"
-                value={form.specialization}
-                onChange={(e) => set("specialization", e.target.value)}
-                placeholder="e.g. Orthodontics"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
-              value={form.bio}
-              onChange={(e) => set("bio", e.target.value)}
-              placeholder="Brief professional biography, qualifications, and experience..."
-              rows={4}
-            />
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-2 border-t">
