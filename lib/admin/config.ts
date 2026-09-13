@@ -9,6 +9,7 @@ import {
   LineChart,
   Images,
   Sparkles,
+  Search,
   type LucideIcon,
 } from "lucide-react"
 
@@ -133,6 +134,11 @@ export const NAV_GROUPS: NavGroup[] = [
         title: "Analytics",
         href: "/admin/analytics",
         icon: LineChart,
+      },
+      {
+        title: "SEO",
+        href: "/admin/seo",
+        icon: Search,
       },
       {
         title: "Settings",

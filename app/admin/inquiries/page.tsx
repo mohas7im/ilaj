@@ -10,6 +10,8 @@ export default function InquiriesPage() {
   const [filters, setFilters] = useState<InquiryFilterState>({
     search: "",
     treatment: "all",
+    dateFrom: undefined,
+    dateTo: undefined,
   })
 
   return (
