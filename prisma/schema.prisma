@@ -89,3 +89,15 @@ model TwoFactor {
   @@index([userId])
   @@map("twoFactor")
 }
+
+model Jwks {
+  id         String    @id
+  publicKey  String
+  privateKey String
+  createdAt  DateTime
+  expiresAt  DateTime?
+  alg        String?
+  crv        String?
+
+  @@map("jwks")
+}

@@ -23,8 +23,8 @@ export default function AdminLoginPage() {
     e.preventDefault()
     setLoading(true)
     setTimeout(() => {
-      router.push("/admin/dashboard")
-    }, 500)
+      router.push(`/admin/login/2fa?email=${encodeURIComponent(email)}`)
+    }, 400)
   }
 
   return (
