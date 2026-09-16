@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,97 +6,13 @@ datasource db {
   provider = "postgresql"
 }
 
-model Session {
-  id        String   @id
-  expiresAt DateTime @db.Timestamptz(6)
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-
-  token     String
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("session")
-  @@unique([token])
-  @@index([userId])
-}
-
 model User {
-  id            String   @id
-  name          String
-  email         String
-  emailVerified Boolean  @default(false)
-  image         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(uuid())
+  name         String?
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  sessions Session[]
-  accounts Account[]
-
-  twoFactorEnabled Boolean?    @default(false)
-  twofactors       TwoFactor[]
-
-  @@unique([email])
   @@map("user")
-}
-
-model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-
-  @@index([userId])
-  @@map("account")
-}
-
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
-  @@map("verification")
-}
-
-model TwoFactor {
-  id                      String    @id
-  secret                  String
-  backupCodes             String
-  userId                  String
-  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  verified                Boolean?  @default(true)
-  failedVerificationCount Int?      @default(0)
-  lockedUntil             DateTime?
-
-  @@index([secret])
-  @@index([userId])
-  @@map("twoFactor")
-}
-
-model Jwks {
-  id         String    @id
-  publicKey  String
-  privateKey String
-  createdAt  DateTime
-  expiresAt  DateTime?
-  alg        String?
-  crv        String?
-
-  @@map("jwks")
 }

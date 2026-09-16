@@ -1,3 +1,4 @@
-// TODO: Implement appointment route handlers
-// GET  /api/appointments  — list appointments
-// POST /api/appointments  — create appointment
+// Appointment route handlers (Placeholder)
+export async function GET() {
+  return Response.json({ appointments: [] });
+}

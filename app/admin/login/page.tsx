@@ -16,15 +16,38 @@ export default function AdminLoginPage() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("admin@ilaj.com")
-  const [password, setPassword] = useState("••••••••••••")
+  const [password, setPassword] = useState("AdminPassword123!")
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => {
-      router.push(`/admin/login/2fa?email=${encodeURIComponent(email)}`)
-    }, 400)
+    setError(null)
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to sign in.")
+      }
+
+      if (data.accessToken) {
+        localStorage.setItem("accessToken", data.accessToken)
+      }
+
+      router.push("/admin/dashboard")
+    } catch (err: any) {
+      setError(err.message || "An error occurred during sign in.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -103,6 +126,11 @@ export default function AdminLoginPage() {
               Enter your credentials to manage clinic patients, doctors, and services.
             </p>
           </div>
+          {error && (
+            <div className="mb-4 p-3 rounded-lg text-xs font-medium text-destructive bg-destructive/10 border border-destructive/20">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email Field */}
