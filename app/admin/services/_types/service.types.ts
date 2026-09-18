@@ -4,15 +4,25 @@ export interface Service {
   id: string
   name: string
   slug?: string
-  description?: string
-  image?: string
-  imageAlt?: string
-  secondaryImage?: string
-  secondaryImageAlt?: string
+  description?: string | null
+  image?: string | null
+  imageAlt?: string | null
+  secondaryImage?: string | null
+  secondaryImageAlt?: string | null
   status: ServiceStatus
   displayOrder?: number
   showInHomePage?: boolean
   isActive?: boolean
-  createdAt?: string
-  updatedAt?: string
+  createdAt?: string | Date
+  updatedAt?: string | Date
 }
+
+
+export const SERVICE_STATUS_CONFIG: Record<
+  ServiceStatus,
+  { label: string; variant: "default" | "secondary" | "outline" | "destructive" }
+> = {
+  active:   { label: "Active",   variant: "default" },
+  inactive: { label: "Inactive", variant: "secondary" },
+}
+

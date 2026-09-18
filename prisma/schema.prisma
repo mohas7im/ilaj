@@ -16,3 +16,24 @@ model User {
 
   @@map("user")
 }
+
+model Service {
+  id                String   @id @default(uuid())
+  name              String
+  slug              String   @unique
+  description       String?  @db.Text
+  image             String?  @db.Text
+  imageAlt          String?
+  secondaryImage    String?  @db.Text
+  secondaryImageAlt String?
+  status            String   @default("active")
+  displayOrder      Int      @default(1)
+  showInHomePage    Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status])
+  @@index([displayOrder])
+  @@map("services")
+}
+

@@ -1,16 +1,14 @@
-"use client"
-
-import { useState } from "react"
 import { PageHeader } from "@/components/admin/PageHeader"
-import { ServiceFilters, type ServiceFilterState } from "./_components/ServiceFilters"
-import { ServiceTable } from "./_components/ServiceTable"
-import { MOCK_SERVICES } from "./_services/service.service"
+import { getServices } from "./_services/service.service"
+import { ServicesClientView } from "./_components/ServicesClientView"
 
-export default function ServicesPage() {
-  const [filters, setFilters] = useState<ServiceFilterState>({
-    search: "",
-    status: "all",
-  })
+export const dynamic = "force-dynamic"
+export const metadata = {
+  title: "Services | Admin",
+}
+
+export default async function ServicesPage() {
+  const services = await getServices()
 
   return (
     <div className="space-y-5">
@@ -19,8 +17,7 @@ export default function ServicesPage() {
         description="Manage the dental services offered by the clinic."
         actions={[{ label: "+ Add Service", href: "/admin/services/create" }]}
       />
-      <ServiceFilters filters={filters} onFiltersChange={setFilters} />
-      <ServiceTable services={MOCK_SERVICES} filters={filters} />
+      <ServicesClientView initialServices={services} />
     </div>
   )
 }

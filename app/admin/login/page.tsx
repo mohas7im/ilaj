@@ -11,6 +11,7 @@ import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Checkbox } from "@/components/admin/ui/checkbox"
+import { authService } from "@/services/auth.service"
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -26,25 +27,10 @@ export default function AdminLoginPage() {
     setError(null)
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to sign in.")
-      }
-
-      if (data.accessToken) {
-        localStorage.setItem("accessToken", data.accessToken)
-      }
-
+      await authService.login({ email, password })
       router.push("/admin/dashboard")
-    } catch (err: any) {
-      setError(err.message || "An error occurred during sign in.")
+    } catch (err) {
+      setError(authService.getErrorMessage(err, "Invalid email or password."))
     } finally {
       setLoading(false)
     }

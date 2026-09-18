@@ -4,38 +4,21 @@ import { verifyJwt } from "@/lib/auth/token";
 
 export async function GET(req: NextRequest) {
   try {
-    // 1. Check HttpOnly cookie first
-    let token = req.cookies.get("auth_token")?.value;
-
-    // 2. Check Authorization Bearer header as fallback
-    if (!token) {
-      const authHeader = req.headers.get("authorization");
-      if (authHeader && authHeader.startsWith("Bearer ")) {
-        token = authHeader.substring(7);
-      }
-    }
-
+    const token = req.cookies.get("auth_token")?.value;
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // 3. Verify JWT token
     const payload = await verifyJwt(token);
-    if (!payload || !payload.id) {
-      return NextResponse.json(
-        { error: "Invalid or expired token" },
-        { status: 401 }
-      );
+    if (!payload?.id) {
+      return NextResponse.json({ error: "Invalid or expired session" }, { status: 401 });
     }
 
-    // 4. Fetch user details from database
     const user = await prisma.user.findUnique({
       where: { id: payload.id },
       select: {
-        id: true,
         name: true,
         email: true,
-        createdAt: true,
       },
     });
 
@@ -48,7 +31,7 @@ export async function GET(req: NextRequest) {
       user,
     });
   } catch (error) {
-    console.error("Auth me error:", error);
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    console.error("Auth session error:", error);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

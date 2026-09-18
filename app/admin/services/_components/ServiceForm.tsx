@@ -2,7 +2,8 @@
 
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { Upload, X, ImageIcon } from "lucide-react"
+import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
@@ -13,8 +14,7 @@ import {
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
 import { Switch } from "@/components/admin/ui/switch"
-import { SERVICE_STATUS_CONFIG } from "../_services/service.service"
-import type { Service, ServiceStatus } from "../_types/service.types"
+import { SERVICE_STATUS_CONFIG, type Service, type ServiceStatus } from "../_types/service.types"
 
 export type ServiceFormProps = {
   mode: "create" | "edit"
@@ -26,6 +26,7 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
   const isEdit = mode === "edit"
   const primaryFileInputRef = useRef<HTMLInputElement>(null)
   const secondaryFileInputRef = useRef<HTMLInputElement>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [form, setForm] = useState({
     name:              initialData?.name              ?? "",
@@ -68,26 +69,39 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
     try {
-      if (isEdit && initialData?.id) {
-        await fetch(`/api/services/${initialData.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        })
-      } else {
-        await fetch("/api/services", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        })
+      const url = isEdit && initialData?.id ? `/api/services/${initialData.id}` : "/api/services"
+      const method = isEdit ? "PUT" : "POST"
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        const errorMsg = data?.error
+          ? typeof data.error === "object"
+            ? Object.values(data.error).flat().join(", ")
+            : String(data.error)
+          : "Failed to save service"
+        throw new Error(errorMsg)
       }
-    } catch {
-      // Fallback redirect for client-side demo
+
+      toast.success(isEdit ? "Service updated successfully" : "Service created successfully")
+      router.push("/admin/services")
+      router.refresh()
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Failed to save service"
+      toast.error(msg)
+    } finally {
+      setIsSubmitting(false)
     }
-    router.push("/admin/services")
-    router.refresh()
   }
+
 
   return (
     <Card>
@@ -310,11 +324,23 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-2 border-t">
-            <Button type="button" variant="outline" onClick={() => router.push("/admin/services")}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/admin/services")}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
-            <Button type="submit">
-              {isEdit ? "Save Changes" : "Add Service"}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {isEdit ? "Saving Changes..." : "Adding Service..."}
+                </>
+              ) : (
+                isEdit ? "Save Changes" : "Add Service"
+              )}
             </Button>
           </div>
         </form>

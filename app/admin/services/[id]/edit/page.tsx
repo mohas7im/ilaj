@@ -5,7 +5,9 @@ import { getServiceById } from "../../_services/service.service"
 
 type Props = { params: Promise<{ id: string }> }
 
+export const dynamic = "force-dynamic"
 export const metadata = { title: "Edit Service" }
+
 
 export default async function ServiceEditPage({ params }: Props) {
   const { id } = await params

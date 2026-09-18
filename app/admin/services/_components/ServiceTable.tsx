@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Pencil, Trash2 } from "lucide-react"
+import { toast } from "sonner"
 import {
   Table, TableBody, TableCell, TableHead,
   TableHeader, TableRow,
@@ -13,8 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avata
 import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
 import { cn } from "@/lib/utils"
-import { SERVICE_STATUS_CONFIG } from "../_services/service.service"
-import type { Service } from "../_types/service.types"
+import { SERVICE_STATUS_CONFIG, type Service } from "../_types/service.types"
 import type { ServiceFilterState } from "./ServiceFilters"
 
 type ServiceTableProps = {
@@ -29,6 +29,10 @@ function initials(name: string) {
 export function ServiceTable({ services: initialServices, filters }: ServiceTableProps) {
   const [services, setServices] = useState<Service[]>(initialServices)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+
+  useEffect(() => {
+    setServices(initialServices)
+  }, [initialServices])
 
   const filtered = services
     .filter((s) => {
@@ -47,14 +51,22 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
     .sort((a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999))
 
   const handleDelete = async () => {
-    if (deleteId) {
-      try {
-        await fetch(`/api/services/${deleteId}`, { method: "DELETE" })
-      } catch {}
+    if (!deleteId) return
+    try {
+      const res = await fetch(`/api/services/${deleteId}`, { method: "DELETE" })
+      if (!res.ok) {
+        throw new Error("Failed to delete service")
+      }
       setServices((prev) => prev.filter((s) => s.id !== deleteId))
+      toast.success("Service deleted successfully")
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Failed to delete service"
+      toast.error(msg)
+    } finally {
       setDeleteId(null)
     }
   }
+
 
   return (
     <div className="space-y-3">

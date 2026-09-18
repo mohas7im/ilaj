@@ -9,8 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/admin/ui/select"
-import { SERVICE_STATUS_CONFIG } from "../_services/service.service"
-import type { ServiceStatus } from "../_types/service.types"
+import { SERVICE_STATUS_CONFIG, type ServiceStatus } from "../_types/service.types"
 
 export type ServiceFilterState = {
   search: string

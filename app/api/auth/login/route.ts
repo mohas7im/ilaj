@@ -45,12 +45,10 @@ export async function POST(req: NextRequest) {
       name: user.name,
     });
 
-    // 4. Create standard JSON response
+    // 4. Create standard JSON response (session handled securely via HttpOnly cookie)
     const response = NextResponse.json({
       success: true,
-      accessToken: token,
       user: {
-        id: user.id,
         name: user.name,
         email: user.email,
       },

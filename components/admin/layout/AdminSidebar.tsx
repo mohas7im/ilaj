@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { authService } from "@/services/auth.service"
 import {
   LogOut,
   ChevronsUpDown,
@@ -174,10 +175,29 @@ function NavMenuItem({ item }: { item: NavItem }) {
 // ─── Admin Sidebar ────────────────────────────────────────────────────────────
 
 export function AdminSidebar() {
+  const router = useRouter()
   const { state } = useSidebar()
   const isCollapsed = state === "collapsed"
+  const [currentUser, setCurrentUser] = useState(MOCK_USER)
 
-  const initials = MOCK_USER.name
+  useEffect(() => {
+    authService.me().then((u) => {
+      if (u) {
+        setCurrentUser({ name: u.name, email: u.email })
+      }
+    })
+  }, [])
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout()
+    } finally {
+      router.push("/admin/login")
+      router.refresh()
+    }
+  }
+
+  const initials = currentUser.name
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -262,7 +282,7 @@ export function AdminSidebar() {
                   <SidebarMenuButton
                     size="lg"
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                    tooltip={MOCK_USER.name}
+                    tooltip={currentUser.name}
                   >
                     <Avatar className="h-7 w-7 rounded-lg">
                       <AvatarFallback className="rounded-lg text-xs">
@@ -270,9 +290,9 @@ export function AdminSidebar() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col leading-tight">
-                      <span className="text-sm font-medium">{MOCK_USER.name}</span>
+                      <span className="text-sm font-medium">{currentUser.name}</span>
                       <span className="text-xs text-muted-foreground">
-                        {MOCK_USER.email}
+                        {currentUser.email}
                       </span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4" />
@@ -292,9 +312,9 @@ export function AdminSidebar() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col leading-tight">
-                      <span className="font-medium">{MOCK_USER.name}</span>
+                      <span className="font-medium">{currentUser.name}</span>
                       <span className="text-xs text-muted-foreground">
-                        {MOCK_USER.email}
+                        {currentUser.email}
                       </span>
                     </div>
                   </div>
@@ -305,7 +325,10 @@ export function AdminSidebar() {
                   Profile
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive focus:text-destructive">
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-destructive focus:text-destructive cursor-pointer"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Log out
                 </DropdownMenuItem>
