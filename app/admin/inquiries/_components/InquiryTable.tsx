@@ -105,7 +105,8 @@ export function InquiryTable({
               </TableHeader>
               <TableBody>
                 {inquiries.map((inq) => {
-                  const displayName = inq.fullName || inq.name || "Anonymous"
+                  const displayName = inq.fullName
+                  const slot = [inq.preferredDate, inq.preferredTime].filter(Boolean).join(" • ") || "—"
                   return (
                     <TableRow key={inq.id}>
                       <TableCell>
@@ -124,11 +125,10 @@ export function InquiryTable({
                         </div>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                        {inq.treatment || inq.subject || "General Checkup"}
+                        {inq.treatment}
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
-                        {inq.preferredDate || "—"}
-                        {inq.preferredTime ? ` • ${inq.preferredTime}` : ""}
+                        {slot}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
                         {inq.email}

@@ -27,8 +27,8 @@ function DetailRow({
 type InquiryDetailsProps = { inquiry: Inquiry }
 
 export function InquiryDetails({ inquiry: inq }: InquiryDetailsProps) {
-  const displayName = inq.fullName || inq.name || "Anonymous"
-  const treatmentName = inq.treatment || inq.subject || "General Consultation"
+  const displayName = inq.fullName
+  const treatmentName = inq.treatment
 
   return (
     <div className="space-y-5">

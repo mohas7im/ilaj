@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/admin/ui/popover"
 import { Calendar } from "@/components/admin/ui/calendar"
-import { fetchTreatmentServices, TREATMENT_OPTIONS } from "../_services/inquiry.service"
+import { fetchTreatmentServices } from "../_services/inquiry.service"
 
 export type InquiryFilterState = {
   search: string
@@ -33,12 +33,12 @@ type InquiryFiltersProps = {
 }
 
 export function InquiryFilters({ filters, onFiltersChange }: InquiryFiltersProps) {
-  const [treatmentOptions, setTreatmentOptions] = useState<string[]>([...TREATMENT_OPTIONS])
+  const [treatmentOptions, setTreatmentOptions] = useState<string[]>([])
 
   useEffect(() => {
     let isMounted = true
     fetchTreatmentServices().then((services) => {
-      if (isMounted && services && services.length > 0) {
+      if (isMounted && Array.isArray(services)) {
         setTreatmentOptions(services)
       }
     })

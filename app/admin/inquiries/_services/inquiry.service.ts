@@ -5,28 +5,6 @@ import type {
   InquiryQueryParams,
 } from "../_types/inquiry.types";
 
-export const TREATMENT_OPTIONS = [
-  "General Dental Checkup",
-  "Teeth Cleaning & Whitening",
-  "Dental Implants",
-  "Orthodontic Braces",
-  "Root Canal Treatment",
-  "Cosmetic Veneers",
-  "Pediatric Dental Care",
-  "Wisdom Tooth Extraction",
-  "Crowns & Bridges",
-] as const;
-
-export const TIME_SLOTS = [
-  "09:00 AM - 10:00 AM",
-  "10:00 AM - 11:00 AM",
-  "11:00 AM - 12:00 PM",
-  "02:00 PM - 03:00 PM",
-  "03:00 PM - 04:00 PM",
-  "04:00 PM - 05:00 PM",
-  "05:00 PM - 06:00 PM",
-] as const;
-
 /**
  * Fetch inquiries with server-side pagination, search, treatment, and date range filters
  */
@@ -53,7 +31,7 @@ export async function fetchInquiries(
 
 /**
  * Fetch services list directly from /api/services to populate treatment options.
- * Defined locally within inquiries service folder without importing from admin services module.
+ * Self-contained in inquiry service folder without importing from admin services module.
  */
 export async function fetchTreatmentServices(): Promise<string[]> {
   try {
@@ -67,16 +45,12 @@ export async function fetchTreatmentServices(): Promise<string[]> {
         .map((service) => service.name?.trim())
         .filter((name): name is string => Boolean(name));
 
-      // Return unique names
-      const uniqueNames = Array.from(new Set(names));
-      if (uniqueNames.length > 0) {
-        return uniqueNames;
-      }
+      return Array.from(new Set(names));
     }
-    return [...TREATMENT_OPTIONS];
+    return [];
   } catch (error) {
-    console.error("Failed to fetch treatment services:", error);
-    return [...TREATMENT_OPTIONS];
+    console.error("Failed to fetch treatment services from /api/services:", error);
+    return [];
   }
 }
 
@@ -84,17 +58,12 @@ export async function fetchTreatmentServices(): Promise<string[]> {
  * Delete an inquiry by ID
  */
 export async function deleteInquiry(id: string): Promise<boolean> {
-  try {
-    await apiClient.delete(`/api/inquiries/${id}`);
-    return true;
-  } catch (error) {
-    console.error("Failed to delete inquiry:", error);
-    throw error;
-  }
+  await apiClient.delete(`/api/inquiries/${id}`);
+  return true;
 }
 
 /**
- * Update inquiry status (e.g. 'new', 'contacted', 'resolved')
+ * Update inquiry status
  */
 export async function updateInquiryStatus(
   id: string,

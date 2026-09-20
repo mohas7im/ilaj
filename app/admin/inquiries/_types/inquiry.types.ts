@@ -9,10 +9,7 @@ export interface Inquiry {
   message: string;
   status: string;
   createdAt: string;
-  updatedAt?: string;
-  /** Backward compatibility aliases */
-  name?: string;
-  subject?: string;
+  updatedAt: string;
 }
 
 export interface InquiryPagination {
