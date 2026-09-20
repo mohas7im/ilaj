@@ -5,9 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
-    const searchParams =
-      req.nextUrl?.searchParams ||
-      new URL(req.url, "http://localhost:3000").searchParams;
+    const { searchParams } = req.nextUrl;
 
     const pageNumber = parseInt(searchParams.get("pageNumber") || "1", 10);
     const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
@@ -26,15 +24,10 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/inquiries error:", error);
     return NextResponse.json(
-      {
-        error: "Failed to fetch inquiries",
-        errorMessage: error?.message || String(error),
-        errorStack: error?.stack,
-        errorName: error?.name,
-      },
+      { error: "Failed to fetch inquiries" },
       { status: 500 }
     );
   }
@@ -77,13 +70,10 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(inquiry, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST /api/inquiries error:", error);
     return NextResponse.json(
-      {
-        error: "Failed to submit contact inquiry",
-        errorMessage: error?.message || String(error),
-      },
+      { error: "Failed to submit contact inquiry" },
       { status: 500 }
     );
   }

@@ -6,11 +6,9 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient(): PrismaClient {
-  const connectionString =
-    process.env.DATABASE_URL ||
-    "postgresql://neondb_owner:npg_mKvf7o8bMdUH@ep-solitary-poetry-az867tpz-pooler.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
-
-  const adapter = new PrismaPg({ connectionString });
+  const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL!,
+  });
 
   return new PrismaClient({
     adapter,
@@ -29,7 +27,9 @@ export function getPrismaClient(): PrismaClient {
   }
 
   const client = createPrismaClient();
-  globalForPrisma.prisma = client;
+  if (process.env.NODE_ENV !== "production") {
+    globalForPrisma.prisma = client;
+  }
   return client;
 }
 
