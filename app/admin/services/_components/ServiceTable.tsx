@@ -10,7 +10,6 @@ import {
 } from "@/components/admin/ui/table"
 import { Button } from "@/components/admin/ui/button"
 import { Badge } from "@/components/admin/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar"
 import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
 import { cn } from "@/lib/utils"
@@ -20,10 +19,6 @@ import type { ServiceFilterState } from "./ServiceFilters"
 type ServiceTableProps = {
   services: Service[]
   filters?: ServiceFilterState
-}
-
-function initials(name: string) {
-  return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
 }
 
 export function ServiceTable({ services: initialServices, filters }: ServiceTableProps) {
@@ -98,27 +93,13 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
                       {svc.displayOrder ?? 1}
                     </TableCell>
                     <TableCell className="whitespace-normal">
-                      <div className="flex items-center gap-2.5">
-                        <Avatar className="h-9 w-9 shrink-0 rounded-md">
-                          {svc.image ? (
-                            <AvatarImage
-                              src={svc.image}
-                              alt={svc.imageAlt || svc.name}
-                              className="object-cover"
-                            />
-                          ) : null}
-                          <AvatarFallback className="text-xs rounded-md bg-muted text-muted-foreground font-medium">
-                            {initials(svc.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                          <span className="font-medium text-sm">{svc.name}</span>
-                          {svc.description && (
-                            <span className="text-xs text-muted-foreground sm:hidden leading-relaxed mt-0.5">
-                              {svc.description}
-                            </span>
-                          )}
-                        </div>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-sm text-foreground">{svc.name}</span>
+                        {svc.description && (
+                          <span className="text-xs text-muted-foreground sm:hidden leading-relaxed mt-0.5">
+                            {svc.description}
+                          </span>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground max-w-md lg:max-w-xl whitespace-normal leading-relaxed">
