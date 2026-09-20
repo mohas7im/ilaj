@@ -11,7 +11,9 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   ChevronRight,
+  Loader2,
 } from "lucide-react"
+import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
 import { ADMIN_BRANDING, NAV_GROUPS, MOCK_USER, type NavItem } from "@/lib/admin/config"
@@ -188,9 +190,16 @@ export function AdminSidebar() {
     })
   }, [])
 
+  const [loggingOut, setLoggingOut] = useState(false)
+
   const handleLogout = async () => {
+    if (loggingOut) return
+    setLoggingOut(true)
     try {
       await authService.logout()
+      toast.success("Logged out successfully")
+    } catch {
+      toast.error("Failed to log out")
     } finally {
       router.push("/admin/login")
       router.refresh()
@@ -334,6 +343,23 @@ export function AdminSidebar() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          </SidebarMenuItem>
+
+          {/* Dedicated Direct Log Out Button */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              disabled={loggingOut}
+              tooltip="Log out"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer transition-colors"
+            >
+              {loggingOut ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <LogOut className="h-4 w-4" />
+              )}
+              <span>{loggingOut ? "Signing out..." : "Log out"}</span>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
