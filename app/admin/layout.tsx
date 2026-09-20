@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation"
 import "@/styles/admin/theme.css"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/admin/ui/sidebar"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
-import { Toaster } from "@/components/admin/ui/toast"
+import { Toaster } from "@/components/admin/ui/sonner"
 
 export default function AdminLayout({
   children,
