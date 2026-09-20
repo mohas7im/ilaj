@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
   Mail,
   Phone,
@@ -33,10 +33,27 @@ type SettingsFormProps = {
 }
 
 export function SettingsForm({ initialSettings }: SettingsFormProps) {
+  const [initialData, setInitialData] = useState<ClinicSettings>(initialSettings)
   const [formData, setFormData] = useState<ClinicSettings>(initialSettings)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const fetchSettings = useCallback(async () => {
+    try {
+      const res = await fetch("/api/settings", { method: "GET" })
+      if (!res.ok) throw new Error("Failed to load settings from server")
+      const data: ClinicSettings = await res.json()
+      setFormData(data)
+      setInitialData(data)
+    } catch (err: unknown) {
+      console.error("Error fetching settings:", err)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchSettings()
+  }, [fetchSettings])
 
   const handleChange = <K extends keyof ClinicSettings>(field: K, value: ClinicSettings[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -45,7 +62,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
   }
 
   const handleReset = () => {
-    setFormData(initialSettings)
+    setFormData(initialData)
     setSuccess(false)
     setError(null)
   }
@@ -68,6 +85,9 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         throw new Error(data.error || "Failed to update settings")
       }
 
+      const updated = await res.json()
+      setFormData(updated)
+      setInitialData(updated)
       setSuccess(true)
       window.scrollTo({ top: 0, behavior: "smooth" })
     } catch (err: unknown) {

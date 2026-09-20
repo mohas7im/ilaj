@@ -113,4 +113,34 @@ model WhyChooseUsItem {
   @@map("why_choose_us_items")
 }
 
+model ClinicSettings {
+  id                   String   @id @default(uuid())
+  primaryEmail         String
+  secondaryEmail       String?
+  phone1               String
+  phone2               String?
+  whatsappNumber       String?
+  address              String   @db.Text
+  yearsOfExperience    String
+  totalPatients        String
+  satisfactionRate     String
+  workingHoursWeekday  String
+  workingHoursSaturday String
+  sundayOpen           Boolean
+  workingHoursSunday   String?
+  facebook             String?
+  instagram            String?
+  linkedin             String?
+  twitter              String?
+  pinterest            String?
+  mapLink              String?
+  clinicName           String?
+  tagline              String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("clinic_settings")
+}
+
+
 

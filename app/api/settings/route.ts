@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server"
-import { getSettings, updateSettings } from "@/app/admin/settings/_services/settings.service"
+import { getClinicSettings, updateClinicSettings } from "@/server/services/settings.service"
 import { settingsSchema } from "@/app/admin/settings/_schemas/settings.schema"
 
 export async function GET() {
-  const settings = await getSettings()
-  return NextResponse.json(settings)
+  try {
+    const settings = await getClinicSettings()
+    return NextResponse.json(settings)
+  } catch (error) {
+    console.error("GET /api/settings error:", error)
+    return NextResponse.json(
+      { error: "Failed to fetch clinic settings" },
+      { status: 500 }
+    )
+  }
 }
 
 export async function PUT(req: Request) {
@@ -17,9 +25,13 @@ export async function PUT(req: Request) {
         { status: 400 }
       )
     }
-    const updated = await updateSettings(parsed.data)
+    const updated = await updateClinicSettings(parsed.data)
     return NextResponse.json(updated)
-  } catch {
-    return NextResponse.json({ error: "Failed to update settings" }, { status: 500 })
+  } catch (error) {
+    console.error("PUT /api/settings error:", error)
+    return NextResponse.json(
+      { error: "Failed to update clinic settings" },
+      { status: 500 }
+    )
   }
 }

@@ -1,4 +1,8 @@
 export type ClinicSettings = {
+  id?: string
+  clinicName?: string
+  tagline?: string
+
   // Contact Information
   primaryEmail: string
   secondaryEmail: string
@@ -25,4 +29,7 @@ export type ClinicSettings = {
   twitter: string
   pinterest: string
   mapLink: string
+
+  createdAt?: string
+  updatedAt?: string
 }
