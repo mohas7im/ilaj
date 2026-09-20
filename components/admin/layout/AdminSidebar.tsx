@@ -183,7 +183,7 @@ export function AdminSidebar() {
   useEffect(() => {
     authService.me().then((u) => {
       if (u) {
-        setCurrentUser({ name: u.name, email: u.email })
+        setCurrentUser({ name: u.name || "Admin", email: u.email })
       }
     })
   }, [])

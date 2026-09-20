@@ -1,4 +1,3 @@
-import { signIn, signOut, getSession } from "next-auth/react";
 import { apiClient } from "@/lib/apiClient";
 import type { AxiosError } from "axios";
 
@@ -8,7 +7,8 @@ export interface LoginCredentials {
 }
 
 export interface AuthUser {
-  name: string;
+  id?: string;
+  name?: string | null;
   email: string;
 }
 
@@ -25,46 +25,32 @@ let inFlightMeRequest: Promise<AuthUser | null> | null = null;
 
 export const authService = {
   /**
-   * Logs in admin via NextAuth v5 credentials provider.
+   * Logs in admin, sets HttpOnly cookies (15m access + 7d refresh in DB), and caches user profile.
    */
   async login(credentials: LoginCredentials): Promise<AuthUser> {
-    const email = credentials.email.trim().toLowerCase();
-    const password = credentials.password;
-
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
-    if (res?.error) {
-      throw new Error("Invalid email or password");
-    }
-
-    // Refresh cached user from session
-    const session = await getSession();
-    if (session?.user) {
-      cachedUser = {
-        name: session.user.name || "Admin",
-        email: session.user.email || email,
-      };
-      return cachedUser;
-    }
-
-    // Fallback if session is still populating
-    cachedUser = {
-      name: "Admin",
-      email,
+    const payload = {
+      email: credentials.email.trim().toLowerCase(),
+      password: credentials.password,
     };
-    return cachedUser;
+
+    const { data } = await apiClient.post<AuthResponse>("/api/auth/login", payload);
+
+    if (!data.success || !data.user) {
+      throw new Error(data.error || "Authentication failed");
+    }
+
+    cachedUser = data.user;
+    return data.user;
   },
 
   /**
-   * Logs out current NextAuth session.
+   * Logs out current session:
+   * 1. Backend revokes the refresh token in the database and deletes cookies.
+   * 2. Frontend wipes the cached in-memory user.
    */
   async logout(): Promise<void> {
     try {
-      await signOut({ redirect: false });
+      await apiClient.post("/api/auth/logout");
     } finally {
       cachedUser = null;
       inFlightMeRequest = null;
