@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Star, Pencil, Trash2 } from "lucide-react"
+import { toast } from "sonner"
 import {
   Table, TableBody, TableCell, TableHead,
   TableHeader, TableRow,
@@ -13,6 +14,7 @@ import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
 import type { Testimonial } from "../_types/testimonial.types"
 import type { TestimonialFilterState } from "./TestimonialFilters"
+import { testimonialApiService } from "../_services/testimonial.api"
 
 type TestimonialTableProps = {
   testimonials: Testimonial[]
@@ -22,24 +24,43 @@ type TestimonialTableProps = {
 export function TestimonialTable({ testimonials: initialTestimonials, filters }: TestimonialTableProps) {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  useEffect(() => {
+    setTestimonials(initialTestimonials)
+  }, [initialTestimonials])
 
   const filtered = testimonials.filter((t) => {
     if (filters) {
       const q = filters.search.toLowerCase().trim()
-      const matchesQuery = !q || t.patientName.toLowerCase().includes(q) || t.treatment.toLowerCase().includes(q) || t.review.toLowerCase().includes(q)
+      const matchesQuery =
+        !q ||
+        t.patientName.toLowerCase().includes(q) ||
+        t.treatment.toLowerCase().includes(q) ||
+        t.review.toLowerCase().includes(q)
+
       let matchesRating = true
       if (filters.rating === "5") matchesRating = t.rating >= 5
       else if (filters.rating === "4") matchesRating = t.rating >= 4
       else if (filters.rating === "3") matchesRating = t.rating >= 3
+
       return matchesQuery && matchesRating
     }
     return true
   })
 
   const handleDelete = async () => {
-    if (deleteId) {
-      try { await fetch(`/api/testimonials/${deleteId}`, { method: "DELETE" }) } catch {}
+    if (!deleteId) return
+    setIsDeleting(true)
+    try {
+      await testimonialApiService.delete(deleteId)
       setTestimonials((prev) => prev.filter((t) => t.id !== deleteId))
+      toast.success("Testimonial deleted successfully")
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Failed to delete testimonial"
+      toast.error(msg)
+    } finally {
+      setIsDeleting(false)
       setDeleteId(null)
     }
   }
@@ -91,10 +112,23 @@ export function TestimonialTable({ testimonials: initialTestimonials, filters }:
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <Button variant="outline" size="icon-sm" title="Edit testimonial" aria-label={`Edit testimonial for ${item.patientName}`} render={<Link href={`/admin/testimonials/${item.id}/edit`} />}>
+                      <Button
+                        variant="outline"
+                        size="icon-sm"
+                        title="Edit testimonial"
+                        aria-label={`Edit testimonial for ${item.patientName}`}
+                        render={<Link href={`/admin/testimonials/${item.id}/edit`} />}
+                      >
                         <Pencil className="h-4 w-4" aria-hidden="true" />
                       </Button>
-                      <Button variant="outline" size="icon-sm" title="Delete testimonial" aria-label={`Delete testimonial for ${item.patientName}`} className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30" onClick={() => setDeleteId(item.id)}>
+                      <Button
+                        variant="outline"
+                        size="icon-sm"
+                        title="Delete testimonial"
+                        aria-label={`Delete testimonial for ${item.patientName}`}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
+                        onClick={() => setDeleteId(item.id)}
+                      >
                         <Trash2 className="h-4 w-4" aria-hidden="true" />
                       </Button>
                     </div>
@@ -108,10 +142,10 @@ export function TestimonialTable({ testimonials: initialTestimonials, filters }:
 
       <ConfirmDialog
         open={deleteId !== null}
-        onOpenChange={(open) => !open && setDeleteId(null)}
+        onOpenChange={(open) => !open && !isDeleting && setDeleteId(null)}
         title="Delete testimonial?"
         description="This will permanently delete this patient review. This action cannot be undone."
-        confirmLabel="Delete"
+        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
         variant="destructive"
         onConfirm={handleDelete}
       />

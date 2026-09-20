@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Star } from "lucide-react"
+import { Star, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
@@ -22,48 +23,80 @@ export type TestimonialFormProps = {
 export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
   const router = useRouter()
   const isEdit = mode === "edit"
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const [form, setForm] = useState({
-    patientName: initialData?.patientName ?? "",
-    treatment:   initialData?.treatment   ?? "",
-    rating:      initialData ? String(initialData.rating) : "5",
-    review:      initialData?.review      ?? "",
-    status:      initialData?.status      ?? ("published" as TestimonialStatus),
+    patientName:  initialData?.patientName  ?? "",
+    treatment:    initialData?.treatment    ?? "",
+    rating:       initialData ? String(initialData.rating) : "5",
+    review:       initialData?.review       ?? "",
+    status:       initialData?.status       ?? ("published" as TestimonialStatus),
+    displayOrder: initialData?.displayOrder ?? 1,
   })
 
-  const set = (key: keyof typeof form, value: string) =>
+  const set = (key: keyof typeof form, value: string | number) => {
     setForm((prev) => ({ ...prev, [key]: value }))
+    if (error) setError(null)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitting(true)
+    setError(null)
+
     try {
       const payload = {
-        ...form,
-        rating: parseFloat(form.rating) || 5,
+        patientName: form.patientName.trim(),
+        treatment: form.treatment.trim(),
+        rating: parseFloat(String(form.rating)) || 5,
+        review: form.review.trim(),
+        status: form.status,
+        displayOrder: Number(form.displayOrder) || 1,
       }
-      if (isEdit && initialData?.id) {
-        await fetch(`/api/testimonials/${initialData.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        })
-      } else {
-        await fetch("/api/testimonials", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        })
+
+      const url = isEdit && initialData?.id ? `/api/testimonials/${initialData.id}` : "/api/testimonials"
+      const method = isEdit ? "PUT" : "POST"
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        const errorMsg = data?.error
+          ? typeof data.error === "object"
+            ? Object.values(data.error).flat().join(", ")
+            : String(data.error)
+          : "Failed to save testimonial"
+        throw new Error(errorMsg)
       }
-    } catch {
-      // Fallback
+
+      toast.success(isEdit ? "Testimonial updated successfully" : "Testimonial added successfully")
+      router.push("/admin/testimonials")
+      router.refresh()
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Something went wrong"
+      setError(msg)
+      toast.error(msg)
+    } finally {
+      setSubmitting(false)
     }
-    router.push("/admin/testimonials")
   }
 
   return (
     <Card>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-5">
+          {error && (
+            <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
+              {error}
+            </div>
+          )}
+
           <div className="grid gap-4 sm:grid-cols-2">
             {/* Patient Name */}
             <div className="space-y-1.5 sm:col-span-2">
@@ -112,13 +145,28 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
                 max="5"
                 value={form.rating}
                 onChange={(e) => set("rating", e.target.value)}
-                placeholder="e.g. 4.5"
+                placeholder="e.g. 5.0"
+                required
+              />
+            </div>
+
+            {/* Display Order */}
+            <div className="space-y-1.5">
+              <Label htmlFor="displayOrder">
+                Display Order <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="displayOrder"
+                type="number"
+                min={1}
+                value={form.displayOrder}
+                onChange={(e) => set("displayOrder", parseInt(e.target.value) || 1)}
                 required
               />
             </div>
 
             {/* Status */}
-            <div className="space-y-1.5 sm:col-span-2">
+            <div className="space-y-1.5">
               <Label htmlFor="status">Status</Label>
               <Select
                 value={form.status}
@@ -150,13 +198,18 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
             </div>
           </div>
 
-
           {/* Form Actions */}
           <div className="flex items-center justify-end gap-2 pt-2 border-t">
-            <Button type="button" variant="outline" onClick={() => router.push("/admin/testimonials")}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/admin/testimonials")}
+              disabled={submitting}
+            >
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" disabled={submitting}>
+              {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEdit ? "Save Changes" : "Add Testimonial"}
             </Button>
           </div>

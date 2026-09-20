@@ -7,5 +7,7 @@ export interface Testimonial {
   rating: number
   review: string
   status: TestimonialStatus
+  displayOrder?: number
   createdAt?: string
+  updatedAt?: string
 }

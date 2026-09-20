@@ -85,3 +85,19 @@ model PatientCase {
   @@map("patient_cases")
 }
 
+model Testimonial {
+  id           String   @id @default(uuid())
+  patientName  String
+  treatment    String
+  rating       Float    @default(5.0)
+  review       String   @db.Text
+  status       String   @default("published")
+  displayOrder Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([status])
+  @@index([displayOrder])
+  @@map("testimonials")
+}
+

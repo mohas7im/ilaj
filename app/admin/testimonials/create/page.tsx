@@ -9,6 +9,13 @@ export default function CreateTestimonialPage() {
       <PageHeader
         title="Add Testimonial"
         description="Add a new patient review and rating."
+        actions={[
+          {
+            label: "Back to Testimonials",
+            href: "/admin/testimonials",
+            variant: "outline",
+          },
+        ]}
       />
       <div className="max-w-2xl mx-auto">
         <TestimonialForm mode="create" />

@@ -1,16 +1,14 @@
-"use client"
-
-import { useState } from "react"
 import { PageHeader } from "@/components/admin/PageHeader"
-import { TestimonialFilters, type TestimonialFilterState } from "./_components/TestimonialFilters"
-import { TestimonialTable } from "./_components/TestimonialTable"
-import { MOCK_TESTIMONIALS } from "./_services/testimonial.service"
+import { getTestimonials } from "@/server/services/testimonial.service"
+import { TestimonialsClientView } from "./_components/TestimonialsClientView"
 
-export default function TestimonialsPage() {
-  const [filters, setFilters] = useState<TestimonialFilterState>({
-    search: "",
-    rating: "all",
-  })
+export const dynamic = "force-dynamic"
+export const metadata = {
+  title: "Testimonials | Admin",
+}
+
+export default async function TestimonialsPage() {
+  const testimonials = await getTestimonials()
 
   return (
     <div className="space-y-6">
@@ -24,8 +22,7 @@ export default function TestimonialsPage() {
           },
         ]}
       />
-      <TestimonialFilters filters={filters} onFiltersChange={setFilters} />
-      <TestimonialTable testimonials={MOCK_TESTIMONIALS} filters={filters} />
+      <TestimonialsClientView initialTestimonials={testimonials} />
     </div>
   )
 }
