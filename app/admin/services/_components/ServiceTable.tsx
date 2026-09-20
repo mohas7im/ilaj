@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Pencil, Trash2 } from "lucide-react"
+import { Eye, Pencil, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import {
   Table, TableBody, TableCell, TableHead,
@@ -122,6 +122,15 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="outline"
+                          size="icon-sm"
+                          title="View service"
+                          aria-label={`View ${svc.name}`}
+                          render={<Link href={`/admin/services/${svc.id}`} />}
+                        >
+                          <Eye className="h-4 w-4" aria-hidden="true" />
+                        </Button>
                         <Button
                           variant="outline"
                           size="icon-sm"
