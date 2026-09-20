@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation"
 import { PageHeader } from "@/components/admin/PageHeader"
 import { PatientCaseForm } from "../../_components/PatientCaseForm"
-import { getPatientCaseById } from "../../_services/patient-case.service"
+import { getPatientCaseById } from "@/server/services/patient-case.service"
 
 type Props = { params: Promise<{ id: string }> }
 
+export const dynamic = "force-dynamic"
 export const metadata = { title: "Edit Patient Case" }
 
 export default async function PatientCaseEditPage({ params }: Props) {

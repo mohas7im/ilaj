@@ -3,6 +3,7 @@
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
@@ -32,6 +33,7 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
     afterImage: initialData?.afterImage ?? "/admin/patient-before-after.jpg",
     beforeAlt: initialData?.beforeAlt ?? "",
     afterAlt: initialData?.afterAlt ?? "",
+    displayOrder: initialData?.displayOrder ?? 1,
   })
 
   const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) => {
@@ -81,38 +83,39 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
       setError("Please provide an alternative text (alt text) for the After image.")
       return
     }
-    if (!form.description.trim()) {
-      setError("Please provide a description of the treatment case.")
-      return
-    }
 
     setSubmitting(true)
     setError(null)
 
     try {
-      if (isEdit && initialData?.id) {
-        const res = await fetch(`/api/gallery/patient/${initialData.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        })
-        if (!res.ok) {
-          throw new Error("Failed to update patient case")
-        }
-      } else {
-        const res = await fetch("/api/gallery/patient", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        })
-        if (!res.ok) {
-          throw new Error("Failed to add patient case")
-        }
+      const url = isEdit && initialData?.id ? `/api/gallery/patient/${initialData.id}` : "/api/gallery/patient"
+      const method = isEdit ? "PUT" : "POST"
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        const errorMsg = data?.error
+          ? typeof data.error === "object"
+            ? Object.values(data.error).flat().join(", ")
+            : String(data.error)
+          : "Failed to save patient case"
+        throw new Error(errorMsg)
       }
+
+      toast.success(isEdit ? "Patient case updated successfully" : "Patient case added successfully")
       router.push("/admin/gallery/patient")
       router.refresh()
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong")
+      const msg = err instanceof Error ? err.message : "Something went wrong"
+      setError(msg)
+      toast.error(msg)
+    } finally {
       setSubmitting(false)
     }
   }
@@ -127,18 +130,35 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
             </div>
           )}
 
-          {/* Heading */}
-          <div className="space-y-1.5">
-            <Label htmlFor="heading">
-              Case Heading <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="heading"
-              value={form.heading}
-              onChange={(e) => set("heading", e.target.value)}
-              placeholder="e.g. Teeth Alignment & Whitening"
-              required
-            />
+          <div className="grid gap-5 sm:grid-cols-3">
+            {/* Heading */}
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="heading">
+                Case Heading <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="heading"
+                value={form.heading}
+                onChange={(e) => set("heading", e.target.value)}
+                placeholder="e.g. Teeth Alignment & Whitening"
+                required
+              />
+            </div>
+
+            {/* Display Order */}
+            <div className="space-y-1.5">
+              <Label htmlFor="displayOrder">
+                Display Order <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="displayOrder"
+                type="number"
+                min={1}
+                value={form.displayOrder}
+                onChange={(e) => set("displayOrder", parseInt(e.target.value) || 1)}
+                required
+              />
+            </div>
           </div>
 
           {/* Before & After Images Grid */}
@@ -284,16 +304,13 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
 
           {/* Description */}
           <div className="space-y-1.5">
-            <Label htmlFor="description">
-              Description <span className="text-destructive">*</span>
-            </Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
               placeholder="Describe the clinical treatment, procedures performed, and transformation outcome..."
               rows={4}
-              required
             />
           </div>
 

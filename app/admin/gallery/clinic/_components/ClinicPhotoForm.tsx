@@ -3,6 +3,7 @@
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
@@ -27,6 +28,7 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
     description: initialData?.description ?? "",
     image: initialData?.image ?? "/admin/clinic-gallery-room.jpg",
     alt: initialData?.alt ?? "",
+    displayOrder: initialData?.displayOrder ?? 1,
   })
 
   const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) => {
@@ -62,38 +64,39 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
       setError("Please provide an alternative text (alt text) for the image.")
       return
     }
-    if (!form.description.trim()) {
-      setError("Please provide a description.")
-      return
-    }
 
     setSubmitting(true)
     setError(null)
 
     try {
-      if (isEdit && initialData?.id) {
-        const res = await fetch(`/api/gallery/clinic/${initialData.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        })
-        if (!res.ok) {
-          throw new Error("Failed to update clinic photo")
-        }
-      } else {
-        const res = await fetch("/api/gallery/clinic", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        })
-        if (!res.ok) {
-          throw new Error("Failed to add clinic photo")
-        }
+      const url = isEdit && initialData?.id ? `/api/gallery/clinic/${initialData.id}` : "/api/gallery/clinic"
+      const method = isEdit ? "PUT" : "POST"
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        const errorMsg = data?.error
+          ? typeof data.error === "object"
+            ? Object.values(data.error).flat().join(", ")
+            : String(data.error)
+          : "Failed to save clinic photo"
+        throw new Error(errorMsg)
       }
+
+      toast.success(isEdit ? "Clinic photo updated successfully" : "Clinic photo added successfully")
       router.push("/admin/gallery/clinic")
       router.refresh()
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong")
+      const msg = err instanceof Error ? err.message : "Something went wrong"
+      setError(msg)
+      toast.error(msg)
+    } finally {
       setSubmitting(false)
     }
   }
@@ -120,6 +123,37 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
               placeholder="e.g. Treatment Suite & Dental Unit"
               required
             />
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            {/* Display Order */}
+            <div className="space-y-1.5">
+              <Label htmlFor="displayOrder">
+                Display Order <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="displayOrder"
+                type="number"
+                min={1}
+                value={form.displayOrder}
+                onChange={(e) => set("displayOrder", parseInt(e.target.value) || 1)}
+                required
+              />
+            </div>
+
+            {/* Image Alt Text Input */}
+            <div className="space-y-1.5">
+              <Label htmlFor="alt">
+                Image Alt Text <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="alt"
+                value={form.alt}
+                onChange={(e) => set("alt", e.target.value)}
+                placeholder="e.g. Modern ergonomic dental chair and treatment unit"
+                required
+              />
+            </div>
           </div>
 
           {/* Photo Upload Area */}
@@ -177,32 +211,15 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
             </div>
           </div>
 
-          {/* Image Alt Text Input */}
-          <div className="space-y-1.5">
-            <Label htmlFor="alt">
-              Image Alt Text <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="alt"
-              value={form.alt}
-              onChange={(e) => set("alt", e.target.value)}
-              placeholder="e.g. Modern ergonomic dental chair and treatment unit overlooking panoramic windows"
-              required
-            />
-          </div>
-
           {/* Description */}
           <div className="space-y-1.5">
-            <Label htmlFor="description">
-              Description <span className="text-destructive">*</span>
-            </Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
               placeholder="Describe the room, facilities, features, and patient comfort features..."
               rows={4}
-              required
             />
           </div>
 

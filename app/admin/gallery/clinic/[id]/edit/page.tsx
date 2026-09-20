@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation"
 import { PageHeader } from "@/components/admin/PageHeader"
 import { ClinicPhotoForm } from "../../_components/ClinicPhotoForm"
-import { getClinicPhotoById } from "../../_services/clinic-photo.service"
+import { getClinicPhotoById } from "@/server/services/clinic-photo.service"
 
 type Props = { params: Promise<{ id: string }> }
 
+export const dynamic = "force-dynamic"
 export const metadata = { title: "Edit Clinic Photo" }
 
 export default async function ClinicPhotoEditPage({ params }: Props) {

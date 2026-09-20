@@ -55,3 +55,33 @@ model Doctor {
   @@map("doctors")
 }
 
+model ClinicPhoto {
+  id           String   @id @default(uuid())
+  heading      String
+  description  String?  @db.Text
+  image        String   @db.Text
+  alt          String
+  displayOrder Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("clinic_photos")
+}
+
+model PatientCase {
+  id           String   @id @default(uuid())
+  heading      String
+  description  String?  @db.Text
+  beforeImage  String   @db.Text
+  afterImage   String   @db.Text
+  beforeAlt    String
+  afterAlt     String
+  displayOrder Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("patient_cases")
+}
+
