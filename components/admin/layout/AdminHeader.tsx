@@ -3,8 +3,6 @@
 import * as React from "react"
 import Link from "next/link"
 import { Globe } from "lucide-react"
-import { SidebarTrigger } from "@/components/admin/ui/sidebar"
-import { Separator } from "@/components/admin/ui/separator"
 import { Button } from "@/components/admin/ui/button"
 import { AdminBreadcrumb } from "./AdminBreadcrumb"
 
@@ -12,8 +10,6 @@ export function AdminHeader() {
   return (
     <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b bg-background/95 px-4 backdrop-blur transition-[width,height] ease-linear">
       <div className="flex items-center gap-2">
-        <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
         <AdminBreadcrumb />
       </div>
 
@@ -31,3 +27,4 @@ export function AdminHeader() {
     </header>
   )
 }
+
