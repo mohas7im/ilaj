@@ -129,7 +129,6 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
               id="heading"
               value={form.heading}
               onChange={(e) => set("heading", e.target.value)}
-              placeholder="e.g. Treatment Suite & Dental Unit"
               required
             />
           </div>
@@ -159,7 +158,6 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
                 id="alt"
                 value={form.alt}
                 onChange={(e) => set("alt", e.target.value)}
-                placeholder="e.g. Modern ergonomic dental chair and treatment unit"
                 required
               />
             </div>
@@ -243,7 +241,6 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
               id="description"
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
-              placeholder="Describe the room, facilities, features, and patient comfort features..."
               rows={4}
             />
           </div>

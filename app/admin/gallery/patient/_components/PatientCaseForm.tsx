@@ -151,7 +151,6 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
                 id="heading"
                 value={form.heading}
                 onChange={(e) => set("heading", e.target.value)}
-                placeholder="e.g. Teeth Alignment & Whitening"
                 required
               />
             </div>
@@ -253,7 +252,6 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
                   id="beforeAlt"
                   value={form.beforeAlt}
                   onChange={(e) => set("beforeAlt", e.target.value)}
-                  placeholder="e.g. Patient teeth before orthodontic alignment showing gaps"
                   required
                 />
               </div>
@@ -338,7 +336,6 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
                   id="afterAlt"
                   value={form.afterAlt}
                   onChange={(e) => set("afterAlt", e.target.value)}
-                  placeholder="e.g. Patient complete smile after clear aligner treatment"
                   required
                 />
               </div>
@@ -352,7 +349,6 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
               id="description"
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
-              placeholder="Describe the clinical treatment, procedures performed, and transformation outcome..."
               rows={4}
             />
           </div>

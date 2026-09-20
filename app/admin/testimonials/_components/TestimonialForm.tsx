@@ -107,7 +107,6 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
                 id="patientName"
                 value={form.patientName}
                 onChange={(e) => set("patientName", e.target.value)}
-                placeholder="e.g. Mohammed Adil"
                 required
               />
             </div>
@@ -121,7 +120,6 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
                 id="treatment"
                 value={form.treatment}
                 onChange={(e) => set("treatment", e.target.value)}
-                placeholder="e.g. Root Canal Treatment"
                 required
               />
             </div>
@@ -145,7 +143,6 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
                 max="5"
                 value={form.rating}
                 onChange={(e) => set("rating", e.target.value)}
-                placeholder="e.g. 5.0"
                 required
               />
             </div>
@@ -191,7 +188,6 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
                 id="review"
                 value={form.review}
                 onChange={(e) => set("review", e.target.value)}
-                placeholder="e.g. I was nervous about the root canal, but it was easier than expected. The doctor explained each step and ensured my comfort."
                 rows={4}
                 required
               />

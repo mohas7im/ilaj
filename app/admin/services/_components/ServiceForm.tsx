@@ -84,6 +84,7 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+
     try {
       const url = isEdit && initialData?.id ? `/api/services/${initialData.id}` : "/api/services"
       const method = isEdit ? "PUT" : "POST"
@@ -130,7 +131,6 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                 id="name"
                 value={form.name}
                 onChange={(e) => set("name", e.target.value)}
-                placeholder="e.g. Root Canal Treatment"
                 required
               />
             </div>
@@ -168,7 +168,6 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                 onChange={(e) =>
                   set("displayOrder", parseInt(e.target.value, 10) || 1)
                 }
-                placeholder="e.g. 1"
                 required
               />
             </div>
@@ -196,7 +195,6 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                 id="description"
                 value={form.description}
                 onChange={(e) => set("description", e.target.value)}
-                placeholder="Detailed description of this dental service and treatment..."
                 rows={3}
               />
             </div>
@@ -279,7 +277,6 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                     id="imageAlt"
                     value={form.imageAlt}
                     onChange={(e) => set("imageAlt", e.target.value)}
-                    placeholder="e.g. Modern dental checkup room and examination unit"
                   />
                 </div>
               </div>
@@ -354,7 +351,6 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                     id="secondaryImageAlt"
                     value={form.secondaryImageAlt}
                     onChange={(e) => set("secondaryImageAlt", e.target.value)}
-                    placeholder="e.g. Clinical procedure and equipment demonstration"
                   />
                 </div>
               </div>

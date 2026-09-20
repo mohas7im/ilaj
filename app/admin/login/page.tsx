@@ -127,7 +127,6 @@ export default function AdminLoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@ilajdental.com"
                 autoComplete="email"
                 required
               />
@@ -148,7 +147,6 @@ export default function AdminLoginPage() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
                   autoComplete="current-password"
                   required
                 />
@@ -181,7 +179,7 @@ export default function AdminLoginPage() {
                 type="submit"
                 size="lg"
                 disabled={loading}
-                className="w-full"
+                className="w-full gap-2"
               >
                 {loading ? "Signing in..." : "Sign in"}
               </Button>

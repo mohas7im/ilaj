@@ -586,7 +586,6 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                     id="siteName"
                     value={common.siteName}
                     onChange={(e) => setCommonField("siteName", e.target.value)}
-                    placeholder="e.g. Ilaj Dental Clinic"
                     required
                   />
                 </div>
@@ -601,7 +600,6 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                     type="url"
                     value={common.siteUrl}
                     onChange={(e) => setCommonField("siteUrl", e.target.value)}
-                    placeholder="https://ilajdental.com"
                     required
                   />
                 </div>
@@ -618,7 +616,6 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                     id="defaultTitle"
                     value={common.defaultTitle}
                     onChange={(e) => setCommonField("defaultTitle", e.target.value)}
-                    placeholder="e.g. Ilaj Dental Clinic | Expert Dental Care in Lahore"
                     required
                   />
                   <p className="text-xs text-muted-foreground">Recommended: 50–60 characters.</p>
@@ -634,7 +631,6 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                     id="defaultDescription"
                     value={common.defaultDescription}
                     onChange={(e) => setCommonField("defaultDescription", e.target.value)}
-                    placeholder="e.g. Ilaj Dental Clinic provides professional dental care in Lahore, including teeth cleaning, whitening, braces, implants and more."
                     rows={3}
                   />
                   <p className="text-xs text-muted-foreground">Recommended: 150–160 characters.</p>
@@ -674,7 +670,6 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                     id="googleVerification"
                     value={common.googleVerification}
                     onChange={(e) => setCommonField("googleVerification", e.target.value)}
-                    placeholder="e.g. abc123xyz"
                   />
                   <p className="text-xs text-muted-foreground">
                     The content value from the Google verification meta tag.
@@ -686,7 +681,6 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                     id="bingVerification"
                     value={common.bingVerification}
                     onChange={(e) => setCommonField("bingVerification", e.target.value)}
-                    placeholder="e.g. def456uvw"
                   />
                   <p className="text-xs text-muted-foreground">
                     The content value from the Bing verification meta tag.
@@ -727,7 +721,6 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   id="pageTitle"
                   value={currentPage?.title ?? ""}
                   onChange={(e) => setPageField("title", e.target.value)}
-                  placeholder={`e.g. ${pageOption?.label} | ${common.siteName || "Ilaj Dental Clinic"}`}
                 />
                 <p className="text-xs text-muted-foreground">
                   Recommended: 50–60 characters.{" "}
@@ -749,7 +742,6 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   id="pageDescription"
                   value={currentPage?.description ?? ""}
                   onChange={(e) => setPageField("description", e.target.value)}
-                  placeholder="Describe this page for search engines and social sharing…"
                   rows={3}
                 />
                 <p className="text-xs text-muted-foreground">

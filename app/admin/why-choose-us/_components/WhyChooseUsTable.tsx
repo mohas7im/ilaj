@@ -225,7 +225,6 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
                 id="point-title"
                 value={form.title}
                 onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-                placeholder="e.g. Experienced & Qualified Doctors"
                 required
                 autoFocus
                 disabled={isSaving}
@@ -240,7 +239,6 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
                 onChange={(e) =>
                   setForm((p) => ({ ...p, description: e.target.value }))
                 }
-                placeholder="Optional details or description for this highlight point..."
                 rows={3}
                 disabled={isSaving}
               />
@@ -261,7 +259,6 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
                     displayOrder: parseInt(e.target.value, 10) || 1,
                   }))
                 }
-                placeholder="e.g. 1"
                 required
                 disabled={isSaving}
               />

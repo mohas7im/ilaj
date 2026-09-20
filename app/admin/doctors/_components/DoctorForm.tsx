@@ -77,6 +77,7 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+
     try {
       const url = isEdit && initialData?.id ? `/api/doctors/${initialData.id}` : "/api/doctors"
       const method = isEdit ? "PUT" : "POST"
@@ -120,7 +121,6 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                 id="name"
                 value={form.name}
                 onChange={(e) => set("name", e.target.value)}
-                placeholder="Dr. Full Name"
                 required
               />
             </div>
@@ -131,7 +131,6 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                 id="designation"
                 value={form.designation}
                 onChange={(e) => set("designation", e.target.value)}
-                placeholder="e.g. BDS, MDS"
                 required
               />
             </div>
@@ -142,7 +141,6 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                 id="specialization"
                 value={form.specialization}
                 onChange={(e) => set("specialization", e.target.value)}
-                placeholder="e.g. Orthodontics"
                 required
               />
             </div>
@@ -178,7 +176,6 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
               id="bio"
               value={form.bio}
               onChange={(e) => set("bio", e.target.value)}
-              placeholder="Brief professional biography, qualifications, and experience..."
               rows={4}
             />
           </div>
@@ -267,7 +264,6 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                 id="imageAlt"
                 value={form.imageAlt}
                 onChange={(e) => set("imageAlt", e.target.value)}
-                placeholder="e.g. Portrait photo of Dr. Full Name in medical uniform"
               />
             </div>
           </div>

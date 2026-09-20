@@ -141,7 +141,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 required
                 value={formData.primaryEmail}
                 onChange={(e) => handleChange("primaryEmail", e.target.value)}
-                placeholder="info@clinic.com"
               />
             </div>
 
@@ -153,7 +152,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 type="email"
                 value={formData.secondaryEmail}
                 onChange={(e) => handleChange("secondaryEmail", e.target.value)}
-                placeholder="support@clinic.com"
               />
             </div>
 
@@ -168,7 +166,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 required
                 value={formData.phone1}
                 onChange={(e) => handleChange("phone1", e.target.value)}
-                placeholder="+92 300 1234567"
               />
             </div>
 
@@ -180,7 +177,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 type="tel"
                 value={formData.phone2}
                 onChange={(e) => handleChange("phone2", e.target.value)}
-                placeholder="+92 321 7654321"
               />
             </div>
 
@@ -195,7 +191,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 type="tel"
                 value={formData.whatsappNumber}
                 onChange={(e) => handleChange("whatsappNumber", e.target.value)}
-                placeholder="+92 300 1234567"
               />
             </div>
 
@@ -211,7 +206,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 rows={3}
                 value={formData.address}
                 onChange={(e) => handleChange("address", e.target.value)}
-                placeholder="Full clinic physical address..."
               />
             </div>
           </div>
@@ -241,7 +235,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 required
                 value={formData.yearsOfExperience}
                 onChange={(e) => handleChange("yearsOfExperience", e.target.value)}
-                placeholder="e.g. 15+"
               />
             </div>
 
@@ -255,7 +248,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 required
                 value={formData.totalPatients}
                 onChange={(e) => handleChange("totalPatients", e.target.value)}
-                placeholder="e.g. 12,000+"
               />
             </div>
 
@@ -269,7 +261,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 required
                 value={formData.satisfactionRate}
                 onChange={(e) => handleChange("satisfactionRate", e.target.value)}
-                placeholder="e.g. 99.4%"
               />
             </div>
           </div>
@@ -299,7 +290,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 required
                 value={formData.workingHoursWeekday}
                 onChange={(e) => handleChange("workingHoursWeekday", e.target.value)}
-                placeholder="e.g. 09:00 AM - 08:00 PM"
               />
             </div>
 
@@ -313,7 +303,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 required
                 value={formData.workingHoursSaturday}
                 onChange={(e) => handleChange("workingHoursSaturday", e.target.value)}
-                placeholder="e.g. 10:00 AM - 06:00 PM"
               />
             </div>
           </div>
@@ -352,7 +341,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                     id="workingHoursSunday"
                     value={formData.workingHoursSunday}
                     onChange={(e) => handleChange("workingHoursSunday", e.target.value)}
-                    placeholder="e.g. 11:00 AM - 04:00 PM"
                   />
                 </div>
               </div>
@@ -384,7 +372,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 id="facebook"
                 value={formData.facebook}
                 onChange={(e) => handleChange("facebook", e.target.value)}
-                placeholder="yourpage"
               />
             </InputGroup>
           </div>
@@ -400,7 +387,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 id="instagram"
                 value={formData.instagram}
                 onChange={(e) => handleChange("instagram", e.target.value)}
-                placeholder="yourhandle"
               />
             </InputGroup>
           </div>
@@ -416,7 +402,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 id="linkedin"
                 value={formData.linkedin}
                 onChange={(e) => handleChange("linkedin", e.target.value)}
-                placeholder="in/yourprofile"
               />
             </InputGroup>
           </div>
@@ -432,7 +417,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 id="twitter"
                 value={formData.twitter}
                 onChange={(e) => handleChange("twitter", e.target.value)}
-                placeholder="username"
               />
             </InputGroup>
           </div>
@@ -448,7 +432,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 id="pinterest"
                 value={formData.pinterest}
                 onChange={(e) => handleChange("pinterest", e.target.value)}
-                placeholder="yourboard"
               />
             </InputGroup>
           </div>
@@ -464,7 +447,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 id="mapLink"
                 value={formData.mapLink}
                 onChange={(e) => handleChange("mapLink", e.target.value)}
-                placeholder="place/your-clinic-location"
               />
             </InputGroup>
           </div>
