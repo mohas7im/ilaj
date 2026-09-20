@@ -11,7 +11,7 @@ export const metadata = {
 export default async function InquiriesPage() {
   let initialData: InquiryPaginatedResponse = {
     inquiries: [],
-    pagination: { page: 1, limit: 10, total: 0, totalPages: 1 },
+    pagination: { page: 1, pageNumber: 1, pageSize: 10, limit: 10, total: 0, totalPages: 1 },
   }
 
   try {

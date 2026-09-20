@@ -52,6 +52,8 @@ export function InquiriesClientView({ initialData }: InquiriesClientViewProps) {
 
       const response = await fetchInquiries({
         page,
+        pageNumber: page,
+        pageSize,
         limit: pageSize,
         search: debouncedSearch,
         treatment: filters.treatment,
