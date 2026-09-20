@@ -1,84 +1,96 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
-import { Eye, Trash2, ChevronLeft, ChevronRight } from "lucide-react"
+import { Trash2, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import {
-  Table, TableBody, TableCell, TableHead,
-  TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/admin/ui/table"
 import { Button } from "@/components/admin/ui/button"
 import { Avatar, AvatarFallback } from "@/components/admin/ui/avatar"
 import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
 import {
-  Select, SelectContent, SelectItem,
-  SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/admin/ui/select"
 import type { Inquiry } from "../_types/inquiry.types"
-import type { InquiryFilterState } from "./InquiryFilters"
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50]
 
 type InquiryTableProps = {
   inquiries: Inquiry[]
-  filters: InquiryFilterState
+  isLoading?: boolean
+  page: number
+  pageSize: number
+  total: number
+  totalPages: number
+  onPageChange: (page: number) => void
+  onPageSizeChange: (pageSize: number) => void
+  onDelete: (id: string) => Promise<void>
 }
 
 function initials(name: string) {
-  return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .filter(Boolean)
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "IN"
 }
 
-export function InquiryTable({ inquiries: initialInquiries, filters }: InquiryTableProps) {
-  const [inquiries, setInquiries] = useState<Inquiry[]>(initialInquiries)
+export function InquiryTable({
+  inquiries,
+  isLoading = false,
+  page,
+  pageSize,
+  total,
+  totalPages,
+  onPageChange,
+  onPageSizeChange,
+  onDelete,
+}: InquiryTableProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null)
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-
-  // Filter
-  const filtered = inquiries.filter((inq) => {
-    const q = filters.search.toLowerCase().trim()
-    const name = inq.fullName || inq.name || ""
-    const treatment = inq.treatment || inq.subject || ""
-    const matchSearch =
-      !q ||
-      name.toLowerCase().includes(q) ||
-      inq.email.toLowerCase().includes(q) ||
-      inq.phone?.toLowerCase().includes(q) ||
-      treatment.toLowerCase().includes(q)
-    const matchTreatment = filters.treatment === "all" || inq.treatment === filters.treatment
-
-    // Date range filter on createdAt
-    const createdAt = new Date(inq.createdAt)
-    const matchFrom = !filters.dateFrom || createdAt >= new Date(filters.dateFrom.setHours(0, 0, 0, 0))
-    const matchTo = !filters.dateTo || createdAt <= new Date(filters.dateTo.setHours(23, 59, 59, 999))
-
-    return matchSearch && matchTreatment && matchFrom && matchTo
-  })
-
-  // Reset to page 1 when filters change — handled via key prop derivation below
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
-  const safePage = Math.min(page, totalPages)
-  const paginated = filtered.slice((safePage - 1) * pageSize, safePage * pageSize)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
-    if (deleteId) {
-      try { await fetch(`/api/inquiries/${deleteId}`, { method: "DELETE" }) } catch {}
-      setInquiries((prev) => prev.filter((i) => i.id !== deleteId))
+    if (!deleteId) return
+    try {
+      setIsDeleting(true)
+      await onDelete(deleteId)
       setDeleteId(null)
+    } finally {
+      setIsDeleting(false)
     }
   }
 
+  const startRecord = total === 0 ? 0 : (page - 1) * pageSize + 1
+  const endRecord = Math.min(page * pageSize, total)
+
   return (
-    <div className="space-y-3">
-      {filtered.length === 0 ? (
+    <div className="space-y-3 relative">
+      {isLoading && (
+        <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] z-10 flex items-center justify-center rounded-md">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      )}
+
+      {inquiries.length === 0 && !isLoading ? (
         <EmptyState
           title="No inquiries found"
           description="Adjust your search or filters to see more results."
         />
       ) : (
         <>
-          <div className="rounded-md border bg-card">
+          <div className="rounded-md border bg-card overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -92,18 +104,22 @@ export function InquiryTable({ inquiries: initialInquiries, filters }: InquiryTa
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginated.map((inq) => {
+                {inquiries.map((inq) => {
                   const displayName = inq.fullName || inq.name || "Anonymous"
                   return (
                     <TableRow key={inq.id}>
                       <TableCell>
                         <div className="flex items-center gap-2.5">
                           <Avatar className="h-9 w-9 shrink-0">
-                            <AvatarFallback className="text-xs">{initials(displayName)}</AvatarFallback>
+                            <AvatarFallback className="text-xs">
+                              {initials(displayName)}
+                            </AvatarFallback>
                           </Avatar>
-                          <div className="flex flex-col">
-                            <span className="font-medium text-sm">{displayName}</span>
-                            <span className="text-xs text-muted-foreground sm:hidden">{inq.phone || inq.email}</span>
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-medium text-sm truncate">{displayName}</span>
+                            <span className="text-xs text-muted-foreground sm:hidden truncate">
+                              {inq.phone || inq.email}
+                            </span>
                           </div>
                         </div>
                       </TableCell>
@@ -111,7 +127,8 @@ export function InquiryTable({ inquiries: initialInquiries, filters }: InquiryTa
                         {inq.treatment || inq.subject || "General Checkup"}
                       </TableCell>
                       <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
-                        {inq.preferredDate || "—"}{inq.preferredTime ? ` • ${inq.preferredTime}` : ""}
+                        {inq.preferredDate || "—"}
+                        {inq.preferredTime ? ` • ${inq.preferredTime}` : ""}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
                         {inq.email}
@@ -119,15 +136,19 @@ export function InquiryTable({ inquiries: initialInquiries, filters }: InquiryTa
                       <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
                         {inq.phone || "—"}
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">
+                      <TableCell className="hidden sm:table-cell text-xs text-muted-foreground whitespace-nowrap">
                         {new Date(inq.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="outline" size="icon-sm" title="View details" aria-label={`View inquiry from ${displayName}`} render={<Link href={`/admin/inquiries/${inq.id}`} />}>
-                            <Eye className="h-4 w-4" aria-hidden="true" />
-                          </Button>
-                          <Button variant="outline" size="icon-sm" title="Delete inquiry" aria-label={`Delete inquiry from ${displayName}`} className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30" onClick={() => setDeleteId(inq.id)}>
+                          <Button
+                            variant="outline"
+                            size="icon-sm"
+                            title="Delete inquiry"
+                            aria-label={`Delete inquiry from ${displayName}`}
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
+                            onClick={() => setDeleteId(inq.id)}
+                          >
                             <Trash2 className="h-4 w-4" aria-hidden="true" />
                           </Button>
                         </div>
@@ -144,15 +165,17 @@ export function InquiryTable({ inquiries: initialInquiries, filters }: InquiryTa
             {/* Results count + page size */}
             <div className="flex items-center gap-2">
               <span>
-                {filtered.length === 0
+                {total === 0
                   ? "No results"
-                  : `${(safePage - 1) * pageSize + 1}–${Math.min(safePage * pageSize, filtered.length)} of ${filtered.length}`}
+                  : `${startRecord}–${endRecord} of ${total}`}
               </span>
               <span className="text-muted-foreground/50">|</span>
               <span>Rows per page:</span>
               <Select
                 value={String(pageSize)}
-                onValueChange={(v) => { setPageSize(Number(v)); setPage(1) }}
+                onValueChange={(v) => {
+                  onPageSizeChange(Number(v))
+                }}
               >
                 <SelectTrigger className="h-7 w-[68px] text-xs" aria-label="Rows per page">
                   <SelectValue />
@@ -172,15 +195,15 @@ export function InquiryTable({ inquiries: initialInquiries, filters }: InquiryTa
               <Button
                 variant="outline"
                 size="icon-sm"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={safePage <= 1}
+                onClick={() => onPageChange(Math.max(1, page - 1))}
+                disabled={page <= 1 || isLoading}
                 aria-label="Previous page"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
               {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .filter((p) => p === 1 || p === totalPages || Math.abs(p - safePage) <= 1)
+                .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
                 .reduce<(number | "…")[]>((acc, p, idx, arr) => {
                   if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) acc.push("…")
                   acc.push(p)
@@ -188,18 +211,21 @@ export function InquiryTable({ inquiries: initialInquiries, filters }: InquiryTa
                 }, [])
                 .map((item, idx) =>
                   item === "…" ? (
-                    <span key={`ellipsis-${idx}`} className="px-1">…</span>
+                    <span key={`ellipsis-${idx}`} className="px-1">
+                      …
+                    </span>
                   ) : (
                     <button
                       key={item}
-                      onClick={() => setPage(item as number)}
+                      onClick={() => onPageChange(item as number)}
+                      disabled={isLoading}
                       className={`min-w-[28px] h-7 px-2 rounded text-xs transition-colors ${
-                        safePage === item
+                        page === item
                           ? "bg-primary text-primary-foreground font-medium"
                           : "hover:bg-muted"
                       }`}
                       aria-label={`Go to page ${item}`}
-                      aria-current={safePage === item ? "page" : undefined}
+                      aria-current={page === item ? "page" : undefined}
                     >
                       {item}
                     </button>
@@ -209,8 +235,8 @@ export function InquiryTable({ inquiries: initialInquiries, filters }: InquiryTa
               <Button
                 variant="outline"
                 size="icon-sm"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={safePage >= totalPages}
+                onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+                disabled={page >= totalPages || isLoading}
                 aria-label="Next page"
               >
                 <ChevronRight className="h-4 w-4" />
@@ -222,10 +248,10 @@ export function InquiryTable({ inquiries: initialInquiries, filters }: InquiryTa
 
       <ConfirmDialog
         open={deleteId !== null}
-        onOpenChange={(open) => !open && setDeleteId(null)}
+        onOpenChange={(open) => !open && !isDeleting && setDeleteId(null)}
         title="Delete inquiry?"
         description="This will permanently delete the inquiry and all its submitted data."
-        confirmLabel="Delete"
+        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
         variant="destructive"
         onConfirm={handleDelete}
       />

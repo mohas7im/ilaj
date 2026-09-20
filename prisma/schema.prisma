@@ -158,5 +158,24 @@ model ClinicSettings {
   @@map("clinic_settings")
 }
 
+model Inquiry {
+  id            String   @id @default(uuid())
+  fullName      String
+  email         String
+  phone         String?
+  treatment     String
+  preferredDate String?
+  preferredTime String?
+  message       String   @db.Text
+  status        String   @default("new")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([treatment])
+  @@index([status])
+  @@index([createdAt])
+  @@map("inquiries")
+}
+
 
 

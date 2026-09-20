@@ -1,18 +1,24 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { CalendarIcon, Search, X } from "lucide-react"
 import { format } from "date-fns"
 import { Input } from "@/components/admin/ui/input"
 import { Button } from "@/components/admin/ui/button"
 import {
-  Select, SelectContent, SelectItem,
-  SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/admin/ui/select"
 import {
-  Popover, PopoverContent, PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/admin/ui/popover"
 import { Calendar } from "@/components/admin/ui/calendar"
-import { TREATMENT_OPTIONS } from "../_services/inquiry.service"
+import { fetchTreatmentServices, TREATMENT_OPTIONS } from "../_services/inquiry.service"
 
 export type InquiryFilterState = {
   search: string
@@ -27,6 +33,20 @@ type InquiryFiltersProps = {
 }
 
 export function InquiryFilters({ filters, onFiltersChange }: InquiryFiltersProps) {
+  const [treatmentOptions, setTreatmentOptions] = useState<string[]>([...TREATMENT_OPTIONS])
+
+  useEffect(() => {
+    let isMounted = true
+    fetchTreatmentServices().then((services) => {
+      if (isMounted && services && services.length > 0) {
+        setTreatmentOptions(services)
+      }
+    })
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   const hasActive =
     filters.search !== "" ||
     filters.treatment !== "all" ||
@@ -44,7 +64,7 @@ export function InquiryFilters({ filters, onFiltersChange }: InquiryFiltersProps
         <Input
           value={filters.search}
           onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
-          placeholder="Search by name, email, phone, or treatment..."
+          placeholder="Search by name, email, phone, or message..."
           className="pl-8 h-9"
           aria-label="Search inquiries"
         />
@@ -55,12 +75,12 @@ export function InquiryFilters({ filters, onFiltersChange }: InquiryFiltersProps
         value={filters.treatment}
         onValueChange={(v) => onFiltersChange({ ...filters, treatment: v ?? "all" })}
       >
-        <SelectTrigger className="h-9 w-[190px]" aria-label="Filter by treatment">
+        <SelectTrigger className="h-9 w-[210px]" aria-label="Filter by treatment">
           <SelectValue placeholder="All Treatments" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Treatments</SelectItem>
-          {TREATMENT_OPTIONS.map((t) => (
+          {treatmentOptions.map((t) => (
             <SelectItem key={t} value={t}>{t}</SelectItem>
           ))}
         </SelectContent>
