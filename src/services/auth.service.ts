@@ -1,3 +1,4 @@
+import { signIn, signOut, getSession } from "next-auth/react";
 import { apiClient } from "@/lib/apiClient";
 import type { AxiosError } from "axios";
 
@@ -19,41 +20,51 @@ export interface AuthResponse {
 }
 
 // ── In-Memory Cache ──────────────────────────────────────────────────────────
-// Holds the authenticated user in browser memory across page transitions
 let cachedUser: AuthUser | null = null;
-
-// Deduplicates simultaneous calls (e.g. when sidebar & header mount simultaneously)
 let inFlightMeRequest: Promise<AuthUser | null> | null = null;
 
 export const authService = {
   /**
-   * Logs in admin, sets HttpOnly cookie via server response, and caches user profile.
+   * Logs in admin via NextAuth v5 credentials provider.
    */
   async login(credentials: LoginCredentials): Promise<AuthUser> {
-    const payload = {
-      email: credentials.email.trim().toLowerCase(),
-      password: credentials.password,
-    };
+    const email = credentials.email.trim().toLowerCase();
+    const password = credentials.password;
 
-    const { data } = await apiClient.post<AuthResponse>("/api/auth/login", payload);
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
 
-    if (!data.success || !data.user) {
-      throw new Error(data.error || "Authentication failed");
+    if (res?.error) {
+      throw new Error("Invalid email or password");
     }
 
-    // Cache the user immediately on successful sign in
-    cachedUser = data.user;
-    return data.user;
+    // Refresh cached user from session
+    const session = await getSession();
+    if (session?.user) {
+      cachedUser = {
+        name: session.user.name || "Admin",
+        email: session.user.email || email,
+      };
+      return cachedUser;
+    }
+
+    // Fallback if session is still populating
+    cachedUser = {
+      name: "Admin",
+      email,
+    };
+    return cachedUser;
   },
 
   /**
-   * Logs out current session:
-   * 1. Backend deletes the HttpOnly cookie.
-   * 2. Frontend wipes the cached in-memory user.
+   * Logs out current NextAuth session.
    */
   async logout(): Promise<void> {
     try {
-      await apiClient.post("/api/auth/logout");
+      await signOut({ redirect: false });
     } finally {
       cachedUser = null;
       inFlightMeRequest = null;
@@ -62,22 +73,16 @@ export const authService = {
 
   /**
    * Retrieves the currently authenticated admin user.
-   * - Uses in-memory cache if available (0ms response, 0 extra network calls).
-   * - Deduplicates concurrent calls to prevent multiple simultaneous requests.
-   * - Pass `forceRefresh = true` if you explicitly need to fetch fresh data from the server.
    */
   async me(forceRefresh = false): Promise<AuthUser | null> {
-    // 1. Instant return from memory cache
     if (cachedUser && !forceRefresh) {
       return cachedUser;
     }
 
-    // 2. Reuse in-flight request if one is already pending
     if (inFlightMeRequest && !forceRefresh) {
       return inFlightMeRequest;
     }
 
-    // 3. Perform network request and populate cache
     inFlightMeRequest = (async () => {
       try {
         const { data } = await apiClient.get<AuthResponse>("/api/auth/me");

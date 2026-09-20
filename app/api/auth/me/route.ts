@@ -1,34 +1,19 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { verifyJwt } from "@/lib/auth/token";
+import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const token = req.cookies.get("auth_token")?.value;
-    if (!token) {
+    const session = await auth();
+    if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const payload = await verifyJwt(token);
-    if (!payload?.id) {
-      return NextResponse.json({ error: "Invalid or expired session" }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: payload.id },
-      select: {
-        name: true,
-        email: true,
-      },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 401 });
     }
 
     return NextResponse.json({
       success: true,
-      user,
+      user: {
+        name: session.user.name || "Admin",
+        email: session.user.email || "",
+      },
     });
   } catch (error) {
     console.error("Auth session error:", error);
