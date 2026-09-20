@@ -1,74 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
+import { getInquiries, createInquiry } from "@/server/services/inquiry.service";
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
+    const searchParams =
+      req.nextUrl?.searchParams ||
+      new URL(req.url, "http://localhost").searchParams;
 
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
-    const limit = Math.max(1, Math.min(100, parseInt(searchParams.get("limit") || "10", 10)));
-    const search = searchParams.get("search")?.trim() || "";
-    const treatment = searchParams.get("treatment")?.trim() || "";
-    const from = searchParams.get("from")?.trim() || "";
-    const to = searchParams.get("to")?.trim() || "";
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const search = searchParams.get("search") || "";
+    const treatment = searchParams.get("treatment") || "";
+    const from = searchParams.get("from") || "";
+    const to = searchParams.get("to") || "";
 
-    // Build dynamic Prisma filter
-    const where: Prisma.InquiryWhereInput = {};
-
-    if (treatment && treatment !== "all") {
-      where.treatment = { equals: treatment, mode: "insensitive" };
-    }
-
-    if (search) {
-      where.OR = [
-        { fullName: { contains: search, mode: "insensitive" } },
-        { email: { contains: search, mode: "insensitive" } },
-        { phone: { contains: search, mode: "insensitive" } },
-        { message: { contains: search, mode: "insensitive" } },
-      ];
-    }
-
-    if (from || to) {
-      where.createdAt = {};
-      if (from) {
-        const fromDate = new Date(from);
-        if (!isNaN(fromDate.getTime())) {
-          fromDate.setHours(0, 0, 0, 0);
-          where.createdAt.gte = fromDate;
-        }
-      }
-      if (to) {
-        const toDate = new Date(to);
-        if (!isNaN(toDate.getTime())) {
-          toDate.setHours(23, 59, 59, 999);
-          where.createdAt.lte = toDate;
-        }
-      }
-    }
-
-    const total = await prisma.inquiry.count({ where });
-    const totalPages = Math.max(1, Math.ceil(total / limit));
-    const skip = (page - 1) * limit;
-
-    const inquiries = await prisma.inquiry.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { createdAt: "desc" },
+    const result = await getInquiries({
+      page,
+      limit,
+      search,
+      treatment,
+      from,
+      to,
     });
 
-    return NextResponse.json({
-      inquiries,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages,
-      },
-    });
+    return NextResponse.json(result);
   } catch (error) {
-    console.error("Failed to fetch inquiries:", error);
+    console.error("GET /api/inquiries error:", error);
     return NextResponse.json(
       { error: "Failed to fetch inquiries" },
       { status: 500 }
@@ -101,22 +58,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Message is required." }, { status: 400 });
     }
 
-    const inquiry = await prisma.inquiry.create({
-      data: {
-        fullName,
-        email,
-        phone,
-        treatment,
-        preferredDate,
-        preferredTime,
-        message,
-        status: body.status || "new",
-      },
+    const inquiry = await createInquiry({
+      fullName,
+      email,
+      phone,
+      treatment,
+      preferredDate,
+      preferredTime,
+      message,
+      status: body.status || "new",
     });
 
     return NextResponse.json(inquiry, { status: 201 });
   } catch (error) {
-    console.error("Failed to create inquiry:", error);
+    console.error("POST /api/inquiries error:", error);
     return NextResponse.json(
       { error: "Failed to submit contact inquiry" },
       { status: 500 }

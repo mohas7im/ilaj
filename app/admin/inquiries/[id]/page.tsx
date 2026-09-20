@@ -1,25 +1,18 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { InquiryDetails } from "../_components/InquiryDetails";
-import { prisma } from "@/lib/prisma";
+import { getInquiryById } from "@/server/services/inquiry.service";
 
 type Props = { params: Promise<{ id: string }> };
 
 export const metadata = { title: "View Enquiry" };
+export const dynamic = "force-dynamic";
 
 export default async function InquiryDetailPage({ params }: Props) {
   const { id } = await params;
-  const rawInquiry = await prisma.inquiry.findUnique({
-    where: { id },
-  });
+  const inquiry = await getInquiryById(id);
 
-  if (!rawInquiry) notFound();
-
-  const inquiry = {
-    ...rawInquiry,
-    createdAt: rawInquiry.createdAt.toISOString(),
-    updatedAt: rawInquiry.updatedAt.toISOString(),
-  };
+  if (!inquiry) notFound();
 
   return (
     <div className="space-y-6">
