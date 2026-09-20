@@ -13,6 +13,7 @@ export interface AuthUser {
 
 export interface AuthResponse {
   success: boolean;
+  message?: string;
   user?: AuthUser;
   error?: string;
 }

@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
     // 4. Create standard JSON response (session handled securely via HttpOnly cookie)
     const response = NextResponse.json({
       success: true,
+      message: "Logged in successfully",
       user: {
         name: user.name,
         email: user.email,
