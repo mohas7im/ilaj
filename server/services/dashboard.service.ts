@@ -8,23 +8,17 @@ export interface DashboardStats {
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
+  const p = prisma as any
+  const inqModel = p.inquiry || p.Inquiry
+  const docModel = p.doctor || p.Doctor
+  const svcModel = p.service || p.Service
+  const testModel = p.testimonial || p.Testimonial
+
   const [totalInquiries, totalDoctors, totalServices, totalTestimonials] = await Promise.all([
-    prisma.inquiry.count().catch((err: unknown) => {
-      console.error("prisma.inquiry.count error:", err)
-      return 0
-    }),
-    prisma.doctor.count().catch((err: unknown) => {
-      console.error("prisma.doctor.count error:", err)
-      return 0
-    }),
-    prisma.service.count().catch((err: unknown) => {
-      console.error("prisma.service.count error:", err)
-      return 0
-    }),
-    prisma.testimonial.count().catch((err: unknown) => {
-      console.error("prisma.testimonial.count error:", err)
-      return 0
-    }),
+    inqModel?.count ? inqModel.count().catch(() => 0) : Promise.resolve(0),
+    docModel?.count ? docModel.count().catch(() => 0) : Promise.resolve(0),
+    svcModel?.count ? svcModel.count().catch(() => 0) : Promise.resolve(0),
+    testModel?.count ? testModel.count().catch(() => 0) : Promise.resolve(0),
   ])
 
   return {

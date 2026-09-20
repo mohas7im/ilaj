@@ -7,10 +7,15 @@ export async function GET() {
   try {
     const stats = await getDashboardStats()
     return NextResponse.json(stats)
-  } catch (error) {
+  } catch (error: any) {
     console.error("GET /api/dashboard/stats error:", error)
     return NextResponse.json(
-      { error: "Failed to fetch dashboard statistics" },
+      {
+        error: "Failed to fetch dashboard statistics",
+        errorMessage: error?.message || String(error),
+        errorStack: error?.stack,
+        errorName: error?.name,
+      },
       { status: 500 }
     )
   }

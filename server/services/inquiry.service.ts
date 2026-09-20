@@ -18,6 +18,21 @@ export async function getInquiries(params?: InquiryFilters) {
   const from = params?.from?.trim() || ""
   const to = params?.to?.trim() || ""
 
+  const p = prisma as any
+  const inquiryModel = p.inquiry || p.Inquiry
+
+  if (!inquiryModel) {
+    return {
+      inquiries: [],
+      pagination: {
+        pageNumber,
+        pageSize,
+        total: 0,
+        totalPages: 1,
+      },
+    }
+  }
+
   const where: Prisma.InquiryWhereInput = {}
 
   if (treatment && treatment !== "all") {
@@ -54,18 +69,18 @@ export async function getInquiries(params?: InquiryFilters) {
     }
   }
 
-  const total = await prisma.inquiry.count({ where })
+  const total = await inquiryModel.count({ where })
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
   const skip = (pageNumber - 1) * pageSize
 
-  const rawInquiries = await prisma.inquiry.findMany({
+  const rawInquiries = await inquiryModel.findMany({
     where,
     skip,
     take: pageSize,
     orderBy: { createdAt: "desc" },
   })
 
-  const inquiries = rawInquiries.map((inq) => ({
+  const inquiries = (rawInquiries || []).map((inq: any) => ({
     id: inq.id,
     fullName: inq.fullName,
     email: inq.email,
@@ -91,7 +106,11 @@ export async function getInquiries(params?: InquiryFilters) {
 }
 
 export async function getInquiryById(id: string) {
-  const inq = await prisma.inquiry.findUnique({ where: { id } })
+  const p = prisma as any
+  const inquiryModel = p.inquiry || p.Inquiry
+  if (!inquiryModel) return null
+
+  const inq = await inquiryModel.findUnique({ where: { id } })
   if (!inq) return null
   return {
     ...inq,
@@ -110,7 +129,11 @@ export async function createInquiry(data: {
   message: string
   status?: string
 }) {
-  const created = await prisma.inquiry.create({
+  const p = prisma as any
+  const inquiryModel = p.inquiry || p.Inquiry
+  if (!inquiryModel) throw new Error("Inquiry model is not available")
+
+  const created = await inquiryModel.create({
     data: {
       fullName: data.fullName.trim(),
       email: data.email.trim().toLowerCase(),
@@ -125,27 +148,35 @@ export async function createInquiry(data: {
 
   return {
     ...created,
-    createdAt: created.createdAt.toISOString(),
-    updatedAt: created.updatedAt.toISOString(),
+    createdAt: created.createdAt instanceof Date ? created.createdAt.toISOString() : String(created.createdAt || ""),
+    updatedAt: created.updatedAt instanceof Date ? created.updatedAt.toISOString() : String(created.updatedAt || ""),
   }
 }
 
 export async function updateInquiryStatus(id: string, status: string) {
-  const updated = await prisma.inquiry.update({
+  const p = prisma as any
+  const inquiryModel = p.inquiry || p.Inquiry
+  if (!inquiryModel) throw new Error("Inquiry model is not available")
+
+  const updated = await inquiryModel.update({
     where: { id },
     data: { status },
   })
 
   return {
     ...updated,
-    createdAt: updated.createdAt.toISOString(),
-    updatedAt: updated.updatedAt.toISOString(),
+    createdAt: updated.createdAt instanceof Date ? updated.createdAt.toISOString() : String(updated.createdAt || ""),
+    updatedAt: updated.updatedAt instanceof Date ? updated.updatedAt.toISOString() : String(updated.updatedAt || ""),
   }
 }
 
 export async function deleteInquiry(id: string): Promise<boolean> {
+  const p = prisma as any
+  const inquiryModel = p.inquiry || p.Inquiry
+  if (!inquiryModel) return false
+
   try {
-    await prisma.inquiry.delete({ where: { id } })
+    await inquiryModel.delete({ where: { id } })
     return true
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
