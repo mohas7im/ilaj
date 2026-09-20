@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation"
 import "@/styles/admin/theme.css"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/admin/ui/sidebar"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
+import { Toaster } from "@/components/admin/ui/sonner"
 
 export default function AdminLayout({
   children,
@@ -14,11 +15,17 @@ export default function AdminLayout({
   const isLoginPage = pathname === "/admin/login" || pathname?.startsWith("/admin/login")
 
   if (isLoginPage) {
-    return <div data-admin-theme className="contents">{children}</div>
+    return (
+      <div data-admin-theme className="contents">
+        <Toaster richColors position="top-right" />
+        {children}
+      </div>
+    )
   }
 
   return (
     <div data-admin-theme className="contents">
+      <Toaster richColors position="top-right" />
       <SidebarProvider>
         <AdminSidebar />
         <SidebarInset>

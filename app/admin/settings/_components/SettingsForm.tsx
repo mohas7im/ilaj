@@ -13,7 +13,9 @@ import {
   Save,
   RotateCcw,
   MessageCircle,
+  Loader2,
 } from "lucide-react"
+import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
 import { Input } from "@/components/admin/ui/input"
 import { Textarea } from "@/components/admin/ui/textarea"
@@ -89,9 +91,12 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
       setFormData(updated)
       setInitialData(updated)
       setSuccess(true)
+      toast.success("Settings saved successfully!")
       window.scrollTo({ top: 0, behavior: "smooth" })
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong")
+      const msg = err instanceof Error ? err.message : "Something went wrong"
+      setError(msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }
@@ -470,8 +475,17 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
           disabled={loading}
           className="gap-1.5 px-6 font-medium shadow-sm"
         >
-          <Save className="h-4 w-4" />
-          {loading ? "Saving..." : "Save Settings"}
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save className="h-4 w-4" />
+              Save Settings
+            </>
+          )}
         </Button>
       </div>
     </form>

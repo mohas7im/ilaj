@@ -3,7 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { Eye, EyeOff, ArrowLeft, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 import "@/styles/admin/theme.css"
 import { ADMIN_BRANDING } from "@/lib/admin/config"
@@ -28,9 +29,12 @@ export default function AdminLoginPage() {
 
     try {
       await authService.login({ email, password })
+      toast.success("Signed in successfully!")
       router.push("/admin/dashboard")
     } catch (err) {
-      setError(authService.getErrorMessage(err, "Invalid email or password."))
+      const msg = authService.getErrorMessage(err, "Invalid email or password.")
+      setError(msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }
@@ -181,7 +185,14 @@ export default function AdminLoginPage() {
                 disabled={loading}
                 className="w-full gap-2"
               >
-                {loading ? "Signing in..." : "Sign in"}
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  "Sign in"
+                )}
               </Button>
             </div>
           </form>

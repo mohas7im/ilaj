@@ -479,9 +479,12 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
       }
 
       setSuccess(true)
+      toast.success("SEO settings saved successfully")
       setTimeout(() => setSuccess(false), 4000)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong")
+      const msg = err instanceof Error ? err.message : "Something went wrong"
+      setError(msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }
@@ -814,7 +817,10 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
         </Button>
         <Button type="submit" disabled={loading}>
           {loading ? (
-            "Saving…"
+            <>
+              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+              Saving…
+            </>
           ) : (
             <>
               <Save className="mr-1.5 h-3.5 w-3.5" />
