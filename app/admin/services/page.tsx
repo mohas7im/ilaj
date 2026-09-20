@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/admin/PageHeader"
-import { getServices } from "./_services/service.service"
+import { getServices } from "@/server/services/service.service"
 import { ServicesClientView } from "./_components/ServicesClientView"
 
 export const dynamic = "force-dynamic"

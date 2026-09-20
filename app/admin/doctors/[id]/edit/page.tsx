@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { PageHeader } from "@/components/admin/PageHeader"
 import { DoctorForm } from "../../_components/DoctorForm"
-import { getDoctorById } from "../../_services/doctor.service"
+import { getDoctorById } from "@/server/services/doctor.service"
 
 type Props = { params: Promise<{ id: string }> }
 

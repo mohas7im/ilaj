@@ -2,11 +2,10 @@ import { prisma } from "@/lib/prisma"
 import {
   SERVICE_STATUS_CONFIG,
   type Service,
-} from "../_types/service.types"
-import type { ServiceFormData } from "../_schemas/service.schema"
+} from "@/app/admin/services/_types/service.types"
+import type { ServiceFormData } from "@/app/admin/services/_schemas/service.schema"
 
 export { SERVICE_STATUS_CONFIG }
-
 
 export function slugify(text: string): string {
   return text

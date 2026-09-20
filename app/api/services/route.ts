@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServices, createService } from "@/app/admin/services/_services/service.service"
+import { getServices, createService } from "@/server/services/service.service"
 import { serviceSchema } from "@/app/admin/services/_schemas/service.schema"
 
 export async function GET() {

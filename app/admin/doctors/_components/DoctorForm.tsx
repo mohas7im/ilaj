@@ -2,12 +2,14 @@
 
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { Upload, X, ImageIcon } from "lucide-react"
+import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
+import { Switch } from "@/components/admin/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar"
 import type { Doctor } from "../_types/doctor.types"
 
@@ -24,6 +26,7 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
   const router = useRouter()
   const isEdit = mode === "edit"
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [form, setForm] = useState({
     name:           initialData?.name           ?? "",
@@ -32,9 +35,11 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
     bio:            initialData?.bio            ?? "",
     image:          initialData?.image          ?? "",
     imageAlt:       initialData?.imageAlt       ?? "",
+    displayOrder:   initialData?.displayOrder   ?? 1,
+    isActive:       initialData?.isActive       ?? true,
   })
 
-  const set = (key: keyof typeof form, value: string) =>
+  const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,25 +63,37 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
     try {
-      if (isEdit && initialData?.id) {
-        await fetch(`/api/doctors/${initialData.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        })
-      } else {
-        await fetch("/api/doctors", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        })
+      const url = isEdit && initialData?.id ? `/api/doctors/${initialData.id}` : "/api/doctors"
+      const method = isEdit ? "PUT" : "POST"
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        const errorMsg = data?.error
+          ? typeof data.error === "object"
+            ? Object.values(data.error).flat().join(", ")
+            : String(data.error)
+          : "Failed to save doctor"
+        throw new Error(errorMsg)
       }
-    } catch {
-      // Fallback
+
+      toast.success(isEdit ? "Doctor updated successfully" : "Doctor created successfully")
+      router.push("/admin/doctors")
+      router.refresh()
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Failed to save doctor"
+      toast.error(msg)
+    } finally {
+      setIsSubmitting(false)
     }
-    router.push("/admin/doctors")
-    router.refresh()
   }
 
   return (
@@ -114,6 +131,30 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                 onChange={(e) => set("specialization", e.target.value)}
                 placeholder="e.g. Orthodontics"
                 required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="displayOrder">Display Order <span className="text-destructive">*</span></Label>
+              <Input
+                id="displayOrder"
+                type="number"
+                min={1}
+                value={form.displayOrder}
+                onChange={(e) => set("displayOrder", parseInt(e.target.value) || 1)}
+                required
+              />
+            </div>
+
+            <div className="flex items-center justify-between rounded-lg border p-3.5 sm:col-span-1">
+              <div className="space-y-0.5">
+                <Label htmlFor="isActive" className="text-sm font-medium">Active Status</Label>
+                <p className="text-xs text-muted-foreground">Visible to patients and staff</p>
+              </div>
+              <Switch
+                id="isActive"
+                checked={form.isActive}
+                onCheckedChange={(checked) => set("isActive", checked)}
               />
             </div>
           </div>
@@ -203,10 +244,16 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-2 border-t">
-            <Button type="button" variant="outline" onClick={() => router.push("/admin/doctors")}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/admin/doctors")}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
-            <Button type="submit">
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEdit ? "Save Changes" : "Add Doctor"}
             </Button>
           </div>

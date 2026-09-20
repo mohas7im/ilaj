@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { PageHeader } from "@/components/admin/PageHeader"
 import { ServiceForm } from "../../_components/ServiceForm"
-import { getServiceById } from "../../_services/service.service"
+import { getServiceById } from "@/server/services/service.service"
 
 type Props = { params: Promise<{ id: string }> }
 

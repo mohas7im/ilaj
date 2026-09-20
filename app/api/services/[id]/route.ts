@@ -3,7 +3,7 @@ import {
   getServiceById,
   updateService,
   deleteService,
-} from "@/app/admin/services/_services/service.service"
+} from "@/server/services/service.service"
 import { serviceSchema } from "@/app/admin/services/_schemas/service.schema"
 
 type Props = { params: Promise<{ id: string }> }
