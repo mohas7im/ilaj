@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import { getClinicSettings } from "@/server/services/settings.service";
+import { getCommonSeo } from "@/app/admin/seo/_services/seo.service";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -9,17 +11,29 @@ const poppins = Poppins({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Ilaj Dental Clinic",
-    template: "%s | Ilaj Dental Clinic",
-  },
-  description: "Professional dental care in Lahore, Pakistan.",
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [common, settings] = await Promise.all([
+    getCommonSeo(),
+    getClinicSettings(),
+  ]);
+
+  const siteName = settings.clinicName || common.siteName;
+  const description = settings.tagline || common.defaultDescription;
+
+  return {
+    title: {
+      default: siteName,
+      template: `%s | ${siteName}`,
+    },
+    description,
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
+
 
 export default function RootLayout({
   children,

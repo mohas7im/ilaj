@@ -31,7 +31,7 @@ export default function AdminLayout({
         <AdminSidebar />
         <SidebarInset>
           <AdminHeader />
-          <main className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+          <main className="flex flex-1 flex-col gap-6 p-3">
             {children}
           </main>
         </SidebarInset>
