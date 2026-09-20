@@ -3,39 +3,8 @@ import { Prisma } from "@prisma/client"
 import type { ClinicPhoto } from "@/app/admin/gallery/clinic/_types/clinic-photo.types"
 import type { ClinicPhotoInput } from "@/app/admin/gallery/clinic/_schemas/clinic-photo.schema"
 
-export const INITIAL_CLINIC_PHOTOS = [
-  {
-    heading: "Treatment Suite & Dental Unit",
-    description: "Modern, ergonomic dental chair with digital monitoring and panoramic window view.",
-    image: "/admin/clinic-gallery-room.jpg",
-    alt: "Modern ergonomic dental chair and treatment equipment in clinic suite",
-    displayOrder: 1,
-  },
-  {
-    heading: "Reception & Architectural Lounge",
-    description: "Spacious, comfortable patient waiting lounge with natural slate and glass architecture.",
-    image: "/admin/login-showcase.jpg",
-    alt: "Spacious clinic reception and patient waiting lounge",
-    displayOrder: 2,
-  },
-  {
-    heading: "Consultation & Smile Design Studio",
-    description: "Dedicated digital imaging and treatment planning consultation area.",
-    image: "/admin/clinic-gallery-room.jpg",
-    alt: "Digital smile design and patient consultation studio",
-    displayOrder: 3,
-  },
-]
-
 export async function getClinicPhotos(): Promise<ClinicPhoto[]> {
   try {
-    const count = await prisma.clinicPhoto.count()
-    if (count === 0) {
-      await prisma.clinicPhoto.createMany({
-        data: INITIAL_CLINIC_PHOTOS,
-      })
-    }
-
     const photos = await prisma.clinicPhoto.findMany({
       orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
     })

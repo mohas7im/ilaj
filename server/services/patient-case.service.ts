@@ -3,45 +3,8 @@ import { Prisma } from "@prisma/client"
 import type { PatientCase } from "@/app/admin/gallery/patient/_types/patient-case.types"
 import type { PatientCaseInput } from "@/app/admin/gallery/patient/_schemas/patient-case.schema"
 
-export const INITIAL_PATIENT_CASES = [
-  {
-    heading: "Teeth Alignment & Whitening",
-    description: "Full smile transformation with invisible aligners and in-office dental whitening.",
-    beforeImage: "/admin/patient-before-after.jpg",
-    afterImage: "/admin/patient-before-after.jpg",
-    beforeAlt: "Patient smile before teeth alignment and whitening showing crooked teeth",
-    afterAlt: "Patient radiant smile after aligners and professional dental whitening",
-    displayOrder: 1,
-  },
-  {
-    heading: "Dental Implants & Ceramic Crown",
-    description: "Replaced missing front tooth with a permanent titanium implant and natural-looking ceramic crown.",
-    beforeImage: "/admin/patient-before-after.jpg",
-    afterImage: "/admin/patient-before-after.jpg",
-    beforeAlt: "Patient smile before implant showing missing upper front tooth",
-    afterAlt: "Patient natural smile restored with ceramic crown on titanium dental implant",
-    displayOrder: 2,
-  },
-  {
-    heading: "Porcelain Veneers Transformation",
-    description: "Corrected front teeth spacing, minor discoloration, and uneven edges for a harmonious smile.",
-    beforeImage: "/admin/patient-before-after.jpg",
-    afterImage: "/admin/patient-before-after.jpg",
-    beforeAlt: "Patient smile before veneers showing tooth discoloration and gap",
-    afterAlt: "Patient harmonious smile with custom handcrafted porcelain veneers",
-    displayOrder: 3,
-  },
-]
-
 export async function getPatientCases(): Promise<PatientCase[]> {
   try {
-    const count = await prisma.patientCase.count()
-    if (count === 0) {
-      await prisma.patientCase.createMany({
-        data: INITIAL_PATIENT_CASES,
-      })
-    }
-
     const cases = await prisma.patientCase.findMany({
       orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
     })

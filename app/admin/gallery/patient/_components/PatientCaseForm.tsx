@@ -29,8 +29,8 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
   const [form, setForm] = useState({
     heading: initialData?.heading ?? "",
     description: initialData?.description ?? "",
-    beforeImage: initialData?.beforeImage ?? "/admin/patient-before-after.jpg",
-    afterImage: initialData?.afterImage ?? "/admin/patient-before-after.jpg",
+    beforeImage: initialData?.beforeImage ?? "",
+    afterImage: initialData?.afterImage ?? "",
     beforeAlt: initialData?.beforeAlt ?? "",
     afterAlt: initialData?.afterAlt ?? "",
     displayOrder: initialData?.displayOrder ?? 1,

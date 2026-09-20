@@ -26,7 +26,7 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
   const [form, setForm] = useState({
     heading: initialData?.heading ?? "",
     description: initialData?.description ?? "",
-    image: initialData?.image ?? "/admin/clinic-gallery-room.jpg",
+    image: initialData?.image ?? "",
     alt: initialData?.alt ?? "",
     displayOrder: initialData?.displayOrder ?? 1,
   })
