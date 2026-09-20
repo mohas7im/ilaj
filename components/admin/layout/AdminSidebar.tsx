@@ -12,8 +12,10 @@ import {
   PanelLeftOpen,
   ChevronRight,
   Loader2,
+  KeyRound,
 } from "lucide-react"
 import { toast } from "sonner"
+import { ChangePasswordDialog } from "./ChangePasswordDialog"
 
 import { cn } from "@/lib/utils"
 import { ADMIN_BRANDING, NAV_GROUPS, MOCK_USER, type NavItem } from "@/lib/admin/config"
@@ -181,6 +183,7 @@ export function AdminSidebar() {
   const { state } = useSidebar()
   const isCollapsed = state === "collapsed"
   const [currentUser, setCurrentUser] = useState(MOCK_USER)
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
 
   useEffect(() => {
     authService.me().then((u) => {
@@ -287,84 +290,86 @@ export function AdminSidebar() {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger
-                render={
-                  <SidebarMenuButton
-                    size="lg"
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                    tooltip={currentUser.name}
-                  >
-                    <Avatar className="h-7 w-7 rounded-lg">
-                      <AvatarFallback className="rounded-lg text-xs">
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col leading-tight">
-                      <span className="text-sm font-medium">{currentUser.name}</span>
-                      <span className="text-xs text-muted-foreground">
+                className={cn(
+                  "flex w-full items-center gap-2 rounded-lg p-2 text-left text-sm outline-none transition-colors",
+                  "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                  "focus-visible:ring-2 focus-visible:ring-sidebar-ring cursor-pointer select-none",
+                  isCollapsed ? "justify-center h-9" : "h-12"
+                )}
+              >
+                <Avatar className="h-7 w-7 rounded-lg shrink-0">
+                  <AvatarFallback className="rounded-lg text-xs font-semibold">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                {!isCollapsed && (
+                  <>
+                    <div className="flex flex-col leading-tight min-w-0 flex-1 overflow-hidden text-left">
+                      <span className="text-sm font-medium truncate">{currentUser.name}</span>
+                      <span className="text-xs text-muted-foreground truncate">
                         {currentUser.email}
                       </span>
                     </div>
-                    <ChevronsUpDown className="ml-auto size-4" />
-                  </SidebarMenuButton>
-                }
-              />
+                    <ChevronsUpDown className="ml-auto size-4 shrink-0 text-muted-foreground" />
+                  </>
+                )}
+              </DropdownMenuTrigger>
+
               <DropdownMenuContent
-                side="top"
+                side={isCollapsed ? "right" : "top"}
                 align="start"
-                className="w-56"
+                sideOffset={8}
+                className="w-56 p-1.5 shadow-lg border border-border bg-popover"
               >
-                <DropdownMenuLabel className="p-0 font-normal">
-                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarFallback className="rounded-lg text-xs">
+                <DropdownMenuLabel className="p-1.5 font-normal">
+                  <div className="flex items-center gap-2.5 text-left text-sm">
+                    <Avatar className="h-8 w-8 rounded-lg shrink-0">
+                      <AvatarFallback className="rounded-lg text-xs font-semibold">
                         {initials}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col leading-tight">
-                      <span className="font-medium">{currentUser.name}</span>
-                      <span className="text-xs text-muted-foreground">
+                    <div className="flex flex-col leading-tight overflow-hidden min-w-0">
+                      <span className="font-semibold text-sm truncate">{currentUser.name}</span>
+                      <span className="text-xs text-muted-foreground truncate">
                         {currentUser.email}
                       </span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <CircleUser className="mr-2 h-4 w-4" />
-                  Profile
+                <DropdownMenuSeparator className="my-1" />
+
+                <DropdownMenuItem
+                  onClick={() => setShowPasswordDialog(true)}
+                  className="cursor-pointer flex items-center gap-2 px-2 py-1.5 text-xs font-medium rounded-md hover:bg-accent"
+                >
+                  <KeyRound className="h-4 w-4 text-muted-foreground" />
+                  <span>Change Password</span>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+
+                <DropdownMenuSeparator className="my-1" />
+
                 <DropdownMenuItem
                   onClick={handleLogout}
-                  className="text-destructive focus:text-destructive cursor-pointer"
+                  className="text-destructive focus:text-destructive cursor-pointer flex items-center gap-2 px-2 py-1.5 text-xs font-medium rounded-md hover:bg-destructive/10"
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log out
+                  {loggingOut ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <LogOut className="h-4 w-4" />
+                  )}
+                  <span>{loggingOut ? "Signing out..." : "Log out"}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
-
-          {/* Dedicated Direct Log Out Button */}
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={handleLogout}
-              disabled={loggingOut}
-              tooltip="Log out"
-              className="text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer transition-colors"
-            >
-              {loggingOut ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <LogOut className="h-4 w-4" />
-              )}
-              <span>{loggingOut ? "Signing out..." : "Log out"}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
 
-      {/* SidebarRail removed — toggle is now the button in the header */}
+      {/* Change Password Dialog Modal */}
+      <ChangePasswordDialog
+        open={showPasswordDialog}
+        onOpenChange={setShowPasswordDialog}
+      />
     </Sidebar>
   )
 }

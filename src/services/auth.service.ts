@@ -58,6 +58,23 @@ export const authService = {
   },
 
   /**
+   * Updates the authenticated admin's password.
+   */
+  async changePassword(payload: {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }): Promise<void> {
+    const { data } = await apiClient.post<{ success: boolean; message?: string; error?: string }>(
+      "/api/auth/change-password",
+      payload
+    );
+    if (!data.success) {
+      throw new Error(data.error || "Failed to change password.");
+    }
+  },
+
+  /**
    * Retrieves the currently authenticated admin user.
    */
   async me(forceRefresh = false): Promise<AuthUser | null> {
