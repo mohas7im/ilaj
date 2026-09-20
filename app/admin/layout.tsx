@@ -17,7 +17,7 @@ export default function AdminLayout({
   if (isLoginPage) {
     return (
       <div data-admin-theme className="contents">
-        <Toaster richColors position="top-right" />
+        <Toaster position="top-right" />
         {children}
       </div>
     )
@@ -25,7 +25,7 @@ export default function AdminLayout({
 
   return (
     <div data-admin-theme className="contents">
-      <Toaster richColors position="top-right" />
+      <Toaster position="top-right" />
       <SidebarProvider>
         <AdminSidebar />
         <SidebarInset>
