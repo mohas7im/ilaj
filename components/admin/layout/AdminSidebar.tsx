@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { authService } from "@/services/auth.service"
+import { authService, type AuthUser } from "@/services/auth.service"
 import {
   LogOut,
   ChevronsUpDown,
@@ -18,7 +18,7 @@ import { toast } from "sonner"
 import { ChangePasswordDialog } from "./ChangePasswordDialog"
 
 import { cn } from "@/lib/utils"
-import { ADMIN_BRANDING, NAV_GROUPS, MOCK_USER, type NavItem } from "@/lib/admin/config"
+import { ADMIN_BRANDING, NAV_GROUPS, type NavItem } from "@/lib/admin/config"
 import {
   Sidebar,
   SidebarContent,
@@ -182,13 +182,13 @@ export function AdminSidebar() {
   const router = useRouter()
   const { state } = useSidebar()
   const isCollapsed = state === "collapsed"
-  const [currentUser, setCurrentUser] = useState(MOCK_USER)
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null)
   const [showPasswordDialog, setShowPasswordDialog] = useState(false)
 
   useEffect(() => {
     authService.me().then((u) => {
       if (u) {
-        setCurrentUser({ name: u.name || "Admin", email: u.email })
+        setCurrentUser(u)
       }
     })
   }, [])
@@ -209,12 +209,8 @@ export function AdminSidebar() {
     }
   }
 
-  const initials = currentUser.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2)
+  const userEmail = currentUser?.email || ""
+  const initials = userEmail ? userEmail.slice(0, 2).toUpperCase() : "AD"
 
   return (
     <Sidebar collapsible="icon">
@@ -305,10 +301,7 @@ export function AdminSidebar() {
                 {!isCollapsed && (
                   <>
                     <div className="flex flex-col leading-tight min-w-0 flex-1 overflow-hidden text-left">
-                      <span className="text-sm font-medium truncate">{currentUser.name}</span>
-                      <span className="text-xs text-muted-foreground truncate">
-                        {currentUser.email}
-                      </span>
+                      <span className="text-xs font-medium truncate">{userEmail || "Admin"}</span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4 shrink-0 text-muted-foreground" />
                   </>
@@ -329,10 +322,8 @@ export function AdminSidebar() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col leading-tight overflow-hidden min-w-0">
-                      <span className="font-semibold text-sm truncate">{currentUser.name}</span>
-                      <span className="text-xs text-muted-foreground truncate">
-                        {currentUser.email}
-                      </span>
+                      <span className="font-semibold text-xs truncate">{userEmail || "Admin"}</span>
+                      <span className="text-[11px] text-muted-foreground">Admin Account</span>
                     </div>
                   </div>
                 </DropdownMenuLabel>

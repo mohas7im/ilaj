@@ -149,18 +149,10 @@ export const NAV_GROUPS: NavGroup[] = [
   },
 ]
 
-// ─── Mock User ────────────────────────────────────────────────────────────────
-// Replace with real auth session data when authentication is implemented.
-
 export type AdminUser = {
-  name: string
+  name?: string | null
   email: string
   avatar?: string
-}
-
-export const MOCK_USER: AdminUser = {
-  name: "Admin",
-  email: "admin@ilaj.com",
 }
 
 // ─── Legacy alias (kept for backward compat with existing imports) ─────────────
