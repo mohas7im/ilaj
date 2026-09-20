@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation"
 import "@/styles/admin/theme.css"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/admin/ui/sidebar"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
-import { Toaster } from "@/components/admin/ui/sonner"
+import { Toaster } from "@/components/admin/ui/toast"
 
 export default function AdminLayout({
   children,
@@ -17,7 +17,7 @@ export default function AdminLayout({
   if (isLoginPage) {
     return (
       <div data-admin-theme className="contents">
-        <Toaster position="top-right" />
+        <Toaster />
         {children}
       </div>
     )
@@ -25,7 +25,7 @@ export default function AdminLayout({
 
   return (
     <div data-admin-theme className="contents">
-      <Toaster position="top-right" />
+      <Toaster />
       <SidebarProvider>
         <AdminSidebar />
         <SidebarInset>

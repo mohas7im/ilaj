@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { format } from "date-fns"
-import { toast } from "sonner"
+import { toast } from "@/components/admin/ui/toast"
 import { InquiryFilters, type InquiryFilterState } from "./InquiryFilters"
 import { InquiryTable } from "./InquiryTable"
 import { fetchInquiries, deleteInquiry } from "../_services/inquiry.service"
