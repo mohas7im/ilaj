@@ -11,7 +11,6 @@ import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
 import { Switch } from "@/components/admin/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar"
-import { uploadImage } from "@/lib/upload"
 import type { Doctor } from "../_types/doctor.types"
 
 export type DoctorFormProps = {
@@ -34,7 +33,8 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
   const isEdit = mode === "edit"
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [uploadingImage, setUploadingImage] = useState(false)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string>(initialData?.image ?? "")
 
   const [form, setForm] = useState({
     name:           initialData?.name           ?? "",
@@ -50,24 +50,22 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
   const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
-  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    setUploadingImage(true)
-    try {
-      const url = await uploadImage(file, "doctors")
-      set("image", url)
-      toast.success("Doctor photo uploaded successfully")
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to upload photo"
-      toast.error(msg)
-    } finally {
-      setUploadingImage(false)
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file")
+      return
     }
+
+    setImageFile(file)
+    setPreviewUrl(URL.createObjectURL(file))
   }
 
   const handleRemoveImage = () => {
+    setImageFile(null)
+    setPreviewUrl("")
     set("image", "")
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
@@ -82,10 +80,24 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
       const url = isEdit && initialData?.id ? `/api/doctors/${initialData.id}` : "/api/doctors"
       const method = isEdit ? "PUT" : "POST"
 
+      const formData = new FormData()
+      formData.append("name", form.name)
+      formData.append("designation", form.designation)
+      formData.append("specialization", form.specialization)
+      formData.append("bio", form.bio)
+      formData.append("imageAlt", form.imageAlt)
+      formData.append("displayOrder", String(form.displayOrder))
+      formData.append("isActive", String(form.isActive))
+
+      if (imageFile) {
+        formData.append("image", imageFile)
+      } else if (form.image) {
+        formData.append("existingImage", form.image)
+      }
+
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: formData,
       })
 
       const data = await res.json()
@@ -109,6 +121,8 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
       setIsSubmitting(false)
     }
   }
+
+  const currentDisplayImage = previewUrl || form.image
 
   return (
     <Card>
@@ -187,12 +201,8 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
             </Label>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <Avatar className="h-16 w-16 shrink-0 border border-border/60 shadow-xs">
-                {uploadingImage ? (
-                  <AvatarFallback className="text-muted-foreground bg-muted">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  </AvatarFallback>
-                ) : form.image ? (
-                  <AvatarImage src={form.image} alt={form.imageAlt || form.name || "Doctor photo"} />
+                {currentDisplayImage ? (
+                  <AvatarImage src={currentDisplayImage} alt={form.imageAlt || form.name || "Doctor photo"} />
                 ) : (
                   <AvatarFallback className="text-muted-foreground bg-muted">
                     {form.name ? (
@@ -211,7 +221,7 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    disabled={uploadingImage}
+                    disabled={isSubmitting}
                     onChange={handleImageFileChange}
                     aria-label="Upload profile photo"
                   />
@@ -219,27 +229,19 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                     type="button"
                     variant="outline"
                     size="sm"
-                    disabled={uploadingImage}
+                    disabled={isSubmitting}
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    {uploadingImage ? (
-                      <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-                    ) : (
-                      <Upload className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                    )}
-                    {uploadingImage
-                      ? "Uploading..."
-                      : form.image
-                      ? "Change Photo"
-                      : "Upload Photo"}
+                    <Upload className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                    {currentDisplayImage ? "Change Photo" : "Upload Photo"}
                   </Button>
 
-                  {form.image && (
+                  {currentDisplayImage && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      disabled={uploadingImage}
+                      disabled={isSubmitting}
                       className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       onClick={handleRemoveImage}
                     >
@@ -255,11 +257,8 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
               </div>
             </div>
 
-            {/* Profile Photo Alt Text */}
-            <div className="space-y-1.5 pt-2 border-t border-border/60">
-              <Label htmlFor="imageAlt" className="text-xs">
-                Photo Alt Text
-              </Label>
+            <div className="space-y-1.5 pt-1">
+              <Label htmlFor="imageAlt">Photo Description (Alt text)</Label>
               <Input
                 id="imageAlt"
                 value={form.imageAlt}
@@ -273,11 +272,11 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/doctors")}
-              disabled={isSubmitting || uploadingImage}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting || uploadingImage}>
+            <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEdit ? "Save Changes" : "Add Doctor"}
             </Button>

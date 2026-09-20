@@ -14,7 +14,6 @@ import {
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
 import { Switch } from "@/components/admin/ui/switch"
-import { uploadImage } from "@/lib/upload"
 import { SERVICE_STATUS_CONFIG, type Service, type ServiceStatus } from "../_types/service.types"
 
 export type ServiceFormProps = {
@@ -28,8 +27,10 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
   const primaryFileInputRef = useRef<HTMLInputElement>(null)
   const secondaryFileInputRef = useRef<HTMLInputElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [uploadingPrimary, setUploadingPrimary] = useState(false)
-  const [uploadingSecondary, setUploadingSecondary] = useState(false)
+  const [primaryFile, setPrimaryFile] = useState<File | null>(null)
+  const [secondaryFile, setSecondaryFile] = useState<File | null>(null)
+  const [primaryPreviewUrl, setPrimaryPreviewUrl] = useState<string>(initialData?.image ?? "")
+  const [secondaryPreviewUrl, setSecondaryPreviewUrl] = useState<string>(initialData?.secondaryImage ?? "")
 
   const [form, setForm] = useState({
     name:              initialData?.name              ?? "",
@@ -47,39 +48,44 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
   const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
-  const handleImageChange = async (
+  const handleImageChange = (
     key: "image" | "secondaryImage",
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    const isPrimary = key === "image"
-    if (isPrimary) setUploadingPrimary(true)
-    else setUploadingSecondary(true)
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file")
+      return
+    }
 
-    try {
-      const url = await uploadImage(file, "services")
-      set(key, url)
-      toast.success(`${isPrimary ? "Primary" : "Secondary"} image uploaded successfully`)
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to upload image"
-      toast.error(msg)
-    } finally {
-      if (isPrimary) setUploadingPrimary(false)
-      else setUploadingSecondary(false)
+    const preview = URL.createObjectURL(file)
+    if (key === "image") {
+      setPrimaryFile(file)
+      setPrimaryPreviewUrl(preview)
+    } else {
+      setSecondaryFile(file)
+      setSecondaryPreviewUrl(preview)
     }
   }
 
   const handleRemoveImage = (key: "image" | "secondaryImage") => {
-    set(key, "")
-    if (key === "image" && primaryFileInputRef.current) {
-      primaryFileInputRef.current.value = ""
-    }
-    if (key === "secondaryImage" && secondaryFileInputRef.current) {
-      secondaryFileInputRef.current.value = ""
+    if (key === "image") {
+      setPrimaryFile(null)
+      setPrimaryPreviewUrl("")
+      set("image", "")
+      if (primaryFileInputRef.current) primaryFileInputRef.current.value = ""
+    } else {
+      setSecondaryFile(null)
+      setSecondaryPreviewUrl("")
+      set("secondaryImage", "")
+      if (secondaryFileInputRef.current) secondaryFileInputRef.current.value = ""
     }
   }
+
+  const currentPrimaryDisplay = primaryPreviewUrl || form.image
+  const currentSecondaryDisplay = secondaryPreviewUrl || form.secondaryImage
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,10 +95,31 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
       const url = isEdit && initialData?.id ? `/api/services/${initialData.id}` : "/api/services"
       const method = isEdit ? "PUT" : "POST"
 
+      const formData = new FormData()
+      formData.append("name", form.name)
+      if (form.slug) formData.append("slug", form.slug)
+      if (form.description) formData.append("description", form.description)
+      formData.append("status", form.status)
+      formData.append("displayOrder", String(form.displayOrder))
+      formData.append("showInHomePage", String(form.showInHomePage))
+      if (form.imageAlt) formData.append("imageAlt", form.imageAlt)
+      if (form.secondaryImageAlt) formData.append("secondaryImageAlt", form.secondaryImageAlt)
+
+      if (primaryFile) {
+        formData.append("image", primaryFile)
+      } else if (form.image) {
+        formData.append("existingImage", form.image)
+      }
+
+      if (secondaryFile) {
+        formData.append("secondaryImage", secondaryFile)
+      } else if (form.secondaryImage) {
+        formData.append("existingSecondaryImage", form.secondaryImage)
+      }
+
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: formData,
       })
 
       const data = await res.json()
@@ -116,7 +143,6 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
       setIsSubmitting(false)
     }
   }
-
 
   return (
     <Card>
@@ -214,14 +240,9 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                 </div>
 
                 <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-md border bg-muted/40">
-                  {uploadingPrimary ? (
-                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                      <Loader2 className="h-7 w-7 animate-spin text-primary" />
-                      <span className="text-xs font-medium">Uploading primary image...</span>
-                    </div>
-                  ) : form.image ? (
+                  {currentPrimaryDisplay ? (
                     <img
-                      src={form.image}
+                      src={currentPrimaryDisplay}
                       alt={form.imageAlt || "Primary service preview"}
                       className="h-full w-full object-cover"
                     />
@@ -236,29 +257,25 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    disabled={uploadingPrimary}
+                    disabled={isSubmitting}
                     onChange={(e) => handleImageChange("image", e)}
                   />
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    disabled={uploadingPrimary}
+                    disabled={isSubmitting}
                     onClick={() => primaryFileInputRef.current?.click()}
                   >
-                    {uploadingPrimary ? (
-                      <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Upload className="mr-1.5 h-3.5 w-3.5" />
-                    )}
-                    {uploadingPrimary ? "Uploading..." : form.image ? "Change" : "Upload Image"}
+                    <Upload className="mr-1.5 h-3.5 w-3.5" />
+                    {currentPrimaryDisplay ? "Change" : "Upload Image"}
                   </Button>
-                  {form.image && (
+                  {currentPrimaryDisplay && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      disabled={uploadingPrimary}
+                      disabled={isSubmitting}
                       className="text-destructive hover:text-destructive"
                       onClick={() => handleRemoveImage("image")}
                     >
@@ -288,14 +305,9 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                 </div>
 
                 <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-md border bg-muted/40">
-                  {uploadingSecondary ? (
-                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                      <Loader2 className="h-7 w-7 animate-spin text-primary" />
-                      <span className="text-xs font-medium">Uploading secondary image...</span>
-                    </div>
-                  ) : form.secondaryImage ? (
+                  {currentSecondaryDisplay ? (
                     <img
-                      src={form.secondaryImage}
+                      src={currentSecondaryDisplay}
                       alt={form.secondaryImageAlt || "Secondary service preview"}
                       className="h-full w-full object-cover"
                     />
@@ -310,29 +322,25 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    disabled={uploadingSecondary}
+                    disabled={isSubmitting}
                     onChange={(e) => handleImageChange("secondaryImage", e)}
                   />
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    disabled={uploadingSecondary}
+                    disabled={isSubmitting}
                     onClick={() => secondaryFileInputRef.current?.click()}
                   >
-                    {uploadingSecondary ? (
-                      <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Upload className="mr-1.5 h-3.5 w-3.5" />
-                    )}
-                    {uploadingSecondary ? "Uploading..." : form.secondaryImage ? "Change" : "Upload Image"}
+                    <Upload className="mr-1.5 h-3.5 w-3.5" />
+                    {currentSecondaryDisplay ? "Change" : "Upload Image"}
                   </Button>
-                  {form.secondaryImage && (
+                  {currentSecondaryDisplay && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      disabled={uploadingSecondary}
+                      disabled={isSubmitting}
                       className="text-destructive hover:text-destructive"
                       onClick={() => handleRemoveImage("secondaryImage")}
                     >
@@ -362,11 +370,11 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/services")}
-              disabled={isSubmitting || uploadingPrimary || uploadingSecondary}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting || uploadingPrimary || uploadingSecondary}>
+            <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

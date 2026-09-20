@@ -5,6 +5,7 @@ import {
   deleteClinicPhoto,
 } from "@/server/services/clinic-photo.service"
 import { clinicPhotoSchema } from "@/app/admin/gallery/clinic/_schemas/clinic-photo.schema"
+import { saveUploadedFile } from "@/server/lib/storage"
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -25,8 +26,34 @@ export async function GET(_req: Request, { params }: Props) {
 export async function PUT(req: Request, { params }: Props) {
   try {
     const { id } = await params
-    const body = await req.json()
-    const parsed = clinicPhotoSchema.partial().safeParse(body)
+    let data: Record<string, any> = {}
+    const contentType = req.headers.get("content-type") || ""
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await req.formData()
+      const imageFile = formData.get("image")
+
+      let imageUrl: string | null | undefined = undefined
+      if (imageFile && typeof imageFile === "object" && "arrayBuffer" in imageFile && (imageFile as File).size > 0) {
+        imageUrl = await saveUploadedFile(imageFile as File, "clinic-photos")
+      } else if (typeof imageFile === "string" && imageFile.trim()) {
+        imageUrl = imageFile
+      } else if (formData.has("existingImage")) {
+        imageUrl = (formData.get("existingImage") as string) || null
+      }
+
+      data = {
+        ...(formData.has("heading") && { heading: formData.get("heading") }),
+        ...(formData.has("description") && { description: formData.get("description") || null }),
+        ...(imageUrl !== undefined && { image: imageUrl }),
+        ...(formData.has("alt") && { alt: formData.get("alt") }),
+        ...(formData.has("displayOrder") && { displayOrder: Number(formData.get("displayOrder")) || 1 }),
+      }
+    } else {
+      data = await req.json()
+    }
+
+    const parsed = clinicPhotoSchema.partial().safeParse(data)
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 })
     }
@@ -37,7 +64,8 @@ export async function PUT(req: Request, { params }: Props) {
     return NextResponse.json(updated)
   } catch (error) {
     console.error("PUT /api/gallery/clinic/[id] error:", error)
-    return NextResponse.json({ error: "Failed to update clinic photo" }, { status: 500 })
+    const message = error instanceof Error ? error.message : "Failed to update clinic photo"
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 

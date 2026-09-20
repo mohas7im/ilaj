@@ -18,7 +18,6 @@ import {
   Loader2,
 } from "lucide-react"
 import { toast } from "sonner"
-import { uploadImage } from "@/lib/upload"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
 import { Input } from "@/components/admin/ui/input"
 import { Textarea } from "@/components/admin/ui/textarea"
@@ -72,39 +71,32 @@ function CharCounter({
   )
 }
 
-// ─── Image Uploader (reused pattern from DoctorForm / ServiceForm) ────────────
+// ─── Image Uploader ──────────────────────────────────────────────────────────
 
 function OgImageUploader({
   value,
   onChange,
+  onFileSelect,
 }: {
   value: string
   onChange: (url: string) => void
+  onFileSelect?: (file: File | null) => void
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState(false)
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     if (!file.type.startsWith("image/")) {
       toast.error("Please select a valid image file")
       return
     }
-    setUploading(true)
-    try {
-      const url = await uploadImage(file, "seo")
-      onChange(url)
-      toast.success("Image uploaded successfully")
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to upload image"
-      toast.error(msg)
-    } finally {
-      setUploading(false)
-    }
+    onFileSelect?.(file)
+    onChange(URL.createObjectURL(file))
   }
 
   const handleRemove = () => {
+    onFileSelect?.(null)
     onChange("")
     if (fileInputRef.current) fileInputRef.current.value = ""
   }
@@ -112,12 +104,7 @@ function OgImageUploader({
   return (
     <div className="space-y-3 p-4 rounded-lg border border-dashed border-border bg-muted/20">
       <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-md border bg-muted/40 max-w-xs">
-        {uploading ? (
-          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-            <Loader2 className="h-7 w-7 animate-spin text-primary" />
-            <span className="text-xs font-medium">Uploading image...</span>
-          </div>
-        ) : value ? (
+        {value ? (
           <img src={value} alt="OG image preview" className="h-full w-full object-cover" />
         ) : (
           <div className="flex flex-col items-center gap-2 text-muted-foreground/60">
@@ -132,7 +119,6 @@ function OgImageUploader({
           type="file"
           accept="image/*"
           className="hidden"
-          disabled={uploading}
           onChange={handleFileChange}
           aria-label="Upload OG image"
         />
@@ -140,22 +126,16 @@ function OgImageUploader({
           type="button"
           variant="outline"
           size="sm"
-          disabled={uploading}
           onClick={() => fileInputRef.current?.click()}
         >
-          {uploading ? (
-            <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-          ) : (
-            <Upload className="mr-1.5 h-3.5 w-3.5" />
-          )}
-          {uploading ? "Uploading..." : value ? "Change Image" : "Upload Image"}
+          <Upload className="mr-1.5 h-3.5 w-3.5" />
+          {value ? "Change Image" : "Upload Image"}
         </Button>
         {value && (
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            disabled={uploading}
             className="text-destructive hover:text-destructive hover:bg-destructive/10"
             onClick={handleRemove}
           >
@@ -312,6 +292,8 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
   }
 
   // ── Save state
+  const [commonOgFile, setCommonOgFile] = useState<File | null>(null)
+  const [pageOgFiles, setPageOgFiles] = useState<Record<string, File | null>>({})
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError]     = useState<string | null>(null)
@@ -460,17 +442,44 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
     try {
       let res: Response
       if (selectedPage === "common") {
-        res = await fetch("/api/seo", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(common),
-        })
+        if (commonOgFile) {
+          const formData = new FormData()
+          formData.append("siteName", common.siteName)
+          formData.append("siteUrl", common.siteUrl)
+          formData.append("defaultTitle", common.defaultTitle)
+          formData.append("defaultDescription", common.defaultDescription)
+          formData.append("googleVerification", common.googleVerification || "")
+          formData.append("bingVerification", common.bingVerification || "")
+          formData.append("defaultOgImage", commonOgFile)
+          res = await fetch("/api/seo", {
+            method: "PUT",
+            body: formData,
+          })
+        } else {
+          res = await fetch("/api/seo", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(common),
+          })
+        }
       } else {
-        res = await fetch(`/api/seo/${selectedPage}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(currentPage ?? { page: selectedPage, title: "", description: "", ogImage: "" }),
-        })
+        const pageFile = pageOgFiles[selectedPage]
+        if (pageFile) {
+          const formData = new FormData()
+          formData.append("title", currentPage?.title ?? "")
+          formData.append("description", currentPage?.description ?? "")
+          formData.append("ogImage", pageFile)
+          res = await fetch(`/api/seo/${selectedPage}`, {
+            method: "PUT",
+            body: formData,
+          })
+        } else {
+          res = await fetch(`/api/seo/${selectedPage}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(currentPage ?? { page: selectedPage, title: "", description: "", ogImage: "" }),
+          })
+        }
       }
 
       if (!res.ok) {
@@ -649,6 +658,7 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 <OgImageUploader
                   value={common.defaultOgImage}
                   onChange={(url) => setCommonField("defaultOgImage", url)}
+                  onFileSelect={(file) => setCommonOgFile(file)}
                 />
               </div>
             </CardContent>
@@ -786,6 +796,7 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 <OgImageUploader
                   value={currentPage?.ogImage ?? ""}
                   onChange={(url) => setPageField("ogImage", url)}
+                  onFileSelect={(file) => setPageOgFiles((prev) => ({ ...prev, [selectedPage]: file }))}
                 />
               </div>
             </CardContent>

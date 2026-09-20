@@ -9,7 +9,6 @@ import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
-import { uploadImage } from "@/lib/upload"
 import type { ClinicPhoto } from "../_types/clinic-photo.types"
 
 export type ClinicPhotoFormProps = {
@@ -22,7 +21,8 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
   const isEdit = mode === "edit"
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [submitting, setSubmitting] = useState(false)
-  const [uploadingImage, setUploadingImage] = useState(false)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string>(initialData?.image ?? "")
   const [error, setError] = useState<string | null>(null)
 
   const [form, setForm] = useState({
@@ -38,35 +38,35 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
     if (error) setError(null)
   }
 
-  const handleImageFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    setUploadingImage(true)
-    setError(null)
-    try {
-      const url = await uploadImage(file, "clinic-photos")
-      set("image", url)
-      toast.success("Photo uploaded successfully")
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to upload photo"
-      setError(msg)
-      toast.error(msg)
-    } finally {
-      setUploadingImage(false)
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file")
+      return
     }
+
+    setError(null)
+    setImageFile(file)
+    setPreviewUrl(URL.createObjectURL(file))
   }
 
   const handleRemoveImage = () => {
+    setImageFile(null)
+    setPreviewUrl("")
     set("image", "")
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
   }
 
+  const currentDisplayImage = previewUrl || form.image
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.image) {
-      setError("Please select or upload a photo.")
+    if (!imageFile && !form.image) {
+      setError("Please select a photo.")
       return
     }
     if (!form.alt.trim()) {
@@ -81,10 +81,21 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
       const url = isEdit && initialData?.id ? `/api/gallery/clinic/${initialData.id}` : "/api/gallery/clinic"
       const method = isEdit ? "PUT" : "POST"
 
+      const formData = new FormData()
+      formData.append("heading", form.heading)
+      formData.append("description", form.description)
+      formData.append("alt", form.alt)
+      formData.append("displayOrder", String(form.displayOrder))
+
+      if (imageFile) {
+        formData.append("image", imageFile)
+      } else if (form.image) {
+        formData.append("existingImage", form.image)
+      }
+
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: formData,
       })
 
       const data = await res.json()
@@ -175,14 +186,9 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
             </div>
 
             <div className="relative aspect-video w-full rounded-md border overflow-hidden bg-muted/40 flex items-center justify-center">
-              {uploadingImage ? (
-                <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <span className="text-xs font-medium">Uploading photo...</span>
-                </div>
-              ) : form.image ? (
+              {currentDisplayImage ? (
                 <img
-                  src={form.image}
+                  src={currentDisplayImage}
                   alt={form.alt || "Clinic photo preview"}
                   className="h-full w-full object-cover"
                 />
@@ -197,33 +203,25 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
                 type="file"
                 accept="image/*"
                 className="hidden"
-                disabled={uploadingImage}
+                disabled={submitting}
                 onChange={handleImageFile}
               />
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                disabled={uploadingImage}
+                disabled={submitting}
                 onClick={() => fileInputRef.current?.click()}
               >
-                {uploadingImage ? (
-                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Upload className="mr-1.5 h-3.5 w-3.5" />
-                )}
-                {uploadingImage
-                  ? "Uploading..."
-                  : form.image
-                  ? "Change Photo"
-                  : "Upload Photo"}
+                <Upload className="mr-1.5 h-3.5 w-3.5" />
+                {currentDisplayImage ? "Change Photo" : "Upload Photo"}
               </Button>
-              {form.image && (
+              {currentDisplayImage && (
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  disabled={uploadingImage}
+                  disabled={submitting}
                   className="text-destructive hover:text-destructive hover:bg-destructive/10"
                   onClick={handleRemoveImage}
                 >
@@ -251,11 +249,11 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/gallery/clinic")}
-              disabled={submitting || uploadingImage}
+              disabled={submitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting || uploadingImage}>
+            <Button type="submit" disabled={submitting}>
               {submitting && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
               {isEdit ? "Save Changes" : "Add Photo"}
             </Button>
