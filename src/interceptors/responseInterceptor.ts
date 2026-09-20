@@ -10,9 +10,12 @@ export const responseInterceptorError = (
   error: AxiosError
 ) => {
   if (error.response?.status === 401) {
-    console.log("Unauthorized request");
-
-    // Refresh-token logic can be added later.
+    if (typeof window !== "undefined") {
+      const pathname = window.location.pathname;
+      if (pathname.startsWith("/admin") && !pathname.includes("/admin/login")) {
+        window.location.href = "/admin/login?expired=1";
+      }
+    }
   }
 
   return Promise.reject(error);

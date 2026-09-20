@@ -1,7 +1,5 @@
 import axios from "axios";
 
-import { API_BASE_URL } from "@/config/apiConfig";
-
 import {
   requestInterceptor,
   requestInterceptorError,
@@ -12,18 +10,19 @@ import {
   responseInterceptorError,
 } from "@/interceptors/responseInterceptor";
 
-
 export const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ?? "",
   withCredentials: true,
+  timeout: 15000,
+  headers: {
+    Accept: "application/json",
+  },
 });
-
 
 apiClient.interceptors.request.use(
   requestInterceptor,
   requestInterceptorError
 );
-
 
 apiClient.interceptors.response.use(
   responseInterceptor,
