@@ -9,6 +9,7 @@ import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
+import { uploadImage } from "@/lib/upload"
 import type { PatientCase } from "../_types/patient-case.types"
 
 export type PatientCaseFormProps = {
@@ -19,11 +20,11 @@ export type PatientCaseFormProps = {
 export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
   const router = useRouter()
   const isEdit = mode === "edit"
-
   const beforeFileRef = useRef<HTMLInputElement>(null)
   const afterFileRef = useRef<HTMLInputElement>(null)
-
   const [submitting, setSubmitting] = useState(false)
+  const [uploadingBefore, setUploadingBefore] = useState(false)
+  const [uploadingAfter, setUploadingAfter] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [form, setForm] = useState({
@@ -41,18 +42,28 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
     if (error) setError(null)
   }
 
-  const handleImageFile = (
+  const handleImageFile = async (
     key: "beforeImage" | "afterImage",
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      const result = reader.result as string
-      set(key, result)
+    const isBefore = key === "beforeImage"
+    if (isBefore) setUploadingBefore(true)
+    else setUploadingAfter(true)
+    setError(null)
+    try {
+      const url = await uploadImage(file, "patient-cases")
+      set(key, url)
+      toast.success(`${isBefore ? "Before" : "After"} photo uploaded`)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to upload photo"
+      setError(msg)
+      toast.error(msg)
+    } finally {
+      if (isBefore) setUploadingBefore(false)
+      else setUploadingAfter(false)
     }
-    reader.readAsDataURL(file)
   }
 
   const handleRemoveImage = (key: "beforeImage" | "afterImage") => {
@@ -175,7 +186,12 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
               </div>
 
               <div className="relative aspect-video w-full rounded-md border overflow-hidden bg-muted/40 flex items-center justify-center">
-                {form.beforeImage ? (
+                {uploadingBefore ? (
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-7 w-7 animate-spin text-primary" />
+                    <span className="text-xs font-medium">Uploading Before photo...</span>
+                  </div>
+                ) : form.beforeImage ? (
                   <img
                     src={form.beforeImage}
                     alt={form.beforeAlt || "Before image preview"}
@@ -192,22 +208,33 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
                   type="file"
                   accept="image/*"
                   className="hidden"
+                  disabled={uploadingBefore}
                   onChange={(e) => handleImageFile("beforeImage", e)}
                 />
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
+                  disabled={uploadingBefore}
                   onClick={() => beforeFileRef.current?.click()}
                 >
-                  <Upload className="mr-1.5 h-3.5 w-3.5" />
-                  {form.beforeImage ? "Change Before" : "Upload Before"}
+                  {uploadingBefore ? (
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Upload className="mr-1.5 h-3.5 w-3.5" />
+                  )}
+                  {uploadingBefore
+                    ? "Uploading..."
+                    : form.beforeImage
+                    ? "Change Before"
+                    : "Upload Before"}
                 </Button>
                 {form.beforeImage && (
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
+                    disabled={uploadingBefore}
                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={() => handleRemoveImage("beforeImage")}
                   >
@@ -244,7 +271,12 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
               </div>
 
               <div className="relative aspect-video w-full rounded-md border overflow-hidden bg-muted/40 flex items-center justify-center">
-                {form.afterImage ? (
+                {uploadingAfter ? (
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-7 w-7 animate-spin text-primary" />
+                    <span className="text-xs font-medium">Uploading After photo...</span>
+                  </div>
+                ) : form.afterImage ? (
                   <img
                     src={form.afterImage}
                     alt={form.afterAlt || "After image preview"}
@@ -261,22 +293,33 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
                   type="file"
                   accept="image/*"
                   className="hidden"
+                  disabled={uploadingAfter}
                   onChange={(e) => handleImageFile("afterImage", e)}
                 />
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
+                  disabled={uploadingAfter}
                   onClick={() => afterFileRef.current?.click()}
                 >
-                  <Upload className="mr-1.5 h-3.5 w-3.5" />
-                  {form.afterImage ? "Change After" : "Upload After"}
+                  {uploadingAfter ? (
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Upload className="mr-1.5 h-3.5 w-3.5" />
+                  )}
+                  {uploadingAfter
+                    ? "Uploading..."
+                    : form.afterImage
+                    ? "Change After"
+                    : "Upload After"}
                 </Button>
                 {form.afterImage && (
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
+                    disabled={uploadingAfter}
                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={() => handleRemoveImage("afterImage")}
                   >
@@ -320,11 +363,11 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/gallery/patient")}
-              disabled={submitting}
+              disabled={submitting || uploadingBefore || uploadingAfter}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting}>
+            <Button type="submit" disabled={submitting || uploadingBefore || uploadingAfter}>
               {submitting && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
               {isEdit ? "Save Changes" : "Add Case"}
             </Button>

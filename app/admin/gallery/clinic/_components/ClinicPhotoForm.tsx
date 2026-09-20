@@ -9,6 +9,7 @@ import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
+import { uploadImage } from "@/lib/upload"
 import type { ClinicPhoto } from "../_types/clinic-photo.types"
 
 export type ClinicPhotoFormProps = {
@@ -21,6 +22,7 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
   const isEdit = mode === "edit"
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [form, setForm] = useState({
@@ -36,15 +38,22 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
     if (error) setError(null)
   }
 
-  const handleImageFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      const result = reader.result as string
-      set("image", result)
+    setUploadingImage(true)
+    setError(null)
+    try {
+      const url = await uploadImage(file, "clinic-photos")
+      set("image", url)
+      toast.success("Photo uploaded successfully")
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to upload photo"
+      setError(msg)
+      toast.error(msg)
+    } finally {
+      setUploadingImage(false)
     }
-    reader.readAsDataURL(file)
   }
 
   const handleRemoveImage = () => {
@@ -168,7 +177,12 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
             </div>
 
             <div className="relative aspect-video w-full rounded-md border overflow-hidden bg-muted/40 flex items-center justify-center">
-              {form.image ? (
+              {uploadingImage ? (
+                <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <span className="text-xs font-medium">Uploading photo...</span>
+                </div>
+              ) : form.image ? (
                 <img
                   src={form.image}
                   alt={form.alt || "Clinic photo preview"}
@@ -185,22 +199,33 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
                 type="file"
                 accept="image/*"
                 className="hidden"
+                disabled={uploadingImage}
                 onChange={handleImageFile}
               />
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
+                disabled={uploadingImage}
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="mr-1.5 h-3.5 w-3.5" />
-                {form.image ? "Change Photo" : "Upload Photo"}
+                {uploadingImage ? (
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Upload className="mr-1.5 h-3.5 w-3.5" />
+                )}
+                {uploadingImage
+                  ? "Uploading..."
+                  : form.image
+                  ? "Change Photo"
+                  : "Upload Photo"}
               </Button>
               {form.image && (
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
+                  disabled={uploadingImage}
                   className="text-destructive hover:text-destructive hover:bg-destructive/10"
                   onClick={handleRemoveImage}
                 >
@@ -229,11 +254,11 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/gallery/clinic")}
-              disabled={submitting}
+              disabled={submitting || uploadingImage}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting}>
+            <Button type="submit" disabled={submitting || uploadingImage}>
               {submitting && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
               {isEdit ? "Save Changes" : "Add Photo"}
             </Button>

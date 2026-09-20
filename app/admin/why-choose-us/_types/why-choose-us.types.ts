@@ -1,7 +1,10 @@
 export type WhyChooseUsItem = {
   id: string
   title: string
+  description?: string | null
   displayOrder: number
+  createdAt?: string
+  updatedAt?: string
 }
 
 export type WhyChooseUsSection = {
@@ -9,6 +12,6 @@ export type WhyChooseUsSection = {
   title: string
   highlightText: string
   description: string
-  image: string
+  image?: string | null
   items: WhyChooseUsItem[]
 }

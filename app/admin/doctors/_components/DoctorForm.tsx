@@ -11,6 +11,7 @@ import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
 import { Switch } from "@/components/admin/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar"
+import { uploadImage } from "@/lib/upload"
 import type { Doctor } from "../_types/doctor.types"
 
 export type DoctorFormProps = {
@@ -18,8 +19,14 @@ export type DoctorFormProps = {
   initialData?: Doctor
 }
 
-function initials(name: string) {
-  return name ? name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) : ""
+function initials(name: string): string {
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase()
 }
 
 export function DoctorForm({ mode, initialData }: DoctorFormProps) {
@@ -27,6 +34,7 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
   const isEdit = mode === "edit"
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
 
   const [form, setForm] = useState({
     name:           initialData?.name           ?? "",
@@ -42,16 +50,21 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
   const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
-  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      const result = reader.result as string
-      set("image", result)
+    setUploadingImage(true)
+    try {
+      const url = await uploadImage(file, "doctors")
+      set("image", url)
+      toast.success("Doctor photo uploaded successfully")
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to upload photo"
+      toast.error(msg)
+    } finally {
+      setUploadingImage(false)
     }
-    reader.readAsDataURL(file)
   }
 
   const handleRemoveImage = () => {
@@ -177,16 +190,21 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
             </Label>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <Avatar className="h-16 w-16 shrink-0 border border-border/60 shadow-xs">
-                {form.image ? (
+                {uploadingImage ? (
+                  <AvatarFallback className="text-muted-foreground bg-muted">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  </AvatarFallback>
+                ) : form.image ? (
                   <AvatarImage src={form.image} alt={form.imageAlt || form.name || "Doctor photo"} />
-                ) : null}
-                <AvatarFallback className="text-muted-foreground bg-muted">
-                  {form.name ? (
-                    <span className="font-medium text-base">{initials(form.name)}</span>
-                  ) : (
-                    <ImageIcon className="h-7 w-7 text-muted-foreground/60" aria-hidden="true" />
-                  )}
-                </AvatarFallback>
+                ) : (
+                  <AvatarFallback className="text-muted-foreground bg-muted">
+                    {form.name ? (
+                      <span className="font-medium text-base">{initials(form.name)}</span>
+                    ) : (
+                      <ImageIcon className="h-7 w-7 text-muted-foreground/60" aria-hidden="true" />
+                    )}
+                  </AvatarFallback>
+                )}
               </Avatar>
 
               <div className="flex-1 space-y-2">
@@ -196,6 +214,7 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                     type="file"
                     accept="image/*"
                     className="hidden"
+                    disabled={uploadingImage}
                     onChange={handleImageFileChange}
                     aria-label="Upload profile photo"
                   />
@@ -203,10 +222,19 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                     type="button"
                     variant="outline"
                     size="sm"
+                    disabled={uploadingImage}
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <Upload className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                    {form.image ? "Change Photo" : "Upload Photo"}
+                    {uploadingImage ? (
+                      <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Upload className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                    )}
+                    {uploadingImage
+                      ? "Uploading..."
+                      : form.image
+                      ? "Change Photo"
+                      : "Upload Photo"}
                   </Button>
 
                   {form.image && (
@@ -214,6 +242,7 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                       type="button"
                       variant="ghost"
                       size="sm"
+                      disabled={uploadingImage}
                       className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       onClick={handleRemoveImage}
                     >
@@ -224,7 +253,7 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
                 </div>
 
                 <p className="text-xs text-muted-foreground">
-                  JPG, PNG, WebP or GIF. Max 5MB recommended.
+                  JPG, PNG, WebP or GIF. Max 10MB recommended.
                 </p>
               </div>
             </div>
@@ -248,11 +277,11 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/doctors")}
-              disabled={isSubmitting}
+              disabled={isSubmitting || uploadingImage}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting || uploadingImage}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEdit ? "Save Changes" : "Add Doctor"}
             </Button>

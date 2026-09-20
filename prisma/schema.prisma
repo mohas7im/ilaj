@@ -101,3 +101,16 @@ model Testimonial {
   @@map("testimonials")
 }
 
+model WhyChooseUsItem {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?  @db.Text
+  displayOrder Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayOrder])
+  @@map("why_choose_us_items")
+}
+
+

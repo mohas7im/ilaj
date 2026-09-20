@@ -42,3 +42,8 @@ next-env.d.ts
 node_modules/
 dist/
 .env
+
+# uploaded user media
+/public/uploads/*
+!/public/uploads/.gitkeep
+

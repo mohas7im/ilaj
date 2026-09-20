@@ -15,7 +15,10 @@ import {
   X,
   Save,
   RotateCcw,
+  Loader2,
 } from "lucide-react"
+import { toast } from "sonner"
+import { uploadImage } from "@/lib/upload"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
 import { Input } from "@/components/admin/ui/input"
 import { Textarea } from "@/components/admin/ui/textarea"
@@ -79,17 +82,26 @@ function OgImageUploader({
   onChange: (url: string) => void
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = useState(false)
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    // Validate type
-    if (!file.type.startsWith("image/")) return
-    // Validate size (5 MB max)
-    if (file.size > 5 * 1024 * 1024) return
-    const reader = new FileReader()
-    reader.onloadend = () => onChange(reader.result as string)
-    reader.readAsDataURL(file)
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file")
+      return
+    }
+    setUploading(true)
+    try {
+      const url = await uploadImage(file, "seo")
+      onChange(url)
+      toast.success("Image uploaded successfully")
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to upload image"
+      toast.error(msg)
+    } finally {
+      setUploading(false)
+    }
   }
 
   const handleRemove = () => {
@@ -100,7 +112,12 @@ function OgImageUploader({
   return (
     <div className="space-y-3 p-4 rounded-lg border border-dashed border-border bg-muted/20">
       <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-md border bg-muted/40 max-w-xs">
-        {value ? (
+        {uploading ? (
+          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <Loader2 className="h-7 w-7 animate-spin text-primary" />
+            <span className="text-xs font-medium">Uploading image...</span>
+          </div>
+        ) : value ? (
           <img src={value} alt="OG image preview" className="h-full w-full object-cover" />
         ) : (
           <div className="flex flex-col items-center gap-2 text-muted-foreground/60">
@@ -115,6 +132,7 @@ function OgImageUploader({
           type="file"
           accept="image/*"
           className="hidden"
+          disabled={uploading}
           onChange={handleFileChange}
           aria-label="Upload OG image"
         />
@@ -122,16 +140,22 @@ function OgImageUploader({
           type="button"
           variant="outline"
           size="sm"
+          disabled={uploading}
           onClick={() => fileInputRef.current?.click()}
         >
-          <Upload className="mr-1.5 h-3.5 w-3.5" />
-          {value ? "Change Image" : "Upload Image"}
+          {uploading ? (
+            <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Upload className="mr-1.5 h-3.5 w-3.5" />
+          )}
+          {uploading ? "Uploading..." : value ? "Change Image" : "Upload Image"}
         </Button>
         {value && (
           <Button
             type="button"
             variant="ghost"
             size="sm"
+            disabled={uploading}
             className="text-destructive hover:text-destructive hover:bg-destructive/10"
             onClick={handleRemove}
           >
@@ -141,7 +165,7 @@ function OgImageUploader({
         )}
       </div>
       <p className="text-xs text-muted-foreground">
-        JPG, PNG or WebP · Max 5 MB · Recommended: 1200 × 630 px
+        JPG, PNG or WebP · Max 10 MB · Recommended: 1200 × 630 px
       </p>
     </div>
   )

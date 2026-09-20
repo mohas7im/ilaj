@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Pencil, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Plus, Pencil, Trash2, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import {
   Table,
   TableBody,
@@ -21,9 +23,11 @@ import {
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
+import { Textarea } from "@/components/admin/ui/textarea"
 import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
 import { PageHeader } from "@/components/admin/ui/page-header"
+import { whyChooseUsApiService } from "../_services/why-choose-us.api"
 import type { WhyChooseUsItem } from "../_types/why-choose-us.types"
 
 type WhyChooseUsTableProps = {
@@ -31,15 +35,19 @@ type WhyChooseUsTableProps = {
 }
 
 export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
+  const router = useRouter()
   const [items, setItems] = useState<WhyChooseUsItem[]>(() =>
     [...initialItems].sort((a, b) => a.displayOrder - b.displayOrder)
   )
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<WhyChooseUsItem | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const [form, setForm] = useState({
     title: "",
+    description: "",
     displayOrder: 1,
   })
 
@@ -47,7 +55,7 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
     const nextOrder =
       items.length > 0 ? Math.max(...items.map((i) => i.displayOrder)) + 1 : 1
     setEditingItem(null)
-    setForm({ title: "", displayOrder: nextOrder })
+    setForm({ title: "", description: "", displayOrder: nextOrder })
     setDialogOpen(true)
   }
 
@@ -55,54 +63,80 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
     setEditingItem(item)
     setForm({
       title: item.title,
+      description: item.description ?? "",
       displayOrder: item.displayOrder,
     })
     setDialogOpen(true)
   }
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     const trimmedTitle = form.title.trim()
-    if (!trimmedTitle) return
+    if (!trimmedTitle) {
+      toast.error("Please enter a title")
+      return
+    }
 
     const orderNum = Number(form.displayOrder) || 1
+    const trimmedDesc = form.description.trim() || undefined
 
-    if (editingItem) {
-      setItems((prev) =>
-        prev
-          .map((it) =>
-            it.id === editingItem.id
-              ? { ...it, title: trimmedTitle, displayOrder: orderNum }
-              : it
-          )
-          .sort((a, b) => a.displayOrder - b.displayOrder)
-      )
-    } else {
-      const newItem: WhyChooseUsItem = {
-        id: Date.now().toString(),
-        title: trimmedTitle,
-        displayOrder: orderNum,
+    setIsSaving(true)
+    try {
+      if (editingItem) {
+        const updated = await whyChooseUsApiService.update(editingItem.id, {
+          title: trimmedTitle,
+          description: trimmedDesc,
+          displayOrder: orderNum,
+        })
+        setItems((prev) =>
+          prev
+            .map((it) => (it.id === editingItem.id ? updated : it))
+            .sort((a, b) => a.displayOrder - b.displayOrder)
+        )
+        toast.success("Highlight point updated successfully")
+      } else {
+        const created = await whyChooseUsApiService.create({
+          title: trimmedTitle,
+          description: trimmedDesc,
+          displayOrder: orderNum,
+        })
+        setItems((prev) =>
+          [...prev, created].sort((a, b) => a.displayOrder - b.displayOrder)
+        )
+        toast.success("Highlight point added successfully")
       }
-      setItems((prev) =>
-        [...prev, newItem].sort((a, b) => a.displayOrder - b.displayOrder)
-      )
+      setDialogOpen(false)
+      router.refresh()
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Failed to save point"
+      toast.error(msg)
+    } finally {
+      setIsSaving(false)
     }
-    setDialogOpen(false)
   }
 
-  const handleDelete = () => {
-    if (deleteId) {
+  const handleDelete = async () => {
+    if (!deleteId) return
+    setIsDeleting(true)
+    try {
+      await whyChooseUsApiService.delete(deleteId)
       setItems((prev) => prev.filter((it) => it.id !== deleteId))
+      toast.success("Highlight point deleted successfully")
       setDeleteId(null)
+      router.refresh()
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Failed to delete point"
+      toast.error(msg)
+    } finally {
+      setIsDeleting(false)
     }
   }
-
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Why Choose Us"
-        description="Manage the 5 core highlight points displayed on the website."
+        description="Manage the core highlight points displayed on the website."
       >
         <Button onClick={handleOpenAdd}>
           <Plus className="mr-1.5 h-4 w-4" /> Add Point
@@ -122,17 +156,21 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
               <TableRow>
                 <TableHead className="w-32 text-center">Display Order</TableHead>
                 <TableHead>Highlight Point</TableHead>
+                <TableHead>Description</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {items.map((item, index) => (
+              {items.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="text-sm font-medium text-foreground text-center select-none">
                     {item.displayOrder}
                   </TableCell>
                   <TableCell className="font-medium text-sm">
                     {item.title}
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground line-clamp-1 max-w-xs">
+                    {item.description || "—"}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
@@ -173,7 +211,7 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
             </DialogTitle>
             <DialogDescription>
               {editingItem
-                ? "Update the title and display order of this highlight point."
+                ? "Update the title, description, and display order of this highlight point."
                 : "Add a new highlight point to display in the Why Choose Us section."}
             </DialogDescription>
           </DialogHeader>
@@ -190,6 +228,21 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
                 placeholder="e.g. Experienced & Qualified Doctors"
                 required
                 autoFocus
+                disabled={isSaving}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="point-description">Description (optional)</Label>
+              <Textarea
+                id="point-description"
+                value={form.description}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, description: e.target.value }))
+                }
+                placeholder="Optional details or description for this highlight point..."
+                rows={3}
+                disabled={isSaving}
               />
             </div>
 
@@ -210,6 +263,7 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
                 }
                 placeholder="e.g. 1"
                 required
+                disabled={isSaving}
               />
             </div>
 
@@ -218,10 +272,12 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
                 type="button"
                 variant="outline"
                 onClick={() => setDialogOpen(false)}
+                disabled={isSaving}
               >
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button type="submit" disabled={isSaving}>
+                {isSaving && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
                 {editingItem ? "Save Changes" : "Add Point"}
               </Button>
             </DialogFooter>
@@ -235,7 +291,7 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
         onOpenChange={(open) => !open && setDeleteId(null)}
         title="Delete point?"
         description="Are you sure you want to remove this highlight point? This action cannot be undone."
-        confirmLabel="Delete"
+        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
         variant="destructive"
         onConfirm={handleDelete}
       />
