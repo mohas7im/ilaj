@@ -2,10 +2,8 @@ import { prisma } from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
 
 export interface InquiryFilters {
-  page?: number
   pageNumber?: number
   pageSize?: number
-  limit?: number
   search?: string
   treatment?: string
   from?: string
@@ -13,8 +11,8 @@ export interface InquiryFilters {
 }
 
 export async function getInquiries(params?: InquiryFilters) {
-  const page = Math.max(1, params?.pageNumber || params?.page || 1)
-  const limit = Math.max(1, Math.min(100, params?.pageSize || params?.limit || 10))
+  const pageNumber = Math.max(1, params?.pageNumber || 1)
+  const pageSize = Math.max(1, Math.min(100, params?.pageSize || 10))
   const search = params?.search?.trim() || ""
   const treatment = params?.treatment?.trim() || ""
   const from = params?.from?.trim() || ""
@@ -57,13 +55,13 @@ export async function getInquiries(params?: InquiryFilters) {
   }
 
   const total = await prisma.inquiry.count({ where })
-  const totalPages = Math.max(1, Math.ceil(total / limit))
-  const skip = (page - 1) * limit
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const skip = (pageNumber - 1) * pageSize
 
   const rawInquiries = await prisma.inquiry.findMany({
     where,
     skip,
-    take: limit,
+    take: pageSize,
     orderBy: { createdAt: "desc" },
   })
 
@@ -84,10 +82,8 @@ export async function getInquiries(params?: InquiryFilters) {
   return {
     inquiries,
     pagination: {
-      page,
-      pageNumber: page,
-      pageSize: limit,
-      limit,
+      pageNumber,
+      pageSize,
       total,
       totalPages,
     },

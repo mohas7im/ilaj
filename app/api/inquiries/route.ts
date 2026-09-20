@@ -7,24 +7,16 @@ export async function GET(req: NextRequest) {
       req.nextUrl?.searchParams ||
       new URL(req.url, "http://localhost").searchParams;
 
-    const page = parseInt(
-      searchParams.get("pageNumber") || searchParams.get("page") || "1",
-      10
-    );
-    const pageSize = parseInt(
-      searchParams.get("pageSize") || searchParams.get("limit") || "10",
-      10
-    );
+    const pageNumber = parseInt(searchParams.get("pageNumber") || "1", 10);
+    const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
     const search = searchParams.get("search") || "";
     const treatment = searchParams.get("treatment") || "";
     const from = searchParams.get("from") || "";
     const to = searchParams.get("to") || "";
 
     const result = await getInquiries({
-      page,
-      pageNumber: page,
+      pageNumber,
       pageSize,
-      limit: pageSize,
       search,
       treatment,
       from,

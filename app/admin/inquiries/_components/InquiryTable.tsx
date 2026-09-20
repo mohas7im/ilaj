@@ -29,11 +29,11 @@ const PAGE_SIZE_OPTIONS = [10, 20, 50]
 type InquiryTableProps = {
   inquiries: Inquiry[]
   isLoading?: boolean
-  page: number
+  pageNumber: number
   pageSize: number
   total: number
   totalPages: number
-  onPageChange: (page: number) => void
+  onPageChange: (pageNumber: number) => void
   onPageSizeChange: (pageSize: number) => void
   onDelete: (id: string) => Promise<void>
 }
@@ -53,7 +53,7 @@ function initials(name: string) {
 export function InquiryTable({
   inquiries,
   isLoading = false,
-  page,
+  pageNumber,
   pageSize,
   total,
   totalPages,
@@ -90,8 +90,8 @@ export function InquiryTable({
     )
   }
 
-  const startRecord = total === 0 ? 0 : (page - 1) * pageSize + 1
-  const endRecord = Math.min(page * pageSize, total)
+  const startRecord = total === 0 ? 0 : (pageNumber - 1) * pageSize + 1
+  const endRecord = Math.min(pageNumber * pageSize, total)
 
   return (
     <div className="space-y-3">
@@ -206,15 +206,15 @@ export function InquiryTable({
           <Button
             variant="outline"
             size="icon-sm"
-            onClick={() => onPageChange(Math.max(1, page - 1))}
-            disabled={page <= 1}
+            onClick={() => onPageChange(Math.max(1, pageNumber - 1))}
+            disabled={pageNumber <= 1}
             aria-label="Previous page"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
 
           {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+            .filter((p) => p === 1 || p === totalPages || Math.abs(p - pageNumber) <= 1)
             .reduce<(number | "…")[]>((acc, p, idx, arr) => {
               if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) acc.push("…")
               acc.push(p)
@@ -230,12 +230,12 @@ export function InquiryTable({
                   key={item}
                   onClick={() => onPageChange(item as number)}
                   className={`min-w-[28px] h-7 px-2 rounded text-xs transition-colors ${
-                    page === item
+                    pageNumber === item
                       ? "bg-primary text-primary-foreground font-medium"
                       : "hover:bg-muted"
                   }`}
                   aria-label={`Go to page ${item}`}
-                  aria-current={page === item ? "page" : undefined}
+                  aria-current={pageNumber === item ? "page" : undefined}
                 >
                   {item}
                 </button>
@@ -245,8 +245,8 @@ export function InquiryTable({
           <Button
             variant="outline"
             size="icon-sm"
-            onClick={() => onPageChange(Math.min(totalPages, page + 1))}
-            disabled={page >= totalPages}
+            onClick={() => onPageChange(Math.min(totalPages, pageNumber + 1))}
+            disabled={pageNumber >= totalPages}
             aria-label="Next page"
           >
             <ChevronRight className="h-4 w-4" />

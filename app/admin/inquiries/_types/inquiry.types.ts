@@ -13,10 +13,8 @@ export interface Inquiry {
 }
 
 export interface InquiryPagination {
-  page: number;
-  pageNumber?: number;
+  pageNumber: number;
   pageSize: number;
-  limit: number;
   total: number;
   totalPages: number;
 }
@@ -27,10 +25,8 @@ export interface InquiryPaginatedResponse {
 }
 
 export interface InquiryQueryParams {
-  page?: number;
   pageNumber?: number;
   pageSize?: number;
-  limit?: number;
   search?: string;
   treatment?: string;
   from?: string;

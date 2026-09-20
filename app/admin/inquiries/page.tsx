@@ -11,11 +11,11 @@ export const metadata = {
 export default async function InquiriesPage() {
   let initialData: InquiryPaginatedResponse = {
     inquiries: [],
-    pagination: { page: 1, pageNumber: 1, pageSize: 10, limit: 10, total: 0, totalPages: 1 },
+    pagination: { pageNumber: 1, pageSize: 10, total: 0, totalPages: 1 },
   }
 
   try {
-    initialData = await getInquiries({ page: 1, limit: 10 })
+    initialData = await getInquiries({ pageNumber: 1, pageSize: 10 })
   } catch (error) {
     console.error("Failed to load initial inquiries:", error)
   }

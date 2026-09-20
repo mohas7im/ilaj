@@ -20,8 +20,8 @@ export function InquiriesClientView({ initialData }: InquiriesClientViewProps) {
     dateTo: undefined,
   })
 
-  const [page, setPage] = useState(initialData.pagination.page)
-  const [pageSize, setPageSize] = useState(initialData.pagination.limit)
+  const [pageNumber, setPageNumber] = useState(initialData.pagination.pageNumber)
+  const [pageSize, setPageSize] = useState(initialData.pagination.pageSize)
   const [inquiries, setInquiries] = useState<Inquiry[]>(initialData.inquiries)
   const [total, setTotal] = useState(initialData.pagination.total)
   const [totalPages, setTotalPages] = useState(initialData.pagination.totalPages)
@@ -51,10 +51,8 @@ export function InquiriesClientView({ initialData }: InquiriesClientViewProps) {
         : undefined
 
       const response = await fetchInquiries({
-        page,
-        pageNumber: page,
+        pageNumber,
         pageSize,
-        limit: pageSize,
         search: debouncedSearch,
         treatment: filters.treatment,
         from: fromStr,
@@ -72,7 +70,7 @@ export function InquiriesClientView({ initialData }: InquiriesClientViewProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [page, pageSize, debouncedSearch, filters.treatment, filters.dateFrom, filters.dateTo])
+  }, [pageNumber, pageSize, debouncedSearch, filters.treatment, filters.dateFrom, filters.dateTo])
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -84,24 +82,24 @@ export function InquiriesClientView({ initialData }: InquiriesClientViewProps) {
 
   const handleFiltersChange = (newFilters: InquiryFilterState) => {
     setFilters(newFilters)
-    setPage(1)
+    setPageNumber(1)
   }
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage)
+  const handlePageChange = (newPageNumber: number) => {
+    setPageNumber(newPageNumber)
   }
 
   const handlePageSizeChange = (newSize: number) => {
     setPageSize(newSize)
-    setPage(1)
+    setPageNumber(1)
   }
 
   const handleDelete = async (id: string) => {
     try {
       await deleteInquiry(id)
       toast.success("Inquiry deleted successfully")
-      if (inquiries.length === 1 && page > 1) {
-        setPage((p) => p - 1)
+      if (inquiries.length === 1 && pageNumber > 1) {
+        setPageNumber((p) => p - 1)
       } else {
         loadData()
       }
@@ -118,7 +116,7 @@ export function InquiriesClientView({ initialData }: InquiriesClientViewProps) {
       <InquiryTable
         inquiries={inquiries}
         isLoading={isLoading}
-        page={page}
+        pageNumber={pageNumber}
         pageSize={pageSize}
         total={total}
         totalPages={totalPages}

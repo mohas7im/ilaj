@@ -13,13 +13,11 @@ export async function fetchInquiries(
 ): Promise<InquiryPaginatedResponse> {
   const query = new URLSearchParams();
 
-  const page = params?.pageNumber || params?.page || 1;
-  const pageSize = params?.pageSize || params?.limit || 10;
+  const pageNumber = params?.pageNumber || 1;
+  const pageSize = params?.pageSize || 10;
 
-  query.set("page", String(page));
-  query.set("pageNumber", String(page));
+  query.set("pageNumber", String(pageNumber));
   query.set("pageSize", String(pageSize));
-  query.set("limit", String(pageSize));
 
   if (params?.search) query.set("search", params.search.trim());
   if (params?.treatment && params.treatment !== "all") {
