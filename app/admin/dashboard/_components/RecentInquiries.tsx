@@ -12,7 +12,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/admin/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
-import type { Inquiry } from "@/app/admin/inquiries/_types/inquiry.types"
+import type { DashboardInquiry } from "../_types/dashboard.types"
 
 function initials(name: string) {
   return name
@@ -24,7 +24,7 @@ function initials(name: string) {
 }
 
 type RecentInquiriesProps = {
-  inquiries: Inquiry[]
+  inquiries: DashboardInquiry[]
 }
 
 export function RecentInquiries({ inquiries }: RecentInquiriesProps) {
@@ -61,9 +61,14 @@ export function RecentInquiries({ inquiries }: RecentInquiriesProps) {
               <TableBody>
                 {inquiries.map((inquiry) => {
                   const displayName = inquiry.fullName || "Anonymous"
-                  const receivedDate = inquiry.createdAt
-                    ? format(new Date(inquiry.createdAt), "MMM d, yyyy")
-                    : "—"
+                  let receivedDate = "—"
+                  if (inquiry.createdAt) {
+                    try {
+                      receivedDate = format(new Date(inquiry.createdAt), "MMM d, yyyy")
+                    } catch {
+                      receivedDate = String(inquiry.createdAt)
+                    }
+                  }
 
                   return (
                     <TableRow key={inquiry.id}>

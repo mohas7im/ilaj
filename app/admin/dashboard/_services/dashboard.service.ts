@@ -1,12 +1,17 @@
 import { apiClient } from "@/lib/apiClient"
 import type { LucideIcon } from "lucide-react"
+import type {
+  DashboardStats,
+  DashboardInquiriesResponse,
+} from "../_types/dashboard.types"
 
-export interface DashboardStats {
-  totalInquiries: number
-  totalDoctors: number
-  totalServices: number
-  totalTestimonials: number
-}
+export type {
+  DashboardStats,
+  DashboardInquiry,
+  DashboardInquiriesResponse,
+  ActivityItem,
+  ActivityType,
+} from "../_types/dashboard.types"
 
 export type StatItem = {
   title: string
@@ -17,5 +22,19 @@ export type StatItem = {
 
 export async function fetchDashboardStats(): Promise<DashboardStats> {
   const { data } = await apiClient.get<DashboardStats>("/api/dashboard/stats")
+  return data
+}
+
+export async function fetchDashboardInquiries(params?: {
+  pageNumber?: number
+  pageSize?: number
+}): Promise<DashboardInquiriesResponse> {
+  const query = new URLSearchParams()
+  query.set("pageNumber", String(params?.pageNumber || 1))
+  query.set("pageSize", String(params?.pageSize || 5))
+
+  const { data } = await apiClient.get<DashboardInquiriesResponse>(
+    `/api/inquiries?${query.toString()}`
+  )
   return data
 }

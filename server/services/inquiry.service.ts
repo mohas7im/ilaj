@@ -75,8 +75,8 @@ export async function getInquiries(params?: InquiryFilters) {
     preferredTime: inq.preferredTime,
     message: inq.message,
     status: inq.status,
-    createdAt: inq.createdAt.toISOString(),
-    updatedAt: inq.updatedAt.toISOString(),
+    createdAt: inq.createdAt instanceof Date ? inq.createdAt.toISOString() : String(inq.createdAt || ""),
+    updatedAt: inq.updatedAt instanceof Date ? inq.updatedAt.toISOString() : String(inq.updatedAt || ""),
   }))
 
   return {
@@ -95,8 +95,8 @@ export async function getInquiryById(id: string) {
   if (!inq) return null
   return {
     ...inq,
-    createdAt: inq.createdAt.toISOString(),
-    updatedAt: inq.updatedAt.toISOString(),
+    createdAt: inq.createdAt instanceof Date ? inq.createdAt.toISOString() : String(inq.createdAt || ""),
+    updatedAt: inq.updatedAt instanceof Date ? inq.updatedAt.toISOString() : String(inq.updatedAt || ""),
   }
 }
 

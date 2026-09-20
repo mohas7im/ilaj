@@ -6,15 +6,20 @@ import { toast } from "sonner"
 import { DashboardSection } from "./DashboardSection"
 import { StatsCard } from "./StatsCard"
 import { RecentInquiries } from "./RecentInquiries"
-import { fetchDashboardStats, type DashboardStats } from "../_services/dashboard.service"
-import { fetchInquiries } from "@/app/admin/inquiries/_services/inquiry.service"
-import type { Inquiry } from "@/app/admin/inquiries/_types/inquiry.types"
+import {
+  fetchDashboardStats,
+  fetchDashboardInquiries,
+} from "../_services/dashboard.service"
+import type {
+  DashboardStats,
+  DashboardInquiry,
+} from "../_types/dashboard.types"
 import { Skeleton } from "@/components/admin/ui/skeleton"
 import { Card, CardContent, CardHeader } from "@/components/admin/ui/card"
 
 type DashboardClientViewProps = {
   initialStats?: DashboardStats | null
-  initialInquiries?: Inquiry[]
+  initialInquiries?: DashboardInquiry[]
 }
 
 export function DashboardClientView({
@@ -22,7 +27,7 @@ export function DashboardClientView({
   initialInquiries,
 }: DashboardClientViewProps) {
   const [stats, setStats] = useState<DashboardStats | null>(initialStats ?? null)
-  const [inquiries, setInquiries] = useState<Inquiry[]>(initialInquiries ?? [])
+  const [inquiries, setInquiries] = useState<DashboardInquiry[]>(initialInquiries ?? [])
   const [loadingStats, setLoadingStats] = useState(!initialStats)
   const [loadingInquiries, setLoadingInquiries] = useState(!initialInquiries)
 
@@ -47,7 +52,7 @@ export function DashboardClientView({
     async function loadInquiries() {
       try {
         setLoadingInquiries(true)
-        const data = await fetchInquiries({ pageNumber: 1, pageSize: 5 })
+        const data = await fetchDashboardInquiries({ pageNumber: 1, pageSize: 5 })
         if (isMounted) {
           setInquiries(data.inquiries || [])
         }
