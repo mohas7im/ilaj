@@ -2,8 +2,9 @@
 
 import { usePathname } from "next/navigation"
 import "@/styles/admin/theme.css"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/admin/ui/sidebar"
+import { SidebarProvider, SidebarInset } from "@/components/admin/ui/sidebar"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
+import { AdminHeader } from "@/components/admin/layout/AdminHeader"
 import { Toaster } from "@/components/admin/ui/sonner"
 
 export default function AdminLayout({
@@ -29,10 +30,7 @@ export default function AdminLayout({
       <SidebarProvider>
         <AdminSidebar />
         <SidebarInset>
-          {/* Mobile-only menu toggle */}
-          <div className="flex items-center px-4 pt-3 md:hidden">
-            <SidebarTrigger />
-          </div>
+          <AdminHeader />
           <main className="flex flex-1 flex-col gap-6 p-4 md:p-6">
             {children}
           </main>
