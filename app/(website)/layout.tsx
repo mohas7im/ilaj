@@ -3,5 +3,9 @@ export default function WebsiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <div data-website-theme className="min-h-screen flex flex-col">
+      {children}
+    </div>
+  );
 }
