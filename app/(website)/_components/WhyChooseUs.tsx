@@ -1,3 +1,1 @@
-export default function WhyChooseUs() {
-  return null;
-}
+export { default } from "./WhyChooseUsSection";

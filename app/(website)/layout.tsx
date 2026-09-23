@@ -1,4 +1,5 @@
 import Navbar from "@/components/website/layout/Navbar";
+import Footer from "@/components/website/layout/Footer";
 
 export default function WebsiteLayout({
   children,
@@ -8,7 +9,8 @@ export default function WebsiteLayout({
   return (
     <div data-website-theme className="min-h-screen flex flex-col relative">
       <Navbar />
-      {children}
+      <div className="flex-1">{children}</div>
+      <Footer />
     </div>
   );
 }

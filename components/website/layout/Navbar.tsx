@@ -29,10 +29,10 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 inset-x-0 z-50 transition-all duration-300 border-b border-[#D1D5DB]",
+        "fixed top-0 inset-x-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-black/85 backdrop-blur-md shadow-md"
-          : "bg-transparent"
+          ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-zinc-200"
+          : "bg-transparent border-b border-[#D1D5DB]"
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -46,7 +46,12 @@ export default function Navbar() {
             <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-brand text-white font-bold text-lg leading-none shadow-sm">
               C
             </span>
-            <span className="font-bold text-white text-2xl tracking-tight">
+            <span
+              className={cn(
+                "font-bold text-2xl tracking-tight transition-colors duration-200",
+                scrolled ? "text-zinc-950" : "text-white"
+              )}
+            >
               Ilaj
             </span>
           </Link>
@@ -68,9 +73,13 @@ export default function Navbar() {
                   href={link.href}
                   className={cn(
                     "text-[16px] font-medium transition-colors duration-150",
-                    active
-                      ? "text-white font-semibold"
-                      : "text-white/80 hover:text-white"
+                    scrolled
+                      ? active
+                        ? "text-zinc-950 font-semibold"
+                        : "text-zinc-600 hover:text-zinc-950"
+                      : active
+                        ? "text-white font-semibold"
+                        : "text-white/80 hover:text-white"
                   )}
                 >
                   {link.name}
@@ -91,7 +100,12 @@ export default function Navbar() {
           {/* Mobile Hamburger */}
           <button
             type="button"
-            className="md:hidden flex items-center justify-center w-11 h-11 rounded-full text-white hover:bg-white/10 transition-colors"
+            className={cn(
+              "md:hidden flex items-center justify-center w-11 h-11 rounded-full transition-colors",
+              scrolled
+                ? "text-zinc-900 hover:bg-zinc-100"
+                : "text-white hover:bg-white/10"
+            )}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
@@ -103,14 +117,26 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="md:hidden bg-neutral-950/95 backdrop-blur-md border-b border-white/10 px-6 pt-3 pb-8 space-y-5">
+        <div
+          className={cn(
+            "md:hidden border-b px-6 pt-3 pb-8 space-y-5 backdrop-blur-md",
+            scrolled
+              ? "bg-white/95 border-zinc-200"
+              : "bg-neutral-950/95 border-white/10"
+          )}
+        >
           <div className="flex flex-col space-y-3.5">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="text-lg font-medium text-white/85 hover:text-white py-1"
+                className={cn(
+                  "text-lg font-medium py-1 transition-colors",
+                  scrolled
+                    ? "text-zinc-800 hover:text-zinc-950"
+                    : "text-white/85 hover:text-white"
+                )}
               >
                 {link.name}
               </Link>
