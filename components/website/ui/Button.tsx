@@ -39,8 +39,8 @@ export function Button({
           className={cn(
             "flex items-center justify-center w-8 h-8 rounded-full shrink-0 transition-transform duration-200 group-hover:translate-x-0.5",
             isPrimary
-              ? "bg-white text-zinc-900"
-              : "bg-zinc-900 text-white"
+              ? "bg-white text-brand"
+              : "bg-brand text-white"
           )}
         >
           {icon ?? <ArrowRight className="w-4 h-4 stroke-[2.5]" />}
