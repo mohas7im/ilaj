@@ -86,7 +86,7 @@ export default function Hero() {
           </div>
 
           {/* Right: Description & Action Buttons */}
-          <div className="flex flex-col items-start gap-4 lg:mr-8 xl:mr-16">
+          <div className="flex flex-col items-start gap-4">
             <p className="text-base sm:text-[17px] text-white leading-relaxed max-w-[460px] font-normal">
               Ilaj Dental Care offers advanced, painless, affordable treatments with modern technology and expert care for a confident smile.
             </p>
