@@ -36,7 +36,7 @@ export default function Navbar() {
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 md:h-20">
+        <div className="relative flex items-center justify-between h-20 md:h-20">
           {/* Logo */}
           <Link
             href="/"
@@ -51,8 +51,11 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-10" aria-label="Main navigation">
+          {/* Desktop Nav Links - Truly Centered */}
+          <nav
+            className="hidden md:flex items-center gap-7 absolute left-1/2 -translate-x-1/2"
+            aria-label="Main navigation"
+          >
             {NAV_LINKS.map((link) => {
               const active =
                 link.href === "/"
