@@ -155,9 +155,13 @@
   --ring: var(--brand);
 }
 
-/* Heading Typography for Website: Geist */
-[data-website-theme] :is(h1, h2, h3, h4, h5, h6, .font-heading) {
-  font-family: var(--font-geist);
+/* Heading & Geist Typography for Website */
+[data-website-theme] :is(h1, h2, h3, h4, h5, h6, .font-heading, .font-heading *, .font-geist, .font-geist *) {
+  font-family: var(--font-geist), sans-serif;
+}
+
+.font-geist {
+  font-family: var(--font-geist), sans-serif !important;
 }
 
 @layer base {
