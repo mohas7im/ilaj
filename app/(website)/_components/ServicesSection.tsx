@@ -66,8 +66,8 @@ export default function ServicesSection() {
               uppercase
               tracking-wider
               text-zinc-800
+              font-heading
             "
-            style={{ fontFamily: "var(--font-geist), sans-serif" }}
           >
             OUR DENTAL SERVICES
           </span>

@@ -4,15 +4,24 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Fonts. next/font exposes --font-admin (Poppins), --font-geist and
+ * --font-manrope on <html>; don't redeclare those names here, or Tailwind
+ * emits self-referencing variables on :root.
+ *
+ * --font-sans is NOT inline so `font-sans` compiles to var(--font-sans) and
+ * can be re-pointed per scope (see [data-website-theme]).
+ */
+@theme {
+  --font-sans: var(--font-admin), ui-sans-serif, system-ui, sans-serif;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-admin, system-ui, sans-serif);
   --font-mono: ui-monospace, monospace;
-  --font-heading: var(--font-geist);
-  --font-manrope: var(--font-manrope);
-  --font-geist: var(--font-geist);
-  --font-admin: var(--font-admin, system-ui, sans-serif);
+  --font-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --color-brand: var(--brand);
   --color-brand-hover: var(--brand-hover);
   --color-brand-subtle: var(--brand-subtle);
@@ -137,11 +146,6 @@
   --primary: var(--brand);
   --primary-foreground: var(--brand-foreground);
   --ring: var(--brand);
-
-  /* Typography: Manrope for body / paragraphs */
-  font-family: var(--font-manrope);
-  --font-sans: var(--font-manrope);
-  --font-heading: var(--font-geist);
 }
 
 .dark [data-website-theme] {
@@ -155,15 +159,6 @@
   --ring: var(--brand);
 }
 
-/* Heading & Geist Typography for Website */
-[data-website-theme] :is(h1, h2, h3, h4, h5, h6, .font-heading, .font-heading *, .font-geist, .font-geist *) {
-  font-family: var(--font-geist), sans-serif;
-}
-
-.font-geist {
-  font-family: var(--font-geist), sans-serif !important;
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -175,5 +170,17 @@
 
   html {
     @apply font-sans;
+  }
+
+  /* Website typography: Manrope for body text, Geist for headings.
+     Kept in the base layer so utilities (font-heading, font-body, font-sans)
+     can still override per element. */
+  [data-website-theme] {
+    --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+    @apply font-sans;
+  }
+
+  [data-website-theme] :is(h1, h2, h3, h4, h5, h6) {
+    @apply font-heading;
   }
 }

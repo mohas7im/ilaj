@@ -55,10 +55,8 @@ export default function DoctorsSection() {
                 uppercase
                 tracking-wider
                 text-zinc-800
+                font-heading
               "
-              style={{
-                fontFamily: "var(--font-geist), sans-serif",
-              }}
             >
               MEET OUR DOCTORS
             </span>
@@ -193,10 +191,8 @@ export default function DoctorsSection() {
                     uppercase
                     tracking-wider
                     text-zinc-800
+                    font-heading
                   "
-                  style={{
-                    fontFamily: "var(--font-geist), sans-serif",
-                  }}
                 >
                   {doctor.qualification}
                 </p>

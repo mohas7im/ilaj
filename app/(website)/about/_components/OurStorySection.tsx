@@ -43,10 +43,8 @@ export default function OurStorySection() {
                 uppercase
                 tracking-wider
                 text-zinc-800
+                font-heading
               "
-              style={{
-                fontFamily: "var(--font-geist), sans-serif",
-              }}
             >
               OUR STORY
             </span>

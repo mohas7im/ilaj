@@ -61,12 +61,12 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8 sm:pb-10 pt-8 mt-auto">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 lg:gap-12">
           {/* Left: Address & Opening Hours */}
-          <div className="flex flex-col sm:flex-row gap-10 sm:gap-16 lg:gap-20 font-geist">
+          <div className="flex flex-col sm:flex-row gap-10 sm:gap-16 lg:gap-20 font-heading">
             <div>
-              <span className="block font-geist font-semibold tracking-[0.08em] uppercase text-white text-sm sm:text-[15px] mb-2">
+              <span className="block font-heading font-semibold tracking-[0.08em] uppercase text-white text-sm sm:text-[15px] mb-2">
                 ADDRESS
               </span>
-              <p className="font-geist text-[14px] sm:text-[15px] text-white/90 leading-relaxed font-medium">
+              <p className="font-heading text-[14px] sm:text-[15px] text-white/90 leading-relaxed font-medium">
                 ScaleUnio Advisory, 27 Alderwick Street,
                 <br />
                 Level 6, Canary Wharf, LondonE14 9DX, UK
@@ -74,10 +74,10 @@ export default function Hero() {
             </div>
 
             <div>
-              <span className="block font-geist font-semibold tracking-[0.08em] uppercase text-white text-sm sm:text-[15px] mb-2">
+              <span className="block font-heading font-semibold tracking-[0.08em] uppercase text-white text-sm sm:text-[15px] mb-2">
                 OPENING HOURS
               </span>
-              <p className="font-geist text-[14px] sm:text-[15px] text-white/90 leading-relaxed font-medium">
+              <p className="font-heading text-[14px] sm:text-[15px] text-white/90 leading-relaxed font-medium">
                 Mon – Sat: 9:00 AM – 8:00 PM
                 <br />
                 Sunday: Closed
