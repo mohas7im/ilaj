@@ -9,7 +9,8 @@ import {
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
 import { Badge } from "@/components/admin/ui/badge"
-import { SERVICE_STATUS_CONFIG, type Service } from "../_types/service.types"
+import type { Service } from "@/domain/service/service.types"
+import { SERVICE_STATUS_CONFIG } from "./service-status"
 
 type ServiceDetailsProps = {
   service: Service

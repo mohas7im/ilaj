@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog"
 import { EmptyState } from "@/components/admin/EmptyState"
-import type { PatientCase } from "../_types/patient-case.types"
+import type { PatientCase } from "@/domain/patient-case/patient-case.types"
 import { patientCaseApiService } from "../_services/patient-case.api"
 
 type PatientGalleryGridProps = {

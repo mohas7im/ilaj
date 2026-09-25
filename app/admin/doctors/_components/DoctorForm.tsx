@@ -11,7 +11,7 @@ import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
 import { Switch } from "@/components/admin/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar"
-import type { Doctor } from "../_types/doctor.types"
+import type { Doctor } from "@/domain/doctor/doctor.types"
 import { doctorApiService } from "../_services/doctor.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 

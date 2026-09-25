@@ -1,6 +1,6 @@
 import { Calendar, Clock, Stethoscope, User, Phone, Mail, MessageSquare } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
-import type { Inquiry } from "../_types/inquiry.types"
+import type { Inquiry } from "@/domain/inquiry/inquiry.types"
 
 function DetailRow({
   icon: Icon,

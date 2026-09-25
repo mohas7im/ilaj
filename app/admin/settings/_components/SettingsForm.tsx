@@ -28,7 +28,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/admin/ui/input-group"
-import type { ClinicSettings } from "../_types/settings.types"
+import type { ClinicSettings } from "@/domain/settings/settings.types"
 import { settingsApiService } from "../_services/settings.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 

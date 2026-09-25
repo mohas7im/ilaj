@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
-import type { Testimonial } from "../_types/testimonial.types"
-import type { TestimonialFormData } from "../_schemas/testimonial.schema"
+import type { Testimonial } from "@/domain/testimonial/testimonial.types"
+import type { TestimonialFormData } from "@/domain/testimonial/testimonial.schema"
 
 export const testimonialApiService = {
   async getAll(): Promise<Testimonial[]> {

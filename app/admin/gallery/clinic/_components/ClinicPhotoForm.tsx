@@ -9,7 +9,7 @@ import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
-import type { ClinicPhoto } from "../_types/clinic-photo.types"
+import type { ClinicPhoto } from "@/domain/clinic-photo/clinic-photo.types"
 import { clinicPhotoApiService } from "../_services/clinic-photo.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 

@@ -14,7 +14,8 @@ import {
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
 import { Switch } from "@/components/admin/ui/switch"
-import { SERVICE_STATUS_CONFIG, type Service, type ServiceStatus } from "../_types/service.types"
+import type { Service, ServiceStatus } from "@/domain/service/service.types"
+import { SERVICE_STATUS_CONFIG } from "./service-status"
 import { serviceApiService } from "../_services/service.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 

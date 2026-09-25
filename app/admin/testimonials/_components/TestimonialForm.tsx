@@ -13,7 +13,7 @@ import {
   Select, SelectContent, SelectItem,
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
-import type { Testimonial, TestimonialStatus } from "../_types/testimonial.types"
+import type { Testimonial, TestimonialStatus } from "@/domain/testimonial/testimonial.types"
 import { testimonialApiService } from "../_services/testimonial.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 

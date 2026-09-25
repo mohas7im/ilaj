@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
-import { getCommonSeo, getPageSeo } from "@/app/admin/seo/_services/seo.service"
+import { getCommonSeo, getPageSeo } from "@/server/services/seo.service"
 import { getClinicSettings } from "@/server/services/settings.service"
-import { PAGE_OPTIONS } from "@/app/admin/seo/_types/seo.types"
+import { PAGE_OPTIONS } from "@/domain/seo/seo.types"
 
 // ─── getSeoForPage ────────────────────────────────────────────────────────────
 // Applies the fallback chain:

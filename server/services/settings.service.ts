@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import type { ClinicSettings } from "@/app/admin/settings/_types/settings.types"
+import type { ClinicSettings } from "@/domain/settings/settings.types"
 
 export const DEFAULT_SETTINGS_RECORD: Omit<ClinicSettings, "id" | "createdAt" | "updatedAt"> = {
   clinicName: "",

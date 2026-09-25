@@ -1,6 +1,6 @@
 import { WhyChooseUsTable } from "./_components/WhyChooseUsTable"
 import { getWhyChooseUsItems } from "@/server/services/why-choose-us.service"
-import type { WhyChooseUsItem } from "./_types/why-choose-us.types"
+import type { WhyChooseUsItem } from "@/domain/why-choose-us/why-choose-us.types"
 
 export const metadata = { title: "Why Choose Us" }
 export const dynamic = "force-dynamic"

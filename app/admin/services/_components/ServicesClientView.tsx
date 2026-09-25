@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { ServiceFilters, type ServiceFilterState } from "./ServiceFilters"
 import { ServiceTable } from "./ServiceTable"
-import type { Service } from "../_types/service.types"
+import type { Service } from "@/domain/service/service.types"
 
 export function ServicesClientView({ initialServices }: { initialServices: Service[] }) {
   const [filters, setFilters] = useState<ServiceFilterState>({

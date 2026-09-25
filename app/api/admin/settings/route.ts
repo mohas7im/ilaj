@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getClinicSettings, updateClinicSettings } from "@/server/services/settings.service"
-import { settingsSchema } from "@/app/admin/settings/_schemas/settings.schema"
+import { settingsSchema } from "@/domain/settings/settings.schema"
 import { requireAdmin } from "@/lib/auth/require-admin"
 
 export async function GET() {

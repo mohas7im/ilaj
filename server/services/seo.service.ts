@@ -1,7 +1,7 @@
-import type { CommonSeo, PageSeo } from "../_types/seo.types"
+import type { CommonSeo, PageSeo } from "@/domain/seo/seo.types"
 
 // ─── Common / Global SEO ─────────────────────────────────────────────────────
-// In-memory store — follows the same pattern as CLINIC_SETTINGS.
+// In-memory store (not in the database yet) — edits reset when the server restarts.
 
 export let COMMON_SEO: CommonSeo = {
   siteName: "Ilaj Dental Clinic",

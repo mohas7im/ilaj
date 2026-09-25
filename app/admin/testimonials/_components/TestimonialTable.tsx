@@ -12,7 +12,7 @@ import { Button } from "@/components/admin/ui/button"
 import { Badge } from "@/components/admin/ui/badge"
 import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
-import type { Testimonial } from "../_types/testimonial.types"
+import type { Testimonial } from "@/domain/testimonial/testimonial.types"
 import type { TestimonialFilterState } from "./TestimonialFilters"
 import { testimonialApiService } from "../_services/testimonial.api"
 

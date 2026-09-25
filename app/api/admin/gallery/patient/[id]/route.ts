@@ -4,7 +4,7 @@ import {
   updatePatientCase,
   deletePatientCase,
 } from "@/server/services/patient-case.service"
-import { patientCaseSchema } from "@/app/admin/gallery/patient/_schemas/patient-case.schema"
+import { patientCaseSchema } from "@/domain/patient-case/patient-case.schema"
 import { saveUploadedFile } from "@/server/lib/storage"
 import { requireAdmin } from "@/lib/auth/require-admin"
 

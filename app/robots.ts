@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next"
-import { getCommonSeo } from "@/app/admin/seo/_services/seo.service"
+import { getCommonSeo } from "@/server/services/seo.service"
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const { siteUrl } = await getCommonSeo()

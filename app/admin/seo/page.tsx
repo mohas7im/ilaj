@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/admin/PageHeader"
-import { getCommonSeo, getPageSeo } from "./_services/seo.service"
+import { getCommonSeo, getPageSeo } from "@/server/services/seo.service"
 import { SeoForm } from "./_components/SeoForm"
 
 export const metadata = {

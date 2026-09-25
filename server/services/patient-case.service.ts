@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
-import type { PatientCase } from "@/app/admin/gallery/patient/_types/patient-case.types"
-import type { PatientCaseInput } from "@/app/admin/gallery/patient/_schemas/patient-case.schema"
+import type { PatientCase } from "@/domain/patient-case/patient-case.types"
+import type { PatientCaseInput } from "@/domain/patient-case/patient-case.schema"
 
 export async function getPatientCases(): Promise<PatientCase[]> {
   try {

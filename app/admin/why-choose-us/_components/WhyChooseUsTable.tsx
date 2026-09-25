@@ -28,7 +28,7 @@ import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
 import { PageHeader } from "@/components/admin/ui/page-header"
 import { whyChooseUsApiService } from "../_services/why-choose-us.api"
-import type { WhyChooseUsItem } from "../_types/why-choose-us.types"
+import type { WhyChooseUsItem } from "@/domain/why-choose-us/why-choose-us.types"
 
 type WhyChooseUsTableProps = {
   initialItems: WhyChooseUsItem[]

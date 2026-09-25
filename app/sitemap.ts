@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next"
-import { getCommonSeo } from "@/app/admin/seo/_services/seo.service"
+import { getCommonSeo } from "@/server/services/seo.service"
 
 // ─── Public pages included in the sitemap ────────────────────────────────────
 // Only actual public website routes — no admin, API, or private routes.

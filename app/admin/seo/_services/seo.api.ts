@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
-import type { CommonSeo, PageSeo } from "../_types/seo.types"
+import type { CommonSeo, PageSeo } from "@/domain/seo/seo.types"
 
 // Payloads are FormData when an OG image file is attached, JSON otherwise.
 export const seoApiService = {

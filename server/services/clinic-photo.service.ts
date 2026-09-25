@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
-import type { ClinicPhoto } from "@/app/admin/gallery/clinic/_types/clinic-photo.types"
-import type { ClinicPhotoInput } from "@/app/admin/gallery/clinic/_schemas/clinic-photo.schema"
+import type { ClinicPhoto } from "@/domain/clinic-photo/clinic-photo.types"
+import type { ClinicPhotoInput } from "@/domain/clinic-photo/clinic-photo.schema"
 
 export async function getClinicPhotos(): Promise<ClinicPhoto[]> {
   try {

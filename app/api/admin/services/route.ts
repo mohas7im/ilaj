@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServices, createService } from "@/server/services/service.service"
-import { serviceSchema } from "@/app/admin/services/_schemas/service.schema"
+import { serviceSchema } from "@/domain/service/service.schema"
 import { saveUploadedFile } from "@/server/lib/storage"
 import { requireAdmin } from "@/lib/auth/require-admin"
 

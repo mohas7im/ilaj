@@ -13,7 +13,7 @@ import { Badge } from "@/components/admin/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar"
 import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
-import type { Doctor } from "../_types/doctor.types"
+import type { Doctor } from "@/domain/doctor/doctor.types"
 import { doctorApiService } from "../_services/doctor.api"
 
 type DoctorTableProps = {

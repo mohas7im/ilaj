@@ -4,7 +4,7 @@ import {
   updateTestimonial,
   deleteTestimonial,
 } from "@/server/services/testimonial.service"
-import { testimonialSchema } from "@/app/admin/testimonials/_schemas/testimonial.schema"
+import { testimonialSchema } from "@/domain/testimonial/testimonial.schema"
 import { requireAdmin } from "@/lib/auth/require-admin"
 
 type Props = { params: Promise<{ id: string }> }

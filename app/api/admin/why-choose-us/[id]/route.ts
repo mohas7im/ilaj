@@ -4,7 +4,7 @@ import {
   updateWhyChooseUsItem,
   deleteWhyChooseUsItem,
 } from "@/server/services/why-choose-us.service"
-import { whyChooseUsItemSchema } from "@/app/admin/why-choose-us/_schemas/why-choose-us.schema"
+import { whyChooseUsItemSchema } from "@/domain/why-choose-us/why-choose-us.schema"
 import { requireAdmin } from "@/lib/auth/require-admin"
 
 type Props = { params: Promise<{ id: string }> }

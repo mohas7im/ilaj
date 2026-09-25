@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog"
 import { EmptyState } from "@/components/admin/EmptyState"
-import type { ClinicPhoto } from "../_types/clinic-photo.types"
+import type { ClinicPhoto } from "@/domain/clinic-photo/clinic-photo.types"
 import { clinicPhotoApiService } from "../_services/clinic-photo.api"
 
 type ClinicGalleryGridProps = {

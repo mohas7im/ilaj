@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import { getCommonSeo, updateCommonSeo } from "@/app/admin/seo/_services/seo.service"
-import { commonSeoSchema } from "@/app/admin/seo/_schemas/seo.schema"
+import { getCommonSeo, updateCommonSeo } from "@/server/services/seo.service"
+import { commonSeoSchema } from "@/domain/seo/seo.schema"
 import { saveUploadedFile } from "@/server/lib/storage"
 import { requireAdmin } from "@/lib/auth/require-admin"
 

@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
-import type { Service } from "../_types/service.types"
-import type { ServiceFormData } from "../_schemas/service.schema"
+import type { Service } from "@/domain/service/service.types"
+import type { ServiceFormData } from "@/domain/service/service.schema"
 
 export const serviceApiService = {
   async getAll(): Promise<Service[]> {

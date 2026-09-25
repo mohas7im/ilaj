@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
-import type { PatientCase } from "../_types/patient-case.types"
-import type { PatientCaseInput } from "../_schemas/patient-case.schema"
+import type { PatientCase } from "@/domain/patient-case/patient-case.types"
+import type { PatientCaseInput } from "@/domain/patient-case/patient-case.schema"
 
 export const patientCaseApiService = {
   async getAll(): Promise<PatientCase[]> {

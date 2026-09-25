@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { PAGE_OPTIONS } from "../_types/seo.types"
+import { PAGE_OPTIONS } from "@/domain/seo/seo.types"
 
 const validPageSlugs = PAGE_OPTIONS.map((p) => p.value) as [string, ...string[]]
 

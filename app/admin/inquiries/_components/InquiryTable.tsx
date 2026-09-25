@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/admin/ui/select"
-import type { Inquiry } from "../_types/inquiry.types"
+import type { Inquiry } from "@/domain/inquiry/inquiry.types"
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50]
 

@@ -3,7 +3,7 @@ import {
   getClinicPhotos,
   createClinicPhoto,
 } from "@/server/services/clinic-photo.service"
-import { clinicPhotoSchema } from "@/app/admin/gallery/clinic/_schemas/clinic-photo.schema"
+import { clinicPhotoSchema } from "@/domain/clinic-photo/clinic-photo.schema"
 import { saveUploadedFile } from "@/server/lib/storage"
 import { requireAdmin } from "@/lib/auth/require-admin"
 

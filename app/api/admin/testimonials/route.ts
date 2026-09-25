@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { getTestimonials, createTestimonial } from "@/server/services/testimonial.service"
-import { testimonialSchema } from "@/app/admin/testimonials/_schemas/testimonial.schema"
+import { testimonialSchema } from "@/domain/testimonial/testimonial.schema"
 import { requireAdmin } from "@/lib/auth/require-admin"
 
 export async function GET(req: Request) {

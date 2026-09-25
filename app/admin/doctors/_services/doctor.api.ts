@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
-import type { Doctor } from "../_types/doctor.types"
-import type { DoctorFormData } from "../_schemas/doctor.schema"
+import type { Doctor } from "@/domain/doctor/doctor.types"
+import type { DoctorFormData } from "@/domain/doctor/doctor.schema"
 
 export const doctorApiService = {
   async getAll(): Promise<Doctor[]> {

@@ -4,7 +4,7 @@ import {
   updateDoctor,
   deleteDoctor,
 } from "@/server/services/doctor.service"
-import { doctorSchema } from "@/app/admin/doctors/_schemas/doctor.schema"
+import { doctorSchema } from "@/domain/doctor/doctor.schema"
 import { saveUploadedFile } from "@/server/lib/storage"
 import { requireAdmin } from "@/lib/auth/require-admin"
 

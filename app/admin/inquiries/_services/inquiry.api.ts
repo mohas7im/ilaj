@@ -4,7 +4,7 @@ import type {
   Inquiry,
   InquiryPaginatedResponse,
   InquiryQueryParams,
-} from "../_types/inquiry.types";
+} from "@/domain/inquiry/inquiry.types";
 
 /**
  * Fetch inquiries with server-side pagination, search, treatment, and date range filters

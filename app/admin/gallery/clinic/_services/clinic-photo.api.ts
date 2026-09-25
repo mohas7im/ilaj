@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
-import type { ClinicPhoto } from "../_types/clinic-photo.types"
-import type { ClinicPhotoInput } from "../_schemas/clinic-photo.schema"
+import type { ClinicPhoto } from "@/domain/clinic-photo/clinic-photo.types"
+import type { ClinicPhotoInput } from "@/domain/clinic-photo/clinic-photo.schema"
 
 export const clinicPhotoApiService = {
   async getAll(): Promise<ClinicPhoto[]> {

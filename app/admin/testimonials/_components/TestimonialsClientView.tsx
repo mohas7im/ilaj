@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { TestimonialFilters, type TestimonialFilterState } from "./TestimonialFilters"
 import { TestimonialTable } from "./TestimonialTable"
-import type { Testimonial } from "../_types/testimonial.types"
+import type { Testimonial } from "@/domain/testimonial/testimonial.types"
 
 export function TestimonialsClientView({ initialTestimonials }: { initialTestimonials: Testimonial[] }) {
   const [filters, setFilters] = useState<TestimonialFilterState>({

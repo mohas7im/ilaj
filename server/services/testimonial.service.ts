@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
-import type { Testimonial, TestimonialStatus } from "@/app/admin/testimonials/_types/testimonial.types"
-import type { TestimonialFormData } from "@/app/admin/testimonials/_schemas/testimonial.schema"
+import type { Testimonial, TestimonialStatus } from "@/domain/testimonial/testimonial.types"
+import type { TestimonialFormData } from "@/domain/testimonial/testimonial.schema"
 
 export async function getTestimonials(options?: { publishedOnly?: boolean }): Promise<Testimonial[]> {
   try {

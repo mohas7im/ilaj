@@ -9,7 +9,7 @@ import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
-import type { PatientCase } from "../_types/patient-case.types"
+import type { PatientCase } from "@/domain/patient-case/patient-case.types"
 import { patientCaseApiService } from "../_services/patient-case.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 

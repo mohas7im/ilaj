@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
-import type { Doctor } from "@/app/admin/doctors/_types/doctor.types"
-import type { DoctorFormData } from "@/app/admin/doctors/_schemas/doctor.schema"
+import type { Doctor } from "@/domain/doctor/doctor.types"
+import type { DoctorFormData } from "@/domain/doctor/doctor.schema"
 
 export async function getDoctors(options?: { activeOnly?: boolean }): Promise<Doctor[]> {
   const doctors = await prisma.doctor.findMany({

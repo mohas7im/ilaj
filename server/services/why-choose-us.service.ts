@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
-import type { WhyChooseUsItem } from "@/app/admin/why-choose-us/_types/why-choose-us.types"
-import type { WhyChooseUsItemFormData } from "@/app/admin/why-choose-us/_schemas/why-choose-us.schema"
+import type { WhyChooseUsItem } from "@/domain/why-choose-us/why-choose-us.types"
+import type { WhyChooseUsItemFormData } from "@/domain/why-choose-us/why-choose-us.schema"
 
 export async function getWhyChooseUsItems(): Promise<WhyChooseUsItem[]> {
   try {

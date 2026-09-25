@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
-import type { WhyChooseUsItem } from "../_types/why-choose-us.types"
-import type { WhyChooseUsItemFormData } from "../_schemas/why-choose-us.schema"
+import type { WhyChooseUsItem } from "@/domain/why-choose-us/why-choose-us.types"
+import type { WhyChooseUsItemFormData } from "@/domain/why-choose-us/why-choose-us.schema"
 
 export const whyChooseUsApiService = {
   async getAll(): Promise<WhyChooseUsItem[]> {

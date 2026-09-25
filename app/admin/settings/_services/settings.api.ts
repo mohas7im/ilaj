@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
-import type { ClinicSettings } from "../_types/settings.types"
+import type { ClinicSettings } from "@/domain/settings/settings.types"
 
 export const settingsApiService = {
   async get(): Promise<ClinicSettings> {

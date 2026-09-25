@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/admin/PageHeader"
 import { getInquiries } from "@/server/services/inquiry.service"
 import { InquiriesClientView } from "./_components/InquiriesClientView"
-import type { InquiryPaginatedResponse } from "./_types/inquiry.types"
+import type { InquiryPaginatedResponse } from "@/domain/inquiry/inquiry.types"
 
 export const dynamic = "force-dynamic"
 export const metadata = {

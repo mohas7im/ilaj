@@ -1,12 +1,12 @@
-import { CLINIC_SETTINGS } from "@/app/admin/settings/_services/settings.service"
-import { COMMON_SEO } from "@/app/admin/seo/_services/seo.service"
+import { DEFAULT_SETTINGS_RECORD } from "@/server/services/settings.service"
+import { COMMON_SEO } from "@/server/services/seo.service"
 
 // ─── generateLocalBusinessSchema ─────────────────────────────────────────────
 // Generates MedicalClinic / Dentist JSON-LD structured data automatically
 // from existing Settings data. No manual input from the admin.
 
 export function generateLocalBusinessSchema(): Record<string, unknown> {
-  const s = CLINIC_SETTINGS
+  const s = DEFAULT_SETTINGS_RECORD
   const seo = COMMON_SEO
   const baseUrl = seo.siteUrl.replace(/\/$/, "")
 

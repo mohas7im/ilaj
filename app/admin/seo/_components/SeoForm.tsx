@@ -31,8 +31,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/admin/ui/select"
-import type { CommonSeo, PageSeo } from "../_types/seo.types"
-import { PAGE_OPTIONS } from "../_types/seo.types"
+import type { CommonSeo, PageSeo } from "@/domain/seo/seo.types"
+import { PAGE_OPTIONS } from "@/domain/seo/seo.types"
 import { seoApiService } from "../_services/seo.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 

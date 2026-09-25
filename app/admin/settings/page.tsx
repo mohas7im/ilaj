@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/admin/PageHeader"
 import { SettingsForm } from "./_components/SettingsForm"
 import { getClinicSettings, DEFAULT_SETTINGS_RECORD } from "@/server/services/settings.service"
-import type { ClinicSettings } from "./_types/settings.types"
+import type { ClinicSettings } from "@/domain/settings/settings.types"
 
 export const dynamic = "force-dynamic"
 
