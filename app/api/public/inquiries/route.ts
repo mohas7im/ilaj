@@ -1,41 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createInquiry } from "@/server/services/inquiry.service";
+import { inquirySchema } from "@/domain/inquiry/inquiry.schema";
+
+// Visitors can't choose a status; every new submission starts as "new".
+const publicInquirySchema = inquirySchema.omit({ status: true });
 
 // Public: the website contact form posts here without signing in.
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const fullName = body.fullName?.trim();
-    const email = body.email?.trim()?.toLowerCase();
-    const treatment = body.treatment?.trim();
-    const message = body.message?.trim();
-    const phone = body.phone?.trim() || null;
-    const preferredDate = body.preferredDate?.trim() || null;
-    const preferredTime = body.preferredTime?.trim() || null;
+    // Trim first so whitespace-only fields fail the "required" checks.
+    const trimmed = Object.fromEntries(
+      Object.entries(body ?? {}).map(([key, value]) => [
+        key,
+        typeof value === "string" ? value.trim() : value,
+      ])
+    );
 
-    if (!fullName) {
-      return NextResponse.json({ error: "Full name is required." }, { status: 400 });
-    }
-    if (!email) {
-      return NextResponse.json({ error: "Email address is required." }, { status: 400 });
-    }
-    if (!treatment) {
-      return NextResponse.json({ error: "Treatment selection is required." }, { status: 400 });
-    }
-    if (!message) {
-      return NextResponse.json({ error: "Message is required." }, { status: 400 });
+    const parsed = publicInquirySchema.safeParse(trimmed);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
     }
 
     const inquiry = await createInquiry({
-      fullName,
-      email,
-      phone,
-      treatment,
-      preferredDate,
-      preferredTime,
-      message,
-      // Visitors can't choose a status; every new submission starts as "new".
+      ...parsed.data,
+      email: parsed.data.email.toLowerCase(),
       status: "new",
     });
 
