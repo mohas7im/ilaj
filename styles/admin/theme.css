@@ -12,14 +12,27 @@
  *  dashboard widgets) remains untouched.
  * ============================================================
  *
- *  SCOPING STRATEGY:
- *  All overrides are scoped to [data-admin-theme] so they
- *  never bleed into the public website.
- *  The root :root block from globals.css (shadcn neutral
- *  tokens) is kept as the foundation — we only override
- *  what needs a client-specific brand accent.
+ *  ENTRY STYLESHEET:
+ *  Imported only by app/admin/layout.tsx (the admin root
+ *  layout), so nothing here reaches the public website.
+ *  styles/base.css (shadcn neutral tokens) is the foundation —
+ *  we only override what needs a client-specific brand accent.
+ *
+ *  Fonts come from next/font in app/admin/layout.tsx:
+ *    --font-admin (Poppins) → body text  (font-sans)
+ *    --font-geist           → titles     (font-heading)
  * ============================================================
  */
+
+@import "../base.css";
+
+@source "../../app/admin";
+@source "../../components/admin";
+
+@theme {
+  --font-sans: var(--font-admin), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+}
 
 /* ─── Brand accent tokens (client-specific) ─────────────────
    Current client: Ilaj Dental Clinic
@@ -27,9 +40,6 @@
    ─────────────────────────────────────────────────────────── */
 
 [data-admin-theme] {
-  /* ── Typography: Poppins loaded via next/font in dashboard layout ── */
-  font-family: var(--font-admin, system-ui, sans-serif);
-
   /* ── Brand primary — #DA251F ── */
   --admin-brand:          #DA251F;
   --admin-brand-hover:    #b81f1a;
@@ -60,10 +70,11 @@
 }
 
 /* ─── Dark mode overrides (scoped) ──────────────────────────
-   Applied when .dark is also present on the html element.
+   Applied when .dark is also present on the html element
+   (data-admin-theme sits on <html> too).
    ─────────────────────────────────────────────────────────── */
 
-.dark [data-admin-theme] {
+:is(.dark[data-admin-theme], .dark [data-admin-theme]) {
   --admin-brand:           #E83A34;  /* slightly brighter crimson in dark */
   --admin-brand-hover:     #F04E48;
   --admin-brand-subtle:    rgba(232, 58, 52, 0.18);

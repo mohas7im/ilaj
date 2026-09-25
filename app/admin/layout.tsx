@@ -1,41 +1,43 @@
-"use client"
-
-import { usePathname } from "next/navigation"
+import type { Metadata } from "next"
+import { Poppins, Geist } from "next/font/google"
+import { generateRootMetadata } from "@/lib/seo"
+import { AdminShell } from "@/components/admin/layout/AdminShell"
 import "@/styles/admin/theme.css"
-import { SidebarProvider, SidebarInset } from "@/components/admin/ui/sidebar"
-import { AdminSidebar } from "@/components/admin/AdminSidebar"
-import { AdminHeader } from "@/components/admin/layout/AdminHeader"
-import { Toaster } from "@/components/admin/ui/sonner"
 
-export default function AdminLayout({
+// Admin root layout — owns <html>/<body>, fonts and the admin stylesheet.
+// Independent of app/(website)/, which has its own root layout.
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-admin",
+  display: "swap",
+})
+
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
+  display: "swap",
+})
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateRootMetadata()
+}
+
+export default function AdminRootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
-  const pathname = usePathname()
-  const isLoginPage = pathname === "/admin/login" || pathname?.startsWith("/admin/login")
-
-  if (isLoginPage) {
-    return (
-      <div data-admin-theme className="contents">
-        <Toaster />
-        {children}
-      </div>
-    )
-  }
-
+}>) {
   return (
-    <div data-admin-theme className="contents">
-      <Toaster />
-      <SidebarProvider>
-        <AdminSidebar />
-        <SidebarInset>
-          <AdminHeader />
-          <main className="flex flex-1 flex-col gap-6 p-3">
-            {children}
-          </main>
-        </SidebarInset>
-      </SidebarProvider>
-    </div>
+    <html
+      lang="en"
+      data-admin-theme
+      className={`${poppins.variable} ${geist.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">
+        <AdminShell>{children}</AdminShell>
+      </body>
+    </html>
   )
 }

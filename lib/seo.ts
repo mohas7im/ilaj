@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { getCommonSeo, getPageSeo } from "@/app/admin/seo/_services/seo.service"
+import { getClinicSettings } from "@/server/services/settings.service"
 import { PAGE_OPTIONS } from "@/app/admin/seo/_types/seo.types"
 
 // ─── getSeoForPage ────────────────────────────────────────────────────────────
@@ -22,6 +23,32 @@ export async function getSeoForPage(pageSlug: string) {
   const canonical = `${baseUrl}${pagePath}`
 
   return { title, description, ogImage, canonical, common, page, pagePath }
+}
+
+// ─── generateRootMetadata ─────────────────────────────────────────────────────
+// Shared by the website and admin root layouts: site-wide title template and
+// description. Pages refine it with generatePageMetadata / generateAdminMetadata.
+
+export async function generateRootMetadata(): Promise<Metadata> {
+  const [common, settings] = await Promise.all([
+    getCommonSeo(),
+    getClinicSettings(),
+  ])
+
+  const siteName = settings.clinicName || common.siteName
+  const description = settings.tagline || common.defaultDescription
+
+  return {
+    title: {
+      default: siteName,
+      template: `%s | ${siteName}`,
+    },
+    description,
+    robots: {
+      index: true,
+      follow: true,
+    },
+  }
 }
 
 // ─── generatePageMetadata ─────────────────────────────────────────────────────

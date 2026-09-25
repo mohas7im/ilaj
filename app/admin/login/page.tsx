@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation"
 import { Eye, EyeOff, ArrowLeft, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
-import "@/styles/admin/theme.css"
 import { ADMIN_BRANDING } from "@/lib/admin/config"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"

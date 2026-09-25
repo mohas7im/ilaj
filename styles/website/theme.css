@@ -1,0 +1,67 @@
+/*
+ * ============================================================
+ *  WEBSITE THEME  —  styles/website/theme.css
+ * ============================================================
+ *
+ *  Entry stylesheet for the public website. Imported only by
+ *  app/(website)/layout.tsx, so nothing here reaches the admin.
+ *
+ *  NEW CLIENT WEBSITE:
+ *  Replace app/(website)/, components/website/ and this file.
+ *  Keep the @import of base.css and the @source lines.
+ *
+ *  Fonts come from next/font in app/(website)/layout.tsx:
+ *    --font-geist   → headings, pills   (font-heading)
+ *    --font-manrope → body / paragraphs (font-sans, the default)
+ * ============================================================
+ */
+
+@import "../base.css";
+
+@source "../../app/(website)";
+@source "../../app/global-not-found.tsx";
+@source "../../components/website";
+
+@theme {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-subtle: var(--brand-subtle);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-website-border: var(--website-border);
+}
+
+/* ─── Brand palette (#DA2420) ────────────────────────────── */
+[data-website-theme] {
+  --brand: #DA2420;
+  --brand-hover: #b81c18;
+  --brand-subtle: rgba(218, 36, 32, 0.08);
+  --brand-foreground: #ffffff;
+  --website-border: #D1D5DB;
+
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-foreground);
+  --ring: var(--brand);
+}
+
+/* data-website-theme sits on <html>, so .dark may be on the same element */
+:is(.dark[data-website-theme], .dark [data-website-theme]) {
+  --brand: #E63834;
+  --brand-hover: #F04C48;
+  --brand-subtle: rgba(230, 56, 52, 0.16);
+  --brand-foreground: #ffffff;
+
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-foreground);
+  --ring: var(--brand);
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}

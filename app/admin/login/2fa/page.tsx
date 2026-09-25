@@ -5,7 +5,6 @@ import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ShieldCheck, ArrowLeft, Loader2 } from "lucide-react"
 
-import "@/styles/admin/theme.css"
 import { ADMIN_BRANDING } from "@/lib/admin/config"
 import { Button } from "@/components/admin/ui/button"
 import { Label } from "@/components/admin/ui/label"
