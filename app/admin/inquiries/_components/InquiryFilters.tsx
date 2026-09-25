@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/admin/ui/popover"
 import { Calendar } from "@/components/admin/ui/calendar"
-import { fetchTreatmentServices } from "../_services/inquiry.service"
+import { fetchTreatmentServices } from "../_services/inquiry.api"
 
 export type InquiryFilterState = {
   search: string

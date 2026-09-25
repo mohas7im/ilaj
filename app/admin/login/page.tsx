@@ -11,7 +11,8 @@ import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Checkbox } from "@/components/admin/ui/checkbox"
-import { authService } from "@/services/auth.service"
+import { authService } from "@/lib/auth/auth.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -31,7 +32,7 @@ export default function AdminLoginPage() {
       toast.success("Signed in successfully!")
       router.push("/admin/dashboard")
     } catch (err) {
-      const msg = authService.getErrorMessage(err, "Invalid email or password.")
+      const msg = getApiErrorMessage(err, "Invalid email or password.")
       setError(msg)
       toast.error(msg)
     } finally {

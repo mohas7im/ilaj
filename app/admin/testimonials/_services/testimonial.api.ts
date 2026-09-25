@@ -1,29 +1,30 @@
-import { apiClient } from "@/lib/apiClient"
+import { apiClient } from "@/lib/api/client"
+import { ENDPOINTS } from "@/lib/api/endpoints"
 import type { Testimonial } from "../_types/testimonial.types"
 import type { TestimonialFormData } from "../_schemas/testimonial.schema"
 
 export const testimonialApiService = {
   async getAll(): Promise<Testimonial[]> {
-    const { data } = await apiClient.get<Testimonial[]>("/api/admin/testimonials")
+    const { data } = await apiClient.get<Testimonial[]>(ENDPOINTS.admin.testimonials.list)
     return data
   },
 
   async getById(id: string): Promise<Testimonial> {
-    const { data } = await apiClient.get<Testimonial>(`/api/admin/testimonials/${id}`)
+    const { data } = await apiClient.get<Testimonial>(ENDPOINTS.admin.testimonials.byId(id))
     return data
   },
 
   async create(payload: TestimonialFormData): Promise<Testimonial> {
-    const { data } = await apiClient.post<Testimonial>("/api/admin/testimonials", payload)
+    const { data } = await apiClient.post<Testimonial>(ENDPOINTS.admin.testimonials.list, payload)
     return data
   },
 
   async update(id: string, payload: Partial<TestimonialFormData>): Promise<Testimonial> {
-    const { data } = await apiClient.put<Testimonial>(`/api/admin/testimonials/${id}`, payload)
+    const { data } = await apiClient.put<Testimonial>(ENDPOINTS.admin.testimonials.byId(id), payload)
     return data
   },
 
   async delete(id: string): Promise<void> {
-    await apiClient.delete(`/api/admin/testimonials/${id}`)
+    await apiClient.delete(ENDPOINTS.admin.testimonials.byId(id))
   },
 }

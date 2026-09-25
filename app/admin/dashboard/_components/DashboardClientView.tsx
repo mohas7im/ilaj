@@ -9,7 +9,7 @@ import { RecentInquiries } from "./RecentInquiries"
 import {
   fetchDashboardStats,
   fetchDashboardInquiries,
-} from "../_services/dashboard.service"
+} from "../_services/dashboard.api"
 import type {
   DashboardStats,
   DashboardInquiry,

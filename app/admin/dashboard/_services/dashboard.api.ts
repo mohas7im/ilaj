@@ -1,4 +1,5 @@
-import { apiClient } from "@/lib/apiClient"
+import { apiClient } from "@/lib/api/client"
+import { ENDPOINTS } from "@/lib/api/endpoints"
 import type { LucideIcon } from "lucide-react"
 import type {
   DashboardStats,
@@ -21,7 +22,7 @@ export type StatItem = {
 }
 
 export async function fetchDashboardStats(): Promise<DashboardStats> {
-  const { data } = await apiClient.get<DashboardStats>("/api/admin/dashboard/stats")
+  const { data } = await apiClient.get<DashboardStats>(ENDPOINTS.admin.dashboard.stats)
   return data
 }
 
@@ -29,12 +30,11 @@ export async function fetchDashboardInquiries(params?: {
   pageNumber?: number
   pageSize?: number
 }): Promise<DashboardInquiriesResponse> {
-  const query = new URLSearchParams()
-  query.set("pageNumber", String(params?.pageNumber || 1))
-  query.set("pageSize", String(params?.pageSize || 5))
-
-  const { data } = await apiClient.get<DashboardInquiriesResponse>(
-    `/api/admin/inquiries?${query.toString()}`
-  )
+  const { data } = await apiClient.get<DashboardInquiriesResponse>(ENDPOINTS.admin.inquiries.list, {
+    params: {
+      pageNumber: params?.pageNumber || 1,
+      pageSize: params?.pageSize || 5,
+    },
+  })
   return data
 }

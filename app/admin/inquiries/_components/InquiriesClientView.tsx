@@ -5,7 +5,7 @@ import { format } from "date-fns"
 import { toast } from "sonner"
 import { InquiryFilters, type InquiryFilterState } from "./InquiryFilters"
 import { InquiryTable } from "./InquiryTable"
-import { fetchInquiries, deleteInquiry } from "../_services/inquiry.service"
+import { fetchInquiries, deleteInquiry } from "../_services/inquiry.api"
 import type { Inquiry, InquiryPaginatedResponse } from "../_types/inquiry.types"
 
 interface InquiriesClientViewProps {

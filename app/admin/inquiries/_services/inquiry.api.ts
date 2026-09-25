@@ -1,4 +1,5 @@
-import { apiClient } from "@/lib/apiClient";
+import { apiClient } from "@/lib/api/client";
+import { ENDPOINTS } from "@/lib/api/endpoints";
 import type {
   Inquiry,
   InquiryPaginatedResponse,
@@ -11,25 +12,18 @@ import type {
 export async function fetchInquiries(
   params?: InquiryQueryParams
 ): Promise<InquiryPaginatedResponse> {
-  const query = new URLSearchParams();
-
-  const pageNumber = params?.pageNumber || 1;
-  const pageSize = params?.pageSize || 10;
-
-  query.set("pageNumber", String(pageNumber));
-  query.set("pageSize", String(pageSize));
-
-  if (params?.search) query.set("search", params.search.trim());
-  if (params?.treatment && params.treatment !== "all") {
-    query.set("treatment", params.treatment.trim());
-  }
-  if (params?.from) query.set("from", params.from);
-  if (params?.to) query.set("to", params.to);
-
-  const queryString = query.toString();
-  const url = `/api/admin/inquiries${queryString ? `?${queryString}` : ""}`;
-
-  const { data } = await apiClient.get<InquiryPaginatedResponse>(url);
+  // axios drops undefined params, so unset filters never reach the query string
+  const { data } = await apiClient.get<InquiryPaginatedResponse>(ENDPOINTS.admin.inquiries.list, {
+    params: {
+      pageNumber: params?.pageNumber || 1,
+      pageSize: params?.pageSize || 10,
+      search: params?.search?.trim() || undefined,
+      treatment:
+        params?.treatment && params.treatment !== "all" ? params.treatment.trim() : undefined,
+      from: params?.from || undefined,
+      to: params?.to || undefined,
+    },
+  });
   return data;
 }
 
@@ -40,7 +34,7 @@ export async function fetchInquiries(
 export async function fetchTreatmentServices(): Promise<string[]> {
   try {
     const { data } = await apiClient.get<Array<{ id: string; name: string; status?: string }>>(
-      "/api/admin/services"
+      ENDPOINTS.admin.services.list
     );
 
     if (Array.isArray(data)) {
@@ -62,7 +56,7 @@ export async function fetchTreatmentServices(): Promise<string[]> {
  * Delete an inquiry by ID
  */
 export async function deleteInquiry(id: string): Promise<boolean> {
-  await apiClient.delete(`/api/admin/inquiries/${id}`);
+  await apiClient.delete(ENDPOINTS.admin.inquiries.byId(id));
   return true;
 }
 
@@ -73,7 +67,7 @@ export async function updateInquiryStatus(
   id: string,
   status: string
 ): Promise<Inquiry> {
-  const { data } = await apiClient.put<Inquiry>(`/api/admin/inquiries/${id}`, {
+  const { data } = await apiClient.put<Inquiry>(ENDPOINTS.admin.inquiries.byId(id), {
     status,
   });
   return data;
@@ -84,7 +78,7 @@ export async function updateInquiryStatus(
  */
 export async function getInquiryById(id: string): Promise<Inquiry | null> {
   try {
-    const { data } = await apiClient.get<Inquiry>(`/api/admin/inquiries/${id}`);
+    const { data } = await apiClient.get<Inquiry>(ENDPOINTS.admin.inquiries.byId(id));
     return data;
   } catch (error) {
     console.error("Failed to get inquiry by id:", error);

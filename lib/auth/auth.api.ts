@@ -1,5 +1,5 @@
-import { apiClient } from "@/lib/apiClient";
-import type { AxiosError } from "axios";
+import { apiClient } from "@/lib/api/client";
+import { ENDPOINTS } from "@/lib/api/endpoints";
 
 export interface LoginCredentials {
   email: string;
@@ -33,7 +33,7 @@ export const authService = {
       password: credentials.password,
     };
 
-    const { data } = await apiClient.post<AuthResponse>("/api/auth/login", payload);
+    const { data } = await apiClient.post<AuthResponse>(ENDPOINTS.auth.login, payload);
 
     if (!data.success || !data.user) {
       throw new Error(data.error || "Authentication failed");
@@ -50,7 +50,7 @@ export const authService = {
    */
   async logout(): Promise<void> {
     try {
-      await apiClient.post("/api/auth/logout");
+      await apiClient.post(ENDPOINTS.auth.logout);
     } finally {
       cachedUser = null;
       inFlightMeRequest = null;
@@ -66,7 +66,7 @@ export const authService = {
     confirmPassword: string;
   }): Promise<void> {
     const { data } = await apiClient.post<{ success: boolean; message?: string; error?: string }>(
-      "/api/auth/change-password",
+      ENDPOINTS.auth.changePassword,
       payload
     );
     if (!data.success) {
@@ -88,7 +88,7 @@ export const authService = {
 
     inFlightMeRequest = (async () => {
       try {
-        const { data } = await apiClient.get<AuthResponse>("/api/auth/me");
+        const { data } = await apiClient.get<AuthResponse>(ENDPOINTS.auth.me);
         if (data.success && data.user) {
           cachedUser = data.user;
           return cachedUser;
@@ -112,25 +112,5 @@ export const authService = {
   async isAuthenticated(): Promise<boolean> {
     const user = await this.me();
     return user !== null;
-  },
-
-  /**
-   * Helper to safely extract user-friendly error messages from API responses.
-   */
-  getErrorMessage(error: unknown, fallback = "An unexpected error occurred."): string {
-    if (typeof error === "object" && error !== null && "response" in error) {
-      const axiosErr = error as AxiosError<{ error?: string; message?: string }>;
-      return (
-        axiosErr.response?.data?.error ||
-        axiosErr.response?.data?.message ||
-        fallback
-      );
-    }
-
-    if (error instanceof Error) {
-      return error.message;
-    }
-
-    return fallback;
   },
 };

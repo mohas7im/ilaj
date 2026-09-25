@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { authService, type AuthUser } from "@/services/auth.service"
+import { authService, type AuthUser } from "@/lib/auth/auth.api"
 import {
   LogOut,
   ChevronsUpDown,

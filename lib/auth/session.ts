@@ -1,4 +1,6 @@
 // Client-side session helpers used by apiClient's response interceptor.
+import { API_CONFIG } from "@/lib/api/config";
+import { ENDPOINTS } from "@/lib/api/endpoints";
 
 let inFlightRefresh: Promise<boolean> | null = null;
 
@@ -8,7 +10,8 @@ let inFlightRefresh: Promise<boolean> | null = null;
  * old one as theft, so two parallel refreshes would revoke every session.
  */
 export function refreshSession(): Promise<boolean> {
-  inFlightRefresh ??= fetch("/api/auth/refresh", {
+  // Plain fetch, not apiClient: a refresh must never trigger the 401 interceptor.
+  inFlightRefresh ??= fetch(`${API_CONFIG.baseURL}${ENDPOINTS.auth.refresh}`, {
     method: "POST",
     credentials: "include",
   })

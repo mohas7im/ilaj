@@ -1,7 +1,7 @@
 import { Users, MessageSquare, Stethoscope, Briefcase } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
 import { cn } from "@/lib/utils"
-import type { ActivityItem, ActivityType } from "../_services/dashboard.service"
+import type { ActivityItem, ActivityType } from "../_services/dashboard.api"
 
 export type { ActivityItem }
 

@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/admin/ui/card"
-import type { StatItem } from "../_services/dashboard.service"
+import type { StatItem } from "../_services/dashboard.api"
 
 export function StatsCard({ title, value, icon: Icon }: StatItem) {
   return (

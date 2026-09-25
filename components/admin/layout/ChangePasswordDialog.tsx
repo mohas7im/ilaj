@@ -3,7 +3,8 @@
 import { useState } from "react"
 import { Eye, EyeOff, KeyRound, Loader2 } from "lucide-react"
 import { toast } from "sonner"
-import { authService } from "@/services/auth.service"
+import { authService } from "@/lib/auth/auth.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -90,7 +91,7 @@ export function ChangePasswordDialog({
       resetForm()
       onOpenChange(false)
     } catch (err) {
-      const msg = authService.getErrorMessage(
+      const msg = getApiErrorMessage(
         err,
         "Failed to change password. Please verify your current password."
       )

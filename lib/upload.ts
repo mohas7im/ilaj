@@ -1,4 +1,5 @@
-import { apiClient } from "@/lib/apiClient"
+import { apiClient } from "@/lib/api/client"
+import { ENDPOINTS } from "@/lib/api/endpoints"
 
 export async function uploadImage(
   file: File,
@@ -8,6 +9,6 @@ export async function uploadImage(
   formData.append("file", file)
   formData.append("folder", folder)
 
-  const { data } = await apiClient.post<{ url: string }>("/api/admin/upload", formData)
+  const { data } = await apiClient.post<{ url: string }>(ENDPOINTS.admin.upload, formData)
   return data.url
 }

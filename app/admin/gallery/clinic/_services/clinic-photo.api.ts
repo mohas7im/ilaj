@@ -1,29 +1,30 @@
-import { apiClient } from "@/lib/apiClient"
+import { apiClient } from "@/lib/api/client"
+import { ENDPOINTS } from "@/lib/api/endpoints"
 import type { ClinicPhoto } from "../_types/clinic-photo.types"
 import type { ClinicPhotoInput } from "../_schemas/clinic-photo.schema"
 
 export const clinicPhotoApiService = {
   async getAll(): Promise<ClinicPhoto[]> {
-    const { data } = await apiClient.get<ClinicPhoto[]>("/api/admin/gallery/clinic")
+    const { data } = await apiClient.get<ClinicPhoto[]>(ENDPOINTS.admin.gallery.clinic.list)
     return data
   },
 
   async getById(id: string): Promise<ClinicPhoto> {
-    const { data } = await apiClient.get<ClinicPhoto>(`/api/admin/gallery/clinic/${id}`)
+    const { data } = await apiClient.get<ClinicPhoto>(ENDPOINTS.admin.gallery.clinic.byId(id))
     return data
   },
 
   async create(payload: ClinicPhotoInput | FormData): Promise<ClinicPhoto> {
-    const { data } = await apiClient.post<ClinicPhoto>("/api/admin/gallery/clinic", payload)
+    const { data } = await apiClient.post<ClinicPhoto>(ENDPOINTS.admin.gallery.clinic.list, payload)
     return data
   },
 
   async update(id: string, payload: Partial<ClinicPhotoInput> | FormData): Promise<ClinicPhoto> {
-    const { data } = await apiClient.put<ClinicPhoto>(`/api/admin/gallery/clinic/${id}`, payload)
+    const { data } = await apiClient.put<ClinicPhoto>(ENDPOINTS.admin.gallery.clinic.byId(id), payload)
     return data
   },
 
   async delete(id: string): Promise<void> {
-    await apiClient.delete(`/api/admin/gallery/clinic/${id}`)
+    await apiClient.delete(ENDPOINTS.admin.gallery.clinic.byId(id))
   },
 }
