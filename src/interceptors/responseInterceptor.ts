@@ -1,4 +1,5 @@
 import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from "axios";
+import { refreshSession, redirectToLogin } from "@/lib/auth/session";
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -21,32 +22,21 @@ export const responseInterceptorError = async (error: AxiosError) => {
   ) {
     originalRequest._retry = true;
 
-    try {
-      // Attempt silent background refresh using the 7-day DB-backed refresh token
-      await axios.post("/api/auth/refresh", {}, { withCredentials: true });
-
+    // Silent refresh using the 7-day DB-backed refresh token. Parallel 401s
+    // share a single refresh request (see refreshSession).
+    if (await refreshSession()) {
       // Retry original request now that new access token cookie is set
       return axios(originalRequest);
-    } catch (refreshError) {
-      // Refresh token is expired or revoked -> redirect to login
-      if (typeof window !== "undefined") {
-        const pathname = window.location.pathname;
-        if (pathname.startsWith("/admin") && !pathname.includes("/admin/login")) {
-          window.location.href = "/admin/login?expired=1";
-        }
-      }
-      return Promise.reject(refreshError);
     }
+
+    // Refresh token is expired or revoked -> redirect to login
+    redirectToLogin();
+    return Promise.reject(error);
   }
 
   // If 401 on an unhandled request while inside admin panel -> redirect
   if (error.response?.status === 401) {
-    if (typeof window !== "undefined") {
-      const pathname = window.location.pathname;
-      if (pathname.startsWith("/admin") && !pathname.includes("/admin/login")) {
-        window.location.href = "/admin/login?expired=1";
-      }
-    }
+    redirectToLogin();
   }
 
   return Promise.reject(error);

@@ -33,6 +33,8 @@ import {
 } from "@/components/admin/ui/select"
 import type { CommonSeo, PageSeo } from "../_types/seo.types"
 import { PAGE_OPTIONS } from "../_types/seo.types"
+import { seoApiService } from "../_services/seo.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -440,7 +442,6 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
     setSuccess(false)
 
     try {
-      let res: Response
       if (selectedPage === "common") {
         if (commonOgFile) {
           const formData = new FormData()
@@ -451,16 +452,9 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
           formData.append("googleVerification", common.googleVerification || "")
           formData.append("bingVerification", common.bingVerification || "")
           formData.append("defaultOgImage", commonOgFile)
-          res = await fetch("/api/seo", {
-            method: "PUT",
-            body: formData,
-          })
+          await seoApiService.updateCommon(formData)
         } else {
-          res = await fetch("/api/seo", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(common),
-          })
+          await seoApiService.updateCommon(common)
         }
       } else {
         const pageFile = pageOgFiles[selectedPage]
@@ -469,29 +463,20 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
           formData.append("title", currentPage?.title ?? "")
           formData.append("description", currentPage?.description ?? "")
           formData.append("ogImage", pageFile)
-          res = await fetch(`/api/seo/${selectedPage}`, {
-            method: "PUT",
-            body: formData,
-          })
+          await seoApiService.updatePage(selectedPage, formData)
         } else {
-          res = await fetch(`/api/seo/${selectedPage}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(currentPage ?? { page: selectedPage, title: "", description: "", ogImage: "" }),
-          })
+          await seoApiService.updatePage(
+            selectedPage,
+            currentPage ?? { page: selectedPage, title: "", description: "", ogImage: "" }
+          )
         }
-      }
-
-      if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || "Failed to save SEO settings")
       }
 
       setSuccess(true)
       toast.success("SEO settings saved successfully")
       setTimeout(() => setSuccess(false), 4000)
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Something went wrong"
+      const msg = getApiErrorMessage(err, "Failed to save SEO settings")
       setError(msg)
       toast.error(msg)
     } finally {

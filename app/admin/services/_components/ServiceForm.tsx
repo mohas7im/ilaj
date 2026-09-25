@@ -15,6 +15,8 @@ import {
 } from "@/components/admin/ui/select"
 import { Switch } from "@/components/admin/ui/switch"
 import { SERVICE_STATUS_CONFIG, type Service, type ServiceStatus } from "../_types/service.types"
+import { serviceApiService } from "../_services/service.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 export type ServiceFormProps = {
   mode: "create" | "edit"
@@ -92,9 +94,6 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
     setIsSubmitting(true)
 
     try {
-      const url = isEdit && initialData?.id ? `/api/services/${initialData.id}` : "/api/services"
-      const method = isEdit ? "PUT" : "POST"
-
       const formData = new FormData()
       formData.append("name", form.name)
       if (form.slug) formData.append("slug", form.slug)
@@ -117,28 +116,17 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
         formData.append("existingSecondaryImage", form.secondaryImage)
       }
 
-      const res = await fetch(url, {
-        method,
-        body: formData,
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        const errorMsg = data?.error
-          ? typeof data.error === "object"
-            ? Object.values(data.error).flat().join(", ")
-            : String(data.error)
-          : "Failed to save service"
-        throw new Error(errorMsg)
+      if (isEdit && initialData?.id) {
+        await serviceApiService.update(initialData.id, formData)
+      } else {
+        await serviceApiService.create(formData)
       }
 
       toast.success(isEdit ? "Service updated successfully" : "Service created successfully")
       router.push("/admin/services")
       router.refresh()
     } catch (error) {
-      const msg = error instanceof Error ? error.message : "Failed to save service"
-      toast.error(msg)
+      toast.error(getApiErrorMessage(error, "Failed to save service"))
     } finally {
       setIsSubmitting(false)
     }

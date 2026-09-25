@@ -12,6 +12,8 @@ import { Textarea } from "@/components/admin/ui/textarea"
 import { Switch } from "@/components/admin/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar"
 import type { Doctor } from "../_types/doctor.types"
+import { doctorApiService } from "../_services/doctor.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 export type DoctorFormProps = {
   mode: "create" | "edit"
@@ -77,9 +79,6 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
     setIsSubmitting(true)
 
     try {
-      const url = isEdit && initialData?.id ? `/api/doctors/${initialData.id}` : "/api/doctors"
-      const method = isEdit ? "PUT" : "POST"
-
       const formData = new FormData()
       formData.append("name", form.name)
       formData.append("designation", form.designation)
@@ -95,28 +94,17 @@ export function DoctorForm({ mode, initialData }: DoctorFormProps) {
         formData.append("existingImage", form.image)
       }
 
-      const res = await fetch(url, {
-        method,
-        body: formData,
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        const errorMsg = data?.error
-          ? typeof data.error === "object"
-            ? Object.values(data.error).flat().join(", ")
-            : String(data.error)
-          : "Failed to save doctor"
-        throw new Error(errorMsg)
+      if (isEdit && initialData?.id) {
+        await doctorApiService.update(initialData.id, formData)
+      } else {
+        await doctorApiService.create(formData)
       }
 
       toast.success(isEdit ? "Doctor updated successfully" : "Doctor created successfully")
       router.push("/admin/doctors")
       router.refresh()
     } catch (error) {
-      const msg = error instanceof Error ? error.message : "Failed to save doctor"
-      toast.error(msg)
+      toast.error(getApiErrorMessage(error, "Failed to save doctor"))
     } finally {
       setIsSubmitting(false)
     }

@@ -27,20 +27,20 @@ export async function fetchInquiries(
   if (params?.to) query.set("to", params.to);
 
   const queryString = query.toString();
-  const url = `/api/inquiries${queryString ? `?${queryString}` : ""}`;
+  const url = `/api/admin/inquiries${queryString ? `?${queryString}` : ""}`;
 
   const { data } = await apiClient.get<InquiryPaginatedResponse>(url);
   return data;
 }
 
 /**
- * Fetch services list directly from /api/services to populate treatment options.
+ * Fetch services list directly from /api/admin/services to populate treatment options.
  * Self-contained in inquiry service folder without importing from admin services module.
  */
 export async function fetchTreatmentServices(): Promise<string[]> {
   try {
     const { data } = await apiClient.get<Array<{ id: string; name: string; status?: string }>>(
-      "/api/services"
+      "/api/admin/services"
     );
 
     if (Array.isArray(data)) {
@@ -53,7 +53,7 @@ export async function fetchTreatmentServices(): Promise<string[]> {
     }
     return [];
   } catch (error) {
-    console.error("Failed to fetch treatment services from /api/services:", error);
+    console.error("Failed to fetch treatment services from /api/admin/services:", error);
     return [];
   }
 }
@@ -62,7 +62,7 @@ export async function fetchTreatmentServices(): Promise<string[]> {
  * Delete an inquiry by ID
  */
 export async function deleteInquiry(id: string): Promise<boolean> {
-  await apiClient.delete(`/api/inquiries/${id}`);
+  await apiClient.delete(`/api/admin/inquiries/${id}`);
   return true;
 }
 
@@ -73,7 +73,7 @@ export async function updateInquiryStatus(
   id: string,
   status: string
 ): Promise<Inquiry> {
-  const { data } = await apiClient.put<Inquiry>(`/api/inquiries/${id}`, {
+  const { data } = await apiClient.put<Inquiry>(`/api/admin/inquiries/${id}`, {
     status,
   });
   return data;
@@ -84,7 +84,7 @@ export async function updateInquiryStatus(
  */
 export async function getInquiryById(id: string): Promise<Inquiry | null> {
   try {
-    const { data } = await apiClient.get<Inquiry>(`/api/inquiries/${id}`);
+    const { data } = await apiClient.get<Inquiry>(`/api/admin/inquiries/${id}`);
     return data;
   } catch (error) {
     console.error("Failed to get inquiry by id:", error);

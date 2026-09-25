@@ -29,6 +29,8 @@ import {
   InputGroupInput,
 } from "@/components/admin/ui/input-group"
 import type { ClinicSettings } from "../_types/settings.types"
+import { settingsApiService } from "../_services/settings.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 type SettingsFormProps = {
   initialSettings: ClinicSettings
@@ -43,9 +45,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
 
   const fetchSettings = useCallback(async () => {
     try {
-      const res = await fetch("/api/settings", { method: "GET" })
-      if (!res.ok) throw new Error("Failed to load settings from server")
-      const data: ClinicSettings = await res.json()
+      const data = await settingsApiService.get()
       setFormData(data)
       setInitialData(data)
     } catch (err: unknown) {
@@ -76,25 +76,14 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
     setSuccess(false)
 
     try {
-      const res = await fetch("/api/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      })
-
-      if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || "Failed to update settings")
-      }
-
-      const updated = await res.json()
+      const updated = await settingsApiService.update(formData)
       setFormData(updated)
       setInitialData(updated)
       setSuccess(true)
       toast.success("Settings saved successfully!")
       window.scrollTo({ top: 0, behavior: "smooth" })
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Something went wrong"
+      const msg = getApiErrorMessage(err, "Failed to update settings")
       setError(msg)
       toast.error(msg)
     } finally {

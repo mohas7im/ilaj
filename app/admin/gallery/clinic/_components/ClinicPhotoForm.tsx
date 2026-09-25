@@ -10,6 +10,8 @@ import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
 import type { ClinicPhoto } from "../_types/clinic-photo.types"
+import { clinicPhotoApiService } from "../_services/clinic-photo.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 export type ClinicPhotoFormProps = {
   mode: "create" | "edit"
@@ -78,9 +80,6 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
     setError(null)
 
     try {
-      const url = isEdit && initialData?.id ? `/api/gallery/clinic/${initialData.id}` : "/api/gallery/clinic"
-      const method = isEdit ? "PUT" : "POST"
-
       const formData = new FormData()
       formData.append("heading", form.heading)
       formData.append("description", form.description)
@@ -93,27 +92,17 @@ export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
         formData.append("existingImage", form.image)
       }
 
-      const res = await fetch(url, {
-        method,
-        body: formData,
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        const errorMsg = data?.error
-          ? typeof data.error === "object"
-            ? Object.values(data.error).flat().join(", ")
-            : String(data.error)
-          : "Failed to save clinic photo"
-        throw new Error(errorMsg)
+      if (isEdit && initialData?.id) {
+        await clinicPhotoApiService.update(initialData.id, formData)
+      } else {
+        await clinicPhotoApiService.create(formData)
       }
 
       toast.success(isEdit ? "Clinic photo updated successfully" : "Clinic photo added successfully")
       router.push("/admin/gallery/clinic")
       router.refresh()
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Something went wrong"
+      const msg = getApiErrorMessage(err, "Failed to save clinic photo")
       setError(msg)
       toast.error(msg)
     } finally {

@@ -14,6 +14,8 @@ import {
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
 import type { Testimonial, TestimonialStatus } from "../_types/testimonial.types"
+import { testimonialApiService } from "../_services/testimonial.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 export type TestimonialFormProps = {
   mode: "create" | "edit"
@@ -55,31 +57,17 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
         displayOrder: Number(form.displayOrder) || 1,
       }
 
-      const url = isEdit && initialData?.id ? `/api/testimonials/${initialData.id}` : "/api/testimonials"
-      const method = isEdit ? "PUT" : "POST"
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        const errorMsg = data?.error
-          ? typeof data.error === "object"
-            ? Object.values(data.error).flat().join(", ")
-            : String(data.error)
-          : "Failed to save testimonial"
-        throw new Error(errorMsg)
+      if (isEdit && initialData?.id) {
+        await testimonialApiService.update(initialData.id, payload)
+      } else {
+        await testimonialApiService.create(payload)
       }
 
       toast.success(isEdit ? "Testimonial updated successfully" : "Testimonial added successfully")
       router.push("/admin/testimonials")
       router.refresh()
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Something went wrong"
+      const msg = getApiErrorMessage(err, "Failed to save testimonial")
       setError(msg)
       toast.error(msg)
     } finally {

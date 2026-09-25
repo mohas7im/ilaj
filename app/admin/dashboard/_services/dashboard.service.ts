@@ -21,7 +21,7 @@ export type StatItem = {
 }
 
 export async function fetchDashboardStats(): Promise<DashboardStats> {
-  const { data } = await apiClient.get<DashboardStats>("/api/dashboard/stats")
+  const { data } = await apiClient.get<DashboardStats>("/api/admin/dashboard/stats")
   return data
 }
 
@@ -34,7 +34,7 @@ export async function fetchDashboardInquiries(params?: {
   query.set("pageSize", String(params?.pageSize || 5))
 
   const { data } = await apiClient.get<DashboardInquiriesResponse>(
-    `/api/inquiries?${query.toString()}`
+    `/api/admin/inquiries?${query.toString()}`
   )
   return data
 }

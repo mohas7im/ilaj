@@ -15,6 +15,8 @@ import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
 import { cn } from "@/lib/utils"
 import { SERVICE_STATUS_CONFIG, type Service } from "../_types/service.types"
 import type { ServiceFilterState } from "./ServiceFilters"
+import { serviceApiService } from "../_services/service.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 type ServiceTableProps = {
   services: Service[]
@@ -48,15 +50,11 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
   const handleDelete = async () => {
     if (!deleteId) return
     try {
-      const res = await fetch(`/api/services/${deleteId}`, { method: "DELETE" })
-      if (!res.ok) {
-        throw new Error("Failed to delete service")
-      }
+      await serviceApiService.delete(deleteId)
       setServices((prev) => prev.filter((s) => s.id !== deleteId))
       toast.success("Service deleted successfully")
     } catch (error) {
-      const msg = error instanceof Error ? error.message : "Failed to delete service"
-      toast.error(msg)
+      toast.error(getApiErrorMessage(error, "Failed to delete service"))
     } finally {
       setDeleteId(null)
     }

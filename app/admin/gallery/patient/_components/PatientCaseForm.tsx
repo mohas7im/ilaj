@@ -10,6 +10,8 @@ import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
 import type { PatientCase } from "../_types/patient-case.types"
+import { patientCaseApiService } from "../_services/patient-case.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 export type PatientCaseFormProps = {
   mode: "create" | "edit"
@@ -107,9 +109,6 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
     setError(null)
 
     try {
-      const url = isEdit && initialData?.id ? `/api/gallery/patient/${initialData.id}` : "/api/gallery/patient"
-      const method = isEdit ? "PUT" : "POST"
-
       const formData = new FormData()
       formData.append("heading", form.heading)
       formData.append("description", form.description)
@@ -129,27 +128,17 @@ export function PatientCaseForm({ mode, initialData }: PatientCaseFormProps) {
         formData.append("existingAfterImage", form.afterImage)
       }
 
-      const res = await fetch(url, {
-        method,
-        body: formData,
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        const errorMsg = data?.error
-          ? typeof data.error === "object"
-            ? Object.values(data.error).flat().join(", ")
-            : String(data.error)
-          : "Failed to save patient case"
-        throw new Error(errorMsg)
+      if (isEdit && initialData?.id) {
+        await patientCaseApiService.update(initialData.id, formData)
+      } else {
+        await patientCaseApiService.create(formData)
       }
 
       toast.success(isEdit ? "Patient case updated successfully" : "Patient case added successfully")
       router.push("/admin/gallery/patient")
       router.refresh()
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Something went wrong"
+      const msg = getApiErrorMessage(err, "Failed to save patient case")
       setError(msg)
       toast.error(msg)
     } finally {
