@@ -87,7 +87,6 @@ export default function TestimonialsSection() {
                   uppercase
                   tracking-wider
                   text-zinc-800
-                  font-mono
                 "
               >
                 CLIENT FEEDBACK

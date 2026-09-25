@@ -43,7 +43,7 @@ export default function OurStorySection() {
                 uppercase
                 tracking-wider
                 text-zinc-800
-                font-mono
+                font-heading
               "
             >
               OUR STORY

@@ -66,7 +66,7 @@ export default function ServicesSection() {
               uppercase
               tracking-wider
               text-zinc-800
-              font-mono
+              font-heading
             "
           >
             OUR DENTAL SERVICES

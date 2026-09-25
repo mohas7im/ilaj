@@ -23,7 +23,6 @@ export default function ContactPage() {
               uppercase
               tracking-wider
               text-zinc-800
-              font-mono
             "
           >
             OUR DENTAL SERVICES
