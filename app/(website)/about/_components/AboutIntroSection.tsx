@@ -27,7 +27,7 @@ export default function AboutIntroSection() {
                   uppercase
                   tracking-wider
                   text-zinc-800
-                  font-heading
+                  font-mono
                 "
               >
                 ABOUT ILAJ DENTAL CARE

@@ -43,7 +43,7 @@ export default function OurStorySection() {
                 uppercase
                 tracking-wider
                 text-zinc-800
-                font-heading
+                font-mono
               "
             >
               OUR STORY
@@ -267,9 +267,6 @@ export default function OurStorySection() {
               <div
                 key={stat.label}
                 className="
-                  border-t
-                  border-zinc-200
-                  pt-5
                   lg:px-5
                   first:lg:pl-0
                 "
@@ -288,7 +285,10 @@ export default function OurStorySection() {
 
                 <div
                   className="
-                    mt-8
+                    mt-4
+                    border-t
+                    border-zinc-200
+                    pt-8
                     font-heading
                     text-5xl
                     font-normal

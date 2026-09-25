@@ -39,7 +39,7 @@ export default function AboutSection() {
               uppercase
               tracking-wider
               text-zinc-800
-              font-heading
+              font-mono
             "
           >
             ABOUT ILAJ DENTAL CARE
@@ -146,10 +146,7 @@ export default function AboutSection() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-10">
 
               {STATS.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="border-t border-zinc-200 pt-5"
-                >
+                <div key={stat.label}>
                   {/* Label */}
                   <h3
                     className="
@@ -165,7 +162,10 @@ export default function AboutSection() {
                   {/* Value */}
                   <div
                     className="
-                      mt-8
+                      mt-4
+                      border-t
+                      border-zinc-200
+                      pt-8
                       font-heading
                       text-5xl
                       sm:text-6xl

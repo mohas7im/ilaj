@@ -43,6 +43,7 @@ export default function GallerySection() {
                   uppercase
                   tracking-wider
                   text-zinc-800
+                  font-mono
                 "
               >
                 ILAJ GALLERY HERE
