@@ -37,13 +37,19 @@ export function Button({
         <span
           aria-hidden="true"
           className={cn(
-            "flex items-center justify-center w-8 h-8 rounded-full shrink-0 transition-transform duration-200 group-hover:translate-x-0.5",
+            "relative flex items-center justify-center w-8 h-8 rounded-full shrink-0 overflow-hidden",
             isPrimary
               ? "bg-white text-brand"
               : "bg-brand text-white"
           )}
         >
-          {icon ?? <ArrowRight className="w-4 h-4 stroke-[2.5]" />}
+          {icon ?? (
+            <>
+              {/* On hover the arrow slides out right while a copy slides in from the left */}
+              <ArrowRight className="w-4 h-4 stroke-[2.5] transition-transform duration-300 ease-out group-hover:translate-x-6 motion-reduce:transition-none" />
+              <ArrowRight className="absolute w-4 h-4 stroke-[2.5] -translate-x-6 transition-transform duration-300 ease-out group-hover:translate-x-0 motion-reduce:transition-none" />
+            </>
+          )}
         </span>
       )}
       <span className="leading-none">{children}</span>

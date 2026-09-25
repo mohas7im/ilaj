@@ -16,8 +16,10 @@ export default function Hero() {
       <img
         src="/images/hero-bg.png"
         alt="Hero background"
-        className="absolute inset-0 w-full h-full object-cover object-[90%_-50px]"
+        className="absolute inset-0 w-full h-full object-cover"
       />
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
       {/* Glossy & Subtle Vignette Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/60 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.04] to-white/[0.12] pointer-events-none" />
