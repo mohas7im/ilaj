@@ -16,10 +16,10 @@ export function ArrowButton({ direction, label, type = "button", ...props }: Arr
     <button
       type={type}
       aria-label={label}
-      className="flex size-11.25 items-center justify-center rounded-full border border-zinc-200 bg-white text-brand transition hover:bg-zinc-100 disabled:opacity-40"
+      className="flex size-11 items-center justify-center rounded-full border border-zinc-200 bg-white text-brand transition hover:bg-zinc-100 disabled:opacity-40"
       {...props}
     >
-      <Icon className="size-5.5" aria-hidden="true" />
+      <Icon className="size-5" aria-hidden="true" />
     </button>
   );
 }

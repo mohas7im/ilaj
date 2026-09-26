@@ -8,12 +8,12 @@ import SectionDescription from "@/components/website/common/SectionDescription";
 export default function AboutIntroSection() {
   return (
     <section className="w-full bg-zinc-50 text-zinc-950">
-      <div className="mx-auto max-w-7xl px-5 pb-12 pt-12 sm:px-6 lg:px-8 lg:pt-15">
+      <div className="mx-auto max-w-7xl px-5 pb-12 pt-12 sm:px-6 lg:px-8 lg:pt-16">
 
         {/* Label — above both columns, so the images line up with the heading */}
         <SectionLabel>ABOUT ILAJ DENTAL CARE</SectionLabel>
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,581px)] lg:gap-10">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-10">
 
           {/* =====================================================
               LEFT CONTENT
@@ -48,10 +48,10 @@ export default function AboutIntroSection() {
           {/* =====================================================
               RIGHT IMAGE COLLAGE
           ====================================================== */}
-          <div className="grid h-[420px] grid-cols-2 gap-3.75 sm:h-[520px] lg:h-[643px]">
+          <div className="grid h-96 grid-cols-2 gap-4 sm:h-128 lg:h-160">
 
             {/* Tall Image */}
-            <div className="relative overflow-hidden rounded-[18px]">
+            <div className="relative overflow-hidden rounded-2xl">
               <Image
                 src="/images/about/about-main.jpg"
                 alt="Dentist providing dental treatment"
@@ -63,8 +63,8 @@ export default function AboutIntroSection() {
             </div>
 
             {/* Two Stacked Images */}
-            <div className="grid grid-rows-2 gap-3.75">
-              <div className="relative overflow-hidden rounded-[18px]">
+            <div className="grid grid-rows-2 gap-4">
+              <div className="relative overflow-hidden rounded-2xl">
                 <Image
                   src="/images/about/about-small-1.jpg"
                   alt="Dental care model"
@@ -74,7 +74,7 @@ export default function AboutIntroSection() {
                 />
               </div>
 
-              <div className="relative overflow-hidden rounded-[18px]">
+              <div className="relative overflow-hidden rounded-2xl">
                 <Image
                   src="/images/about/about-small-2.jpg"
                   alt="Dental hygiene demonstration"

@@ -30,7 +30,7 @@ const UTILITY_LINKS = [
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#151515] text-white">
+    <footer className="w-full bg-neutral-900 text-white">
 
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
 

@@ -6,7 +6,7 @@ import SectionDescription from "@/components/website/common/SectionDescription";
 
 export default function ContactCtaSection() {
   return (
-    <section className="relative w-full min-h-[620px] overflow-hidden">
+    <section className="relative w-full min-h-156 overflow-hidden">
 
       {/* Background Image */}
       <Image
@@ -22,7 +22,7 @@ export default function ContactCtaSection() {
       <div className="absolute inset-0 bg-black/55" />
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-[620px] items-end px-5 py-10 sm:px-8 sm:py-12 lg:px-16 lg:py-16">
+      <div className="relative z-10 flex min-h-156 items-end px-5 py-10 sm:px-8 sm:py-12 lg:px-16 lg:py-16">
 
         <div
           className="
@@ -51,7 +51,7 @@ export default function ContactCtaSection() {
           <div className="max-w-2xl">
 
             <SectionTitle tone="light">
-              Need Dental Care? Get in
+              Need Dental Care? Get in{" "}
               <br className="hidden sm:block" />
               Touch Today
             </SectionTitle>

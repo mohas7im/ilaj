@@ -14,7 +14,7 @@ export function SectionDescription({ children, tone = "dark", className }: Secti
   return (
     <p
       className={cn(
-        "text-base leading-[1.37] lg:text-[16.5px]",
+        "text-base leading-snug",
         tone === "light" ? "text-white/90" : "text-zinc-900",
         className
       )}

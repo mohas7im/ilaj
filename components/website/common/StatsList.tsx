@@ -24,7 +24,7 @@ export function StatsList({ stats, className }: StatsListProps) {
 
           <CardTitle size="sm">{stat.label}</CardTitle>
 
-          <div className="mt-4 border-t border-zinc-200 pt-6 font-heading text-5xl font-medium leading-none tracking-tight text-zinc-950 sm:text-6xl lg:text-[64px]">
+          <div className="mt-4 border-t border-zinc-200 pt-6 font-heading text-5xl font-medium leading-none tracking-tight text-zinc-950 sm:text-6xl">
             {stat.value}
           </div>
 

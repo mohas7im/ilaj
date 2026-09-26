@@ -96,13 +96,13 @@ export default function ContactForm() {
       </Button>
 
       {status === "success" && (
-        <p role="status" className="mt-4 text-center text-[15px] text-zinc-700">
+        <p role="status" className="mt-4 text-center text-sm text-zinc-700">
           Thank you! We have received your request and will contact you soon.
         </p>
       )}
 
       {status === "error" && (
-        <p role="alert" className="mt-4 text-center text-[15px] text-red-600">
+        <p role="alert" className="mt-4 text-center text-sm text-red-600">
           {error}
         </p>
       )}

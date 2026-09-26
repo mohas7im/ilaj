@@ -54,7 +54,7 @@ export default function DoctorsSection() {
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
 
             <SectionTitle className="max-w-3xl">
-              Our skilled <Highlight>dental team</Highlight> ensures the
+              Our skilled <Highlight>dental team</Highlight> ensures the{" "}
               <br className="hidden sm:block" />
               best care for your health.
             </SectionTitle>
@@ -96,7 +96,7 @@ export default function DoctorsSection() {
             >
 
               {/* Card Information */}
-              <div className="flex h-[202px] flex-col p-7">
+              <div className="flex h-50 flex-col p-7">
 
                 {/* Doctor Name */}
                 <CardTitle>{doctor.name}</CardTitle>
@@ -139,7 +139,7 @@ export default function DoctorsSection() {
               </div>
 
               {/* Doctor Image */}
-              <div className="relative aspect-[0.9/1] w-full">
+              <div className="relative aspect-9/10 w-full">
                 <Image
                   src={doctor.image}
                   alt={doctor.name}

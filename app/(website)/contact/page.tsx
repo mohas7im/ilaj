@@ -35,7 +35,7 @@ export default function ContactPage() {
       {/* =====================================================
           HERO
       ====================================================== */}
-      <section className="px-5 pt-12 sm:px-6 lg:px-8 lg:pt-[76px]">
+      <section className="px-5 pt-12 sm:px-6 lg:px-8 lg:pt-20">
         <div className="mx-auto max-w-7xl text-center">
 
           <SectionLabel>OUR DENTAL SERVICES</SectionLabel>
@@ -63,24 +63,24 @@ export default function ContactPage() {
         {/* Decorative photo — pinned to the left edge, faded by the panel over it */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-0 top-[145px] hidden aspect-square w-[781px] lg:block"
+          className="pointer-events-none absolute left-0 top-36 hidden aspect-square w-1/2 lg:block"
         >
           <Image
             src="/images/contact/contact-panel-bg.png"
             alt=""
             fill
             className="object-cover saturate-50"
-            sizes="781px"
+            sizes="50vw"
           />
         </div>
 
         <div className="relative mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-          <div className="rounded-3xl bg-neutral-100/85 p-5 sm:p-7.5">
+          <div className="rounded-3xl bg-neutral-100/85 p-5 sm:p-8">
 
-            <div className="grid grid-cols-1 gap-7 lg:grid-cols-[minmax(0,3fr)_minmax(0,5fr)]">
+            <div className="grid grid-cols-1 gap-7 lg:grid-cols-8">
 
               {/* Contact Information */}
-              <div className="space-y-6.5">
+              <div className="space-y-6 lg:col-span-3">
                 {CONTACT_INFO.map((item) => (
                   <div key={item.title}>
                     <CardTitle as="h2" size="sm">
@@ -108,7 +108,7 @@ export default function ContactPage() {
               {/* Appointment Form */}
               <div
                 id="book-appointment"
-                className="scroll-mt-28 rounded-2xl border border-zinc-200 bg-white p-3.5"
+                className="scroll-mt-28 rounded-2xl lg:col-span-5 border border-zinc-200 bg-white p-3.5"
               >
                 <CardTitle as="h2">Book Your Appointment</CardTitle>
 
@@ -122,7 +122,7 @@ export default function ContactPage() {
               <iframe
                 title="Ilaj Dental Care Location"
                 src="https://www.google.com/maps?q=Ilaj%20Dental%20Care%20Kottakkal%20Kerala&output=embed"
-                className="h-[320px] w-full border-0 sm:h-[380px] lg:h-[420px]"
+                className="h-80 w-full border-0 sm:h-96 lg:h-104"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />

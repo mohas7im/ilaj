@@ -20,12 +20,12 @@ export default function WhyChooseUsSection() {
         {/* Label */}
         <SectionLabel>WHY CHOOSE US</SectionLabel>
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-0">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-0">
 
           {/* =================================================
               LEFT CONTENT
           ================================================== */}
-          <div className="flex flex-col">
+          <div className="flex flex-col lg:col-span-7">
 
             {/* Heading */}
             <SectionTitle>
@@ -34,13 +34,13 @@ export default function WhyChooseUsSection() {
               <Highlight>Dental Care Different</Highlight>
             </SectionTitle>
 
-            <SectionDescription className="mt-2.5 max-w-[420px]">
+            <SectionDescription className="mt-2.5 max-w-md">
               Experience and compassion — our team delivers
               high-quality care in a patient-first environment.
             </SectionDescription>
 
             {/* Feature List — sits at the bottom, level with the image */}
-            <div className="mt-16 space-y-7.5 lg:mt-auto lg:pt-16">
+            <div className="mt-16 space-y-8 lg:mt-auto lg:pt-16">
 
               {FEATURES.map((feature, index) => (
                 <div
@@ -73,12 +73,13 @@ export default function WhyChooseUsSection() {
           <div
             className="
               relative
-              h-[420px]
+              h-96
+              lg:col-span-5
               w-full
               overflow-hidden
-              rounded-[18px]
-              sm:h-[520px]
-              lg:h-[612px]
+              rounded-2xl
+              sm:h-128
+              lg:h-152
             "
           >
             <Image

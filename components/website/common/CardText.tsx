@@ -14,7 +14,7 @@ export function CardText({ children, tone = "dark", as: Tag = "p", className }: 
   return (
     <Tag
       className={cn(
-        "text-[15px] leading-[1.4]",
+        "text-sm",
         tone === "light" ? "text-white/90" : "text-zinc-800",
         className
       )}

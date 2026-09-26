@@ -24,7 +24,7 @@ export function Button({
     <button
       type={type}
       className={cn(
-        "group inline-flex items-center justify-center gap-3 rounded-full font-semibold text-[15px] transition-all duration-200 cursor-pointer select-none whitespace-nowrap active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",
+        "group inline-flex items-center justify-center gap-3 rounded-full font-semibold text-sm transition-all duration-200 cursor-pointer select-none whitespace-nowrap active:scale-98 disabled:pointer-events-none disabled:opacity-50",
         showIcon ? "pl-2 pr-6 py-2" : "px-7 py-3",
         isPrimary
           ? "bg-brand text-white hover:bg-brand-hover shadow-md"
@@ -46,8 +46,8 @@ export function Button({
           {icon ?? (
             <>
               {/* On hover the arrow slides out right while a copy slides in from the left */}
-              <ArrowRight className="w-4 h-4 stroke-[2.5] transition-transform duration-300 ease-out group-hover:translate-x-6 motion-reduce:transition-none" />
-              <ArrowRight className="absolute w-4 h-4 stroke-[2.5] -translate-x-6 transition-transform duration-300 ease-out group-hover:translate-x-0 motion-reduce:transition-none" />
+              <ArrowRight strokeWidth={2.5} className="size-4 transition-transform duration-300 ease-out group-hover:translate-x-6 motion-reduce:transition-none" />
+              <ArrowRight strokeWidth={2.5} className="absolute size-4 -translate-x-6 transition-transform duration-300 ease-out group-hover:translate-x-0 motion-reduce:transition-none" />
             </>
           )}
         </span>

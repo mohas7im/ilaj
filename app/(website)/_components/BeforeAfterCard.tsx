@@ -18,7 +18,7 @@ export default function BeforeAfterCard({
   const [position, setPosition] = useState(50);
 
   return (
-    <div className="relative aspect-[1.8/1] w-full overflow-hidden rounded-2xl">
+    <div className="relative aspect-9/5 w-full overflow-hidden rounded-2xl">
       {/* AFTER IMAGE - Background */}
       <Image
         src={after}

@@ -32,7 +32,7 @@ export default function Navbar() {
         "fixed top-0 inset-x-0 z-50 transition-all duration-300",
         scrolled
           ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-zinc-200"
-          : "bg-transparent border-b border-[#D1D5DB]"
+          : "bg-transparent border-b border-gray-300"
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,7 +72,7 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   className={cn(
-                    "text-[16px] font-medium transition-colors duration-150",
+                    "text-base font-medium transition-colors duration-150",
                     scrolled
                       ? active
                         ? "text-zinc-950 font-semibold"

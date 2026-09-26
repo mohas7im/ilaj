@@ -77,7 +77,7 @@ export default function ServicesSection() {
 
           {/* Short Description */}
           <div className="flex items-end lg:col-span-4 lg:justify-end">
-            <SectionDescription className="max-w-[372px]">
+            <SectionDescription className="max-w-sm">
               We offer a wide range of treatments to keep your
               smile healthy and beautiful.
             </SectionDescription>
@@ -112,7 +112,7 @@ export default function ServicesSection() {
                 py-12
                 sm:px-6
                 sm:py-14
-                lg:grid-cols-[minmax(0,2fr)_minmax(0,6fr)_minmax(0,4fr)]
+                lg:grid-cols-12
                 lg:gap-6
                 lg:px-8
                 lg:py-9
@@ -122,7 +122,7 @@ export default function ServicesSection() {
               {/* =================================================
                   NUMBER
               ================================================== */}
-              <div>
+              <div className="lg:col-span-2">
                 <CardTitle as="span" tone="brand">
                   {service.number}
                 </CardTitle>
@@ -131,7 +131,7 @@ export default function ServicesSection() {
               {/* =================================================
                   CONTENT
               ================================================== */}
-              <div className="flex flex-col">
+              <div className="flex flex-col lg:col-span-6">
 
                 <CardTitle>{service.title}</CardTitle>
 
@@ -150,7 +150,7 @@ export default function ServicesSection() {
                     items-center
                     gap-4
                     pt-12
-                    text-[15px]
+                    text-sm
                     font-semibold
                     text-brand
                   "
@@ -182,6 +182,7 @@ export default function ServicesSection() {
                   grid
                   grid-cols-2
                   gap-4
+                  lg:col-span-4
                 "
               >
                 {service.images.map((image, imageIndex) => (

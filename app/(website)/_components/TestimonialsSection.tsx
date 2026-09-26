@@ -119,9 +119,10 @@ export default function TestimonialsSection() {
           px-5
           sm:px-6
           lg:px-8
-          [--card-w:calc(100vw-40px)]
+          [--card-w:100%]
           [--pitch:calc(var(--card-w)+1rem)]
-          sm:[--card-w:395px]
+          sm:[--card-w:calc((100%-1rem)/2)]
+          lg:[--card-w:calc((100%-2rem)/3)]
         "
       >
 
@@ -159,7 +160,7 @@ export default function TestimonialsSection() {
               className={cn(
                 "flex gap-4 will-change-transform motion-reduce:transition-none",
                 animate && "transition-transform duration-500 ease-out",
-                rowIndex === 1 && "[--row-shift:calc(var(--pitch)/2)] lg:[--row-shift:213px]"
+                rowIndex === 1 && "[--row-shift:calc(var(--pitch)/2)]"
               )}
               style={{
                 transform: `translateX(calc(var(--row-shift, 0px) - ${MIDDLE * LENGTH + step} * var(--pitch)))`,
@@ -191,7 +192,7 @@ function TestimonialCard({ testimonial, hidden }: { testimonial: Testimonial; hi
     >
       {/* Rating */}
       <div className="flex items-center gap-2">
-        <Star className="size-[17px] fill-brand text-brand" aria-hidden="true" />
+        <Star className="size-4 fill-brand text-brand" aria-hidden="true" />
         <CardTitle as="span" size="sm">
           {testimonial.rating}
         </CardTitle>
