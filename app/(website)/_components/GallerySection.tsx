@@ -1,6 +1,10 @@
 "use client";
 
 import BeforeAfterCard from "./BeforeAfterCard";
+import SectionLabel from "@/components/website/common/SectionLabel";
+import SectionTitle from "@/components/website/common/SectionTitle";
+import SectionDescription from "@/components/website/common/SectionDescription";
+import ArrowButton from "@/components/website/ui/ArrowButton";
 
 const GALLERY = [
   {
@@ -31,59 +35,24 @@ export default function GallerySection() {
           <div className="lg:col-span-7">
 
             {/* Label */}
-            <div className="mb-7">
-              <span
-                className="
-                  inline-flex
-                  rounded-full
-                  border border-zinc-200
-                  px-4 py-2
-                  text-xs
-                  font-semibold
-                  uppercase
-                  tracking-wider
-                  text-zinc-800
-                "
-              >
-                ILAJ GALLERY HERE
-              </span>
-            </div>
+            <SectionLabel>ILAJ GALLERY HERE</SectionLabel>
 
-            <h2
-              className="
-                font-heading
-                max-w-2xl
-                text-4xl
-                font-normal
-                leading-[1.1]
-                tracking-tight
-                sm:text-5xl
-                lg:text-[48px]
-              "
-            >
+            <SectionTitle className="max-w-2xl">
               A Closer Look at
               <br />
               Your Smile Journey
-            </h2>
+            </SectionTitle>
 
           </div>
 
           {/* Description */}
           <div className="flex items-end lg:col-span-3">
 
-            <p
-              className="
-                max-w-md
-                text-base
-                leading-relaxed
-                text-zinc-900
-                sm:text-lg
-              "
-            >
+            <SectionDescription className="max-w-md">
               Explore our patients’ transformations and take a look
               inside our clinic, designed to make every visit
               comfortable and confident.
-            </p>
+            </SectionDescription>
 
           </div>
 
@@ -116,49 +85,11 @@ export default function GallerySection() {
         {/* =====================================================
             NAVIGATION
         ====================================================== */}
-        <div className="mt-10 flex justify-center gap-3">
+        <div className="mt-10 flex justify-center gap-2">
 
-          <button
-            type="button"
-            aria-label="Previous gallery"
-            className="
-              flex
-              h-14
-              w-14
-              items-center
-              justify-center
-              rounded-full
-              border
-              border-zinc-200
-              text-2xl
-              text-brand
-              transition
-              hover:bg-zinc-50
-            "
-          >
-            ←
-          </button>
+          <ArrowButton direction="prev" label="Previous gallery" />
 
-          <button
-            type="button"
-            aria-label="Next gallery"
-            className="
-              flex
-              h-14
-              w-14
-              items-center
-              justify-center
-              rounded-full
-              border
-              border-zinc-200
-              text-2xl
-              text-brand
-              transition
-              hover:bg-zinc-50
-            "
-          >
-            →
-          </button>
+          <ArrowButton direction="next" label="Next gallery" />
 
         </div>
 

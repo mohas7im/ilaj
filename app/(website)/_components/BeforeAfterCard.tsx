@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import MetaText from "@/components/website/common/MetaText";
 
 interface BeforeAfterCardProps {
   before: string;
@@ -75,38 +76,14 @@ export default function BeforeAfterCard({
       </div>
 
       {/* BEFORE label */}
-      <span
-        className="
-          absolute
-          bottom-3
-          left-3
-          z-20
-          text-[10px]
-          font-bold
-          uppercase
-          tracking-wide
-          text-white
-        "
-      >
+      <MetaText as="span" tone="light" className="absolute bottom-3 left-3 z-20">
         BEFORE
-      </span>
+      </MetaText>
 
       {/* AFTER label */}
-      <span
-        className="
-          absolute
-          bottom-3
-          right-3
-          z-20
-          text-[10px]
-          font-bold
-          uppercase
-          tracking-wide
-          text-white
-        "
-      >
+      <MetaText as="span" tone="light" className="absolute bottom-3 right-3 z-20">
         AFTER
-      </span>
+      </MetaText>
 
       {/* Invisible Slider */}
       <input

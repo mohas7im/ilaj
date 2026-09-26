@@ -2,9 +2,22 @@
 
 import { useState } from "react";
 import { getApiErrorMessage } from "@/lib/api/errors";
+import Button from "@/components/website/ui/Button";
+import Input from "@/components/website/ui/Input";
+import Select from "@/components/website/ui/Select";
+import Textarea from "@/components/website/ui/Textarea";
 import { submitContactInquiry } from "../_api/contactApi";
 
 type Status = "idle" | "submitting" | "success" | "error";
+
+const TREATMENTS = [
+  "Teeth Cleaning",
+  "Teeth Whitening",
+  "Dental Implants",
+  "Orthodontics",
+  "Root Canal Treatment",
+  "Other",
+];
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -36,292 +49,60 @@ export default function ContactForm() {
   };
 
   return (
-    <form className="mt-6" onSubmit={handleSubmit}>
+    <form className="mt-3" onSubmit={handleSubmit}>
 
-      <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-x-3.5 gap-y-4 sm:grid-cols-2">
 
-        {/* Full Name */}
-        <div>
-          <label
-            htmlFor="fullName"
-            className="block text-base font-medium"
-          >
-            Full Name*
-          </label>
+        <Input id="fullName" name="fullName" type="text" label="Full Name*" placeholder="Enter Your Full Name" required />
 
-          <input
-            id="fullName"
-            name="fullName"
-            type="text"
-            placeholder="Enter Your Full Name"
-            required
-            className="
-              mt-3
-              h-12
-              w-full
-              border-0
-              border-b
-              border-zinc-300
-              bg-transparent
-              px-0
-              text-base
-              outline-none
-              placeholder:text-zinc-500
-              focus:border-brand
-            "
-          />
-        </div>
+        <Input id="phone" name="phone" type="tel" label="Phone Number*" placeholder="Enter your phone number" required />
 
-        {/* Phone */}
-        <div>
-          <label
-            htmlFor="phone"
-            className="block text-base font-medium"
-          >
-            Phone Number*
-          </label>
+        <Input id="email" name="email" type="email" label="Email Address*" placeholder="Enter your email address" required />
 
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            placeholder="Enter your phone number"
-            required
-            className="
-              mt-3
-              h-12
-              w-full
-              border-0
-              border-b
-              border-zinc-300
-              bg-transparent
-              px-0
-              text-base
-              outline-none
-              placeholder:text-zinc-500
-              focus:border-brand
-            "
-          />
-        </div>
-
-        {/* Email */}
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-base font-medium"
-          >
-            Email Address*
-          </label>
-
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Enter your email address"
-            required
-            className="
-              mt-3
-              h-12
-              w-full
-              border-0
-              border-b
-              border-zinc-300
-              bg-transparent
-              px-0
-              text-base
-              outline-none
-              placeholder:text-zinc-500
-              focus:border-brand
-            "
-          />
-        </div>
-
-        {/* Treatment */}
-        <div>
-          <label
-            htmlFor="treatment"
-            className="block text-base font-medium"
-          >
-            Select Treatment*
-          </label>
-
-          <select
-            id="treatment"
-            name="treatment"
-            required
-            defaultValue=""
-            className="
-              mt-3
-              h-12
-              w-full
-              border-0
-              border-b
-              border-zinc-300
-              bg-transparent
-              px-0
-              text-base
-              text-zinc-500
-              outline-none
-              focus:border-brand
-            "
-          >
-            <option value="" disabled>
-              Choose a treatment
+        <Select id="treatment" name="treatment" label="Select Treatment*" required defaultValue="">
+          <option value="" disabled>
+            Choose a treatment
+          </option>
+          {TREATMENTS.map((treatment) => (
+            <option key={treatment} value={treatment}>
+              {treatment}
             </option>
+          ))}
+        </Select>
 
-            <option value="Teeth Cleaning">
-              Teeth Cleaning
-            </option>
+        <Input id="date" name="date" type="date" label="Preferred Date*" required />
 
-            <option value="Teeth Whitening">
-              Teeth Whitening
-            </option>
+        <Input id="time" name="time" type="time" label="Preferred Time*" required />
 
-            <option value="Dental Implants">
-              Dental Implants
-            </option>
-
-            <option value="Orthodontics">
-              Orthodontics
-            </option>
-
-            <option value="Root Canal Treatment">
-              Root Canal Treatment
-            </option>
-
-            <option value="Other">
-              Other
-            </option>
-          </select>
-        </div>
-
-        {/* Preferred Date */}
-        <div>
-          <label
-            htmlFor="date"
-            className="block text-base font-medium"
-          >
-            Preferred Date*
-          </label>
-
-          <input
-            id="date"
-            name="date"
-            type="date"
-            required
-            className="
-              mt-3
-              h-12
-              w-full
-              border-0
-              border-b
-              border-zinc-300
-              bg-transparent
-              px-0
-              text-base
-              text-zinc-500
-              outline-none
-              focus:border-brand
-            "
-          />
-        </div>
-
-        {/* Preferred Time */}
-        <div>
-          <label
-            htmlFor="time"
-            className="block text-base font-medium"
-          >
-            Preferred Time*
-          </label>
-
-          <input
-            id="time"
-            name="time"
-            type="time"
-            required
-            className="
-              mt-3
-              h-12
-              w-full
-              border-0
-              border-b
-              border-zinc-300
-              bg-transparent
-              px-0
-              text-base
-              text-zinc-500
-              outline-none
-              focus:border-brand
-            "
-          />
-        </div>
-
-        {/* Message */}
-        <div className="sm:col-span-2">
-          <label
-            htmlFor="message"
-            className="block text-base font-medium"
-          >
-            Message*
-          </label>
-
-          <textarea
-            id="message"
-            name="message"
-            rows={3}
-            placeholder="Enter your message"
-            required
-            className="
-              mt-3
-              w-full
-              resize-none
-              border-0
-              border-b
-              border-zinc-300
-              bg-transparent
-              px-0
-              py-2
-              text-base
-              outline-none
-              placeholder:text-zinc-500
-              focus:border-brand
-            "
-          />
-        </div>
+        <Textarea
+          id="message"
+          name="message"
+          label="Message*"
+          placeholder="Enter your message"
+          required
+          className="sm:col-span-2"
+        />
 
       </div>
 
-      {/* Submit */}
-      <button
+      <Button
         type="submit"
+        variant="primary"
+        showIcon={false}
         disabled={status === "submitting"}
-        className="
-          mt-8
-          h-14
-          w-full
-          rounded-full
-          bg-brand
-          px-6
-          text-base
-          font-semibold
-          text-white
-          transition
-          hover:opacity-90
-          disabled:opacity-60
-        "
+        className="mt-8 w-full"
       >
         {status === "submitting" ? "Sending..." : "Book Appointment"}
-      </button>
+      </Button>
 
       {status === "success" && (
-        <p role="status" className="mt-4 text-center text-base text-zinc-700">
+        <p role="status" className="mt-4 text-center text-[15px] text-zinc-700">
           Thank you! We have received your request and will contact you soon.
         </p>
       )}
 
       {status === "error" && (
-        <p role="alert" className="mt-4 text-center text-base text-red-600">
+        <p role="alert" className="mt-4 text-center text-[15px] text-red-600">
           {error}
         </p>
       )}

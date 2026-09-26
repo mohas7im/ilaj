@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/website/ui/Button";
 import SectionLabel from "@/components/website/common/SectionLabel";
+import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
+import SectionDescription from "@/components/website/common/SectionDescription";
+import StatsList from "@/components/website/common/StatsList";
 
 const STATS = [
   {
@@ -34,25 +37,21 @@ export default function AboutSection() {
 
           {/* Heading */}
           <div className="lg:col-span-1">
-            <h2 className="font-heading text-3xl font-medium leading-[1.15] tracking-tight sm:text-4xl lg:text-[36px]">
-              <span className="text-brand">
-                Ilaj Dental Care -
-              </span>
-              <span className="text-zinc-950">
-                The Story Behind Every Smile
-              </span>
-            </h2>
+            <SectionTitle>
+              <Highlight>Ilaj Dental Care -</Highlight>{" "}
+              The Story Behind Every Smile
+            </SectionTitle>
           </div>
 
           {/* Paragraph + CTA */}
           <div className="lg:col-span-2">
-            <p className="max-w-4xl text-lg font-medium leading-[1.45] text-zinc-950 sm:text-lg lg:text-[19px]">
+            <SectionDescription className="max-w-4xl">
               At Ilaj Dental Care, we take pride in delivering exceptional
               dental care with a focus on quality, comfort, and trust. Backed
               by years of experience, our expert team has helped thousands of
               patients achieve healthy and confident smiles through advanced,
               safe, and personalized treatments.
-            </p>
+            </SectionDescription>
 
             <div className="mt-20 flex justify-start">
               <Link href="/about">
@@ -83,27 +82,7 @@ export default function AboutSection() {
 
           {/* Stats */}
           <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 lg:gap-10">
-
-              {STATS.map((stat) => (
-                <div key={stat.label}>
-
-                  <h3 className="text-xl font-medium text-center text-zinc-950 sm:text-lg">
-                    {stat.label}
-                  </h3>
-
-                  <div className="mt-4 border-t border-zinc-200 pt-8 text-center font-heading text-5xl font-medium leading-none tracking-tight text-zinc-950 sm:text-6xl lg:text-[64px]">
-                    {stat.value}
-                  </div>
-
-                  <p className="mt-4 text-center text-sm leading-relaxed text-gray-800 sm:text-base">
-                    {stat.description}
-                  </p>
-
-                </div>
-              ))}
-
-            </div>
+            <StatsList stats={STATS} />
           </div>
 
         </div>

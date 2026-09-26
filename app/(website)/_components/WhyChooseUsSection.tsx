@@ -1,4 +1,8 @@
 import Image from "next/image";
+import SectionLabel from "@/components/website/common/SectionLabel";
+import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
+import SectionDescription from "@/components/website/common/SectionDescription";
+import CardTitle from "@/components/website/common/CardTitle";
 
 const FEATURES = [
   "Experienced & Qualified Doctors",
@@ -13,95 +17,52 @@ export default function WhyChooseUsSection() {
     <section className="w-full bg-white text-zinc-950 py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-10 lg:gap-16">
+        {/* Label */}
+        <SectionLabel>WHY CHOOSE US</SectionLabel>
+
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-0">
 
           {/* =================================================
               LEFT CONTENT
           ================================================== */}
-          <div className="lg:col-span-6">
+          <div className="flex flex-col">
 
             {/* Heading */}
-            <div className="max-w-2xl">
-              <h2
-                className="
-                  font-heading
-                  text-4xl
-                  font-normal
-                  leading-[1.1]
-                  tracking-tight
-                  sm:text-5xl
-                  lg:text-[48px]
-                "
-              >
-                <span className="text-zinc-950">
-                  What Makes Ilaj
-                </span>
+            <SectionTitle>
+              What Makes Ilaj
+              <br />
+              <Highlight>Dental Care Different</Highlight>
+            </SectionTitle>
 
-                <br />
+            <SectionDescription className="mt-2.5 max-w-[420px]">
+              Experience and compassion — our team delivers
+              high-quality care in a patient-first environment.
+            </SectionDescription>
 
-                <span className="text-brand">
-                  Dental Care Different
-                </span>
-              </h2>
+            {/* Feature List — sits at the bottom, level with the image */}
+            <div className="mt-16 space-y-7.5 lg:mt-auto lg:pt-16">
 
-              <p
-                className="
-                  mt-5
-                  max-w-xl
-                  text-base
-                  leading-relaxed
-                  text-zinc-900
-                  sm:text-lg
-                "
-              >
-                Experience and compassion — our team delivers
-                high-quality care in a patient-first environment.
-              </p>
-            </div>
+              {FEATURES.map((feature, index) => (
+                <div
+                  key={feature}
+                  className="flex items-baseline gap-4"
+                >
 
-            {/* Feature List */}
-            <div className="mt-28 sm:mt-32 lg:mt-36">
-
-              <div className="space-y-9 sm:space-y-10">
-
-                {FEATURES.map((feature, index) => (
-                  <div
-                    key={feature}
-                    className="flex items-center gap-5"
+                  {/* Number */}
+                  <CardTitle
+                    as="span"
+                    size="sm"
+                    tone="brand"
+                    className="relative top-0.5 w-7 shrink-0 text-right"
                   >
+                    {String(index + 1).padStart(2, "0")}
+                  </CardTitle>
 
-                    {/* Number */}
-                    <span
-                      className="
-                        w-8
-                        shrink-0
-                        text-xl
-                        font-medium
-                        tracking-tight
-                        text-brand
-                      "
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
+                  {/* Feature */}
+                  <CardTitle>{feature}</CardTitle>
 
-                    {/* Feature */}
-                    <h3
-                      className="
-                        text-2xl
-                        font-medium
-                        leading-tight
-                        tracking-tight
-                        text-zinc-950
-                        sm:text-3xl
-                      "
-                    >
-                      {feature}
-                    </h3>
-
-                  </div>
-                ))}
-
-              </div>
+                </div>
+              ))}
 
             </div>
           </div>
@@ -109,32 +70,25 @@ export default function WhyChooseUsSection() {
           {/* =================================================
               RIGHT IMAGE
           ================================================== */}
-          <div className="lg:col-span-4">
-
-            <div
-              className="
-                relative
-                h-[520px]
-                w-full
-                overflow-hidden
-                rounded-3xl
-                sm:h-[600px]
-                lg:h-[790px]
-              "
-            >
-              <Image
-                src="/images/why-ilaj.jpg"
-                alt="Patient smiling and looking at their teeth"
-                fill
-                priority
-                className="object-cover"
-                sizes="
-                  (max-width: 1024px) 100vw,
-                  40vw
-                "
-              />
-            </div>
-
+          <div
+            className="
+              relative
+              h-[420px]
+              w-full
+              overflow-hidden
+              rounded-[18px]
+              sm:h-[520px]
+              lg:h-[612px]
+            "
+          >
+            <Image
+              src="/images/why-ilaj.jpg"
+              alt="Patient smiling and looking at their teeth"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 40vw"
+            />
           </div>
 
         </div>

@@ -1,5 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import SectionLabel from "@/components/website/common/SectionLabel";
+import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
+import CardTitle from "@/components/website/common/CardTitle";
+import MetaText from "@/components/website/common/MetaText";
+import ArrowButton from "@/components/website/ui/ArrowButton";
 
 const DOCTORS = [
   {
@@ -43,99 +48,23 @@ export default function DoctorsSection() {
         <div className="relative">
 
           {/* Label */}
-          <div className="mb-6">
-            <span
-              className="
-                inline-flex
-                rounded-full
-                border border-zinc-200
-                px-4 py-2
-                text-xs
-                font-semibold
-                uppercase
-                tracking-wider
-                text-zinc-800
-                font-heading
-              "
-            >
-              MEET OUR DOCTORS
-            </span>
-          </div>
+          <SectionLabel>MEET OUR DOCTORS</SectionLabel>
 
           {/* Heading + Arrows */}
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
 
-            <h2
-              className="
-                max-w-3xl
-                font-heading
-                text-4xl
-                font-normal
-                leading-[1.1]
-                tracking-tight
-                sm:text-5xl
-                lg:text-[46px]
-              "
-            >
-              <span className="text-zinc-950">
-                Our skilled{" "}
-              </span>
-
-              <span className="text-brand">
-                dental team
-              </span>
-
-              <span className="text-zinc-950">
-                {" "}ensures the
-                <br className="hidden sm:block" />
-                best care for your health.
-              </span>
-            </h2>
+            <SectionTitle className="max-w-3xl">
+              Our skilled <Highlight>dental team</Highlight> ensures the
+              <br className="hidden sm:block" />
+              best care for your health.
+            </SectionTitle>
 
             {/* Navigation Buttons */}
-            <div className="flex shrink-0 gap-3">
+            <div className="flex shrink-0 gap-2">
 
-              <button
-                type="button"
-                aria-label="Previous doctors"
-                className="
-                  flex
-                  h-14
-                  w-14
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-zinc-200
-                  text-2xl
-                  text-brand
-                  transition
-                  hover:bg-zinc-50
-                "
-              >
-                ←
-              </button>
+              <ArrowButton direction="prev" label="Previous doctors" />
 
-              <button
-                type="button"
-                aria-label="Next doctors"
-                className="
-                  flex
-                  h-14
-                  w-14
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-zinc-200
-                  text-2xl
-                  text-brand
-                  transition
-                  hover:bg-zinc-50
-                "
-              >
-                →
-              </button>
+              <ArrowButton direction="next" label="Next doctors" />
 
             </div>
           </div>
@@ -170,32 +99,10 @@ export default function DoctorsSection() {
               <div className="flex h-[202px] flex-col p-7">
 
                 {/* Doctor Name */}
-                <h3
-                  className="
-                    text-xl
-                    font-semibold
-                    tracking-tight
-                    text-zinc-950
-                    sm:text-2xl
-                  "
-                >
-                  {doctor.name}
-                </h3>
+                <CardTitle>{doctor.name}</CardTitle>
 
                 {/* Qualification */}
-                <p
-                  className="
-                    mt-2
-                    text-xs
-                    font-medium
-                    uppercase
-                    tracking-wider
-                    text-zinc-800
-                    font-heading
-                  "
-                >
-                  {doctor.qualification}
-                </p>
+                <MetaText className="mt-2">{doctor.qualification}</MetaText>
 
                 {/* Social Links */}
                 <div className="mt-auto flex items-center gap-4">
@@ -238,11 +145,7 @@ export default function DoctorsSection() {
                   alt={doctor.name}
                   fill
                   className="object-cover"
-                  sizes="
-                    (max-width: 640px) 100vw,
-                    (max-width: 1024px) 50vw,
-                    25vw
-                  "
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 />
               </div>
 

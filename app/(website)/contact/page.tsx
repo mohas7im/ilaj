@@ -1,287 +1,141 @@
 import Image from "next/image";
-import Link from "next/link";
 import ContactForm from "./_components/ContactForm";
+import AppointmentCTA from "../_components/AppointmentCTA";
+import SectionLabel from "@/components/website/common/SectionLabel";
+import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
+import SectionDescription from "@/components/website/common/SectionDescription";
+import CardTitle from "@/components/website/common/CardTitle";
+import CardText from "@/components/website/common/CardText";
+
+const CONTACT_INFO = [
+  {
+    title: "Email",
+    lines: ["contact@ilajdentalcare.com"],
+    href: "mailto:contact@ilajdentalcare.com",
+  },
+  {
+    title: "Phone",
+    lines: ["+91 97265 37777"],
+    href: "tel:+919726537777",
+  },
+  {
+    title: "Location",
+    lines: ["Ilaj Dental Care", "Edarikode-Panthakkal Kund Rd,", "Kottakkal, Kerala", "India"],
+  },
+  {
+    title: "Opening Hours",
+    lines: ["Mon – Sat: 9:00 AM – 8:00 PM", "Sunday: Closed"],
+  },
+];
 
 export default function ContactPage() {
   return (
-    <main className="w-full bg-white text-zinc-950">
+    <main className="w-full bg-white pt-20 text-zinc-950">
 
       {/* =====================================================
           HERO
       ====================================================== */}
-      <section className="px-5 pt-10 sm:px-6 sm:pt-14 lg:px-8 lg:pt-16">
+      <section className="px-5 pt-12 sm:px-6 lg:px-8 lg:pt-[76px]">
         <div className="mx-auto max-w-7xl text-center">
 
-          {/* Label */}
-          <span
-            className="
-              inline-flex
-              rounded-full
-              border border-zinc-200
-              px-4 py-2
-              text-xs
-              font-semibold
-              uppercase
-              tracking-wider
-              text-zinc-800
-            "
-          >
-            OUR DENTAL SERVICES
-          </span>
+          <SectionLabel>OUR DENTAL SERVICES</SectionLabel>
 
-          {/* Heading */}
-          <h1
-            className="
-              mx-auto
-              mt-6
-              max-w-3xl
-              font-heading
-              text-4xl
-              font-normal
-              leading-[1.1]
-              tracking-tight
-              sm:text-5xl
-              lg:text-[48px]
-            "
-          >
-            <span className="text-zinc-950">
-              We’re Here To{" "}
-            </span>
-
-            <span className="text-brand">
-              Help You
-            </span>
-
+          <SectionTitle as="h1" className="mx-auto max-w-3xl">
+            We’re Here To <Highlight>Help You</Highlight>
             <br />
+            <Highlight>Smile Brighter</Highlight>
+          </SectionTitle>
 
-            <span className="text-brand">
-              Smile Brighter
-            </span>
-          </h1>
-
-          {/* Description */}
-          <p
-            className="
-              mx-auto
-              mt-5
-              max-w-3xl
-              text-base
-              leading-relaxed
-              text-zinc-800
-              sm:text-lg
-            "
-          >
+          <SectionDescription className="mx-auto mt-2.5 max-w-3xl">
             Got questions about your dental health or need a little
             guidance? Reach out to us, and our friendly team will help
             you find the right care for a healthier, more confident smile.
-          </p>
+          </SectionDescription>
 
         </div>
       </section>
 
       {/* =====================================================
-          CONTACT AREA
+          CONTACT + FORM + MAP
       ====================================================== */}
-      <section className="relative mt-14 overflow-hidden sm:mt-16">
+      <section className="relative mt-11 pb-16 sm:pb-20 lg:pb-24">
 
-        {/* Background Image */}
-        <div className="absolute inset-0">
-
+        {/* Decorative photo — pinned to the left edge, faded by the panel over it */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-[145px] hidden aspect-square w-[781px] lg:block"
+        >
           <Image
-            src="/images/contact/contact-bg.jpg"
+            src="/images/contact/contact-panel-bg.png"
             alt=""
             fill
-            className="object-cover"
-            sizes="100vw"
+            className="object-cover saturate-50"
+            sizes="781px"
           />
-
-          {/* White overlay */}
-          <div className="absolute inset-0 bg-white/85" />
-
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 mx-auto max-w-7xl px-5 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+        <div className="relative mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+          <div className="rounded-3xl bg-neutral-100/85 p-5 sm:p-7.5">
 
-          <div
-            className="
-              overflow-hidden
-              rounded-3xl
-              bg-zinc-100/95
-              p-5
-              sm:p-7
-              lg:p-8
-            "
-          >
+            <div className="grid grid-cols-1 gap-7 lg:grid-cols-[minmax(0,3fr)_minmax(0,5fr)]">
 
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+              {/* Contact Information */}
+              <div className="space-y-6.5">
+                {CONTACT_INFO.map((item) => (
+                  <div key={item.title}>
+                    <CardTitle as="h2" size="sm">
+                      {item.title}
+                    </CardTitle>
 
-              {/* =================================================
-                  CONTACT INFORMATION
-              ================================================== */}
-              <div
-                className="
-                  flex
-                  flex-col
-                  justify-between
-                  px-2
-                  py-3
-                  sm:px-4
-                  lg:col-span-4
-                  lg:p-4
-                "
-              >
-
-                <div className="space-y-9">
-
-                  {/* Email */}
-                  <div>
-                    <h2 className="text-xl font-semibold">
-                      Email
-                    </h2>
-
-                    <a
-                      href="mailto:contact@ilajdentalcare.com"
-                      className="
-                        mt-2
-                        block
-                        text-base
-                        text-zinc-800
-                        hover:text-brand
-                      "
-                    >
-                      contact@ilajdentalcare.com
-                    </a>
+                    <CardText className="mt-1">
+                      {item.href ? (
+                        <a href={item.href} className="hover:text-brand">
+                          {item.lines[0]}
+                        </a>
+                      ) : (
+                        item.lines.map((line, i) => (
+                          <span key={line}>
+                            {i > 0 && <br />}
+                            {line}
+                          </span>
+                        ))
+                      )}
+                    </CardText>
                   </div>
-
-                  {/* Phone */}
-                  <div>
-                    <h2 className="text-xl font-semibold">
-                      Phone
-                    </h2>
-
-                    <a
-                      href="tel:+919726537777"
-                      className="
-                        mt-2
-                        block
-                        text-base
-                        text-zinc-800
-                        hover:text-brand
-                      "
-                    >
-                      +91 97265 37777
-                    </a>
-                  </div>
-
-                  {/* Location */}
-                  <div>
-                    <h2 className="text-xl font-semibold">
-                      Location
-                    </h2>
-
-                    <p
-                      className="
-                        mt-2
-                        max-w-xs
-                        text-base
-                        leading-relaxed
-                        text-zinc-800
-                      "
-                    >
-                      Ilaj Dental Care
-                      <br />
-                      Edarikode-Panthakkal Kund Rd,
-                      <br />
-                      Kottakkal, Kerala
-                      <br />
-                      India
-                    </p>
-                  </div>
-
-                  {/* Opening Hours */}
-                  <div>
-                    <h2 className="text-xl font-semibold">
-                      Opening Hours
-                    </h2>
-
-                    <p
-                      className="
-                        mt-2
-                        text-base
-                        leading-relaxed
-                        text-zinc-800
-                      "
-                    >
-                      Mon – Sat: 9:00 AM – 8:00 PM
-                      <br />
-                      Sunday: Closed
-                    </p>
-                  </div>
-
-                </div>
-
+                ))}
               </div>
 
-              {/* =================================================
-                  APPOINTMENT FORM
-              ================================================== */}
+              {/* Appointment Form */}
               <div
-                className="
-                  rounded-3xl
-                  border
-                  border-zinc-200
-                  bg-white
-                  p-6
-                  sm:p-8
-                  lg:col-span-8
-                  lg:p-8
-                "
+                id="book-appointment"
+                className="scroll-mt-28 rounded-2xl border border-zinc-200 bg-white p-3.5"
               >
-
-                <h2
-                  className="
-                    font-heading
-                    text-2xl
-                    font-medium
-                    tracking-tight
-                    sm:text-3xl
-                  "
-                >
-                  Book Your Appointment
-                </h2>
+                <CardTitle as="h2">Book Your Appointment</CardTitle>
 
                 <ContactForm />
-
               </div>
 
             </div>
 
-            {/* =================================================
-                GOOGLE MAP
-            ================================================== */}
-            <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-200">
-
+            {/* Google Map */}
+            <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200">
               <iframe
                 title="Ilaj Dental Care Location"
                 src="https://www.google.com/maps?q=Ilaj%20Dental%20Care%20Kottakkal%20Kerala&output=embed"
-                className="
-                  h-[320px]
-                  w-full
-                  border-0
-                  sm:h-[380px]
-                  lg:h-[420px]
-                "
+                className="h-[320px] w-full border-0 sm:h-[380px] lg:h-[420px]"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
-
             </div>
 
           </div>
-
         </div>
       </section>
+
+      {/* =====================================================
+          GET STARTED
+      ====================================================== */}
+      <AppointmentCTA />
 
     </main>
   );

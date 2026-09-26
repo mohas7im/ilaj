@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/website/ui/Button";
+import SectionTitle from "@/components/website/common/SectionTitle";
+import SectionDescription from "@/components/website/common/SectionDescription";
 
 export default function ContactCtaSection() {
   return (
@@ -48,37 +50,17 @@ export default function ContactCtaSection() {
           {/* Text */}
           <div className="max-w-2xl">
 
-            <h2
-              className="
-                font-heading
-                text-3xl
-                font-normal
-                leading-tight
-                tracking-tight
-                text-white
-                sm:text-4xl
-                lg:text-5xl
-              "
-            >
+            <SectionTitle tone="light">
               Need Dental Care? Get in
               <br className="hidden sm:block" />
               Touch Today
-            </h2>
+            </SectionTitle>
 
-            <p
-              className="
-                mt-5
-                max-w-xl
-                text-base
-                leading-relaxed
-                text-white/90
-                sm:text-lg
-              "
-            >
+            <SectionDescription tone="light" className="mt-5 max-w-xl">
               Have questions or need to book an appointment? Our
               team at Ilaj Dental Care is here to help you with quick
               and friendly support.
-            </p>
+            </SectionDescription>
 
           </div>
 

@@ -1,5 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import SectionLabel from "@/components/website/common/SectionLabel";
+import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
+import SectionDescription from "@/components/website/common/SectionDescription";
+import CardTitle from "@/components/website/common/CardTitle";
+import CardText from "@/components/website/common/CardText";
+import Button from "@/components/website/ui/Button";
 
 const SERVICES = [
   {
@@ -26,7 +33,7 @@ const SERVICES = [
     number: "03//",
     title: "Dental Implants",
     description:
-      "Replace missing teeth with natural-looking dental implants designed for comfort, function, and a confident smile.",
+      "Dental implants are a long-lasting solution for missing teeth. They look, feel, and function like natural teeth, helping restore your smile",
     images: [
       "/images/services/dental-implants-1.jpg",
       "/images/services/dental-implants-2.jpg",
@@ -54,71 +61,26 @@ export default function ServicesSection() {
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
 
         {/* Label */}
-        <div className="mb-6">
-          <span
-            className="
-              inline-flex
-              rounded-full
-              border border-zinc-200
-              px-4 py-2
-              text-xs
-              font-semibold
-              uppercase
-              tracking-wider
-              text-zinc-800
-              font-heading
-            "
-          >
-            OUR DENTAL SERVICES
-          </span>
-        </div>
+        <SectionLabel>OUR DENTAL SERVICES</SectionLabel>
 
         {/* Header */}
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-10 lg:gap-14">
 
           {/* Heading */}
-          <div className="lg:col-span-7">
-            <h2
-              className="
-                font-heading
-                text-4xl
-                font-normal
-                leading-[1.1]
-                tracking-tight
-                sm:text-5xl
-                lg:text-[46px]
-              "
-            >
-              <span className="text-zinc-950">
-                We Provide A Wide Range
-              </span>
-
+          <div className="lg:col-span-6">
+            <SectionTitle>
+              We Provide A Wide Range
               <br />
-
-              <span className="text-zinc-950">
-                Of{" "}
-              </span>
-
-              <span className="text-brand">
-                Dental Services
-              </span>
-            </h2>
+              Of <Highlight>Dental Services</Highlight>
+            </SectionTitle>
           </div>
 
           {/* Short Description */}
-          <div className="flex items-end lg:col-span-3">
-            <p
-              className="
-                max-w-md
-                text-base
-                leading-relaxed
-                text-zinc-900
-                sm:text-lg
-              "
-            >
+          <div className="flex items-end lg:col-span-4 lg:justify-end">
+            <SectionDescription className="max-w-[372px]">
               We offer a wide range of treatments to keep your
               smile healthy and beautiful.
-            </p>
+            </SectionDescription>
           </div>
 
         </div>
@@ -150,59 +112,32 @@ export default function ServicesSection() {
                 py-12
                 sm:px-6
                 sm:py-14
-                lg:grid-cols-12
-                lg:gap-10
+                lg:grid-cols-[minmax(0,2fr)_minmax(0,6fr)_minmax(0,4fr)]
+                lg:gap-6
                 lg:px-8
-                lg:py-12
+                lg:py-9
               "
             >
 
               {/* =================================================
                   NUMBER
               ================================================== */}
-              <div className="lg:col-span-2">
-                <span
-                  className="
-                    text-2xl
-                    font-medium
-                    tracking-tight
-                    text-brand
-                  "
-                >
+              <div>
+                <CardTitle as="span" tone="brand">
                   {service.number}
-                </span>
+                </CardTitle>
               </div>
 
               {/* =================================================
                   CONTENT
               ================================================== */}
-              <div className="flex flex-col lg:col-span-6">
+              <div className="flex flex-col">
 
-                <h3
-                  className="
-                    font-heading
-                    text-2xl
-                    font-medium
-                    tracking-tight
-                    text-zinc-950
-                    sm:text-3xl
-                  "
-                >
-                  {service.title}
-                </h3>
+                <CardTitle>{service.title}</CardTitle>
 
-                <p
-                  className="
-                    mt-4
-                    max-w-xl
-                    text-base
-                    leading-relaxed
-                    text-zinc-800
-                    sm:text-lg
-                  "
-                >
+                <CardText className="mt-3 max-w-xs">
                   {service.description}
-                </p>
+                </CardText>
 
                 {/* CTA */}
                 <Link
@@ -213,9 +148,9 @@ export default function ServicesSection() {
                     inline-flex
                     w-fit
                     items-center
-                    gap-5
+                    gap-4
                     pt-12
-                    text-base
+                    text-[15px]
                     font-semibold
                     text-brand
                   "
@@ -224,16 +159,17 @@ export default function ServicesSection() {
                     Contact To Know More
                   </span>
 
-                  <span
+                  <ArrowRight
+                    aria-hidden="true"
                     className="
-                      text-2xl
+                      h-5
+                      w-5
+                      stroke-2
                       transition-transform
                       duration-200
                       group-hover:translate-x-1
                     "
-                  >
-                    →
-                  </span>
+                  />
                 </Link>
 
               </div>
@@ -246,7 +182,6 @@ export default function ServicesSection() {
                   grid
                   grid-cols-2
                   gap-4
-                  lg:col-span-4
                 "
               >
                 {service.images.map((image, imageIndex) => (
@@ -257,8 +192,7 @@ export default function ServicesSection() {
                       aspect-square
                       w-full
                       overflow-hidden
-                      rounded-2xl
-                      sm:rounded-3xl
+                      rounded-xl
                     "
                   >
                     <Image
@@ -271,11 +205,7 @@ export default function ServicesSection() {
                         duration-500
                         hover:scale-105
                       "
-                      sizes="
-                        (max-width: 640px) 45vw,
-                        (max-width: 1024px) 40vw,
-                        220px
-                      "
+                      sizes="(max-width: 640px) 45vw, (max-width: 1024px) 40vw, 220px"
                     />
                   </div>
                 ))}
@@ -285,6 +215,15 @@ export default function ServicesSection() {
           </article>
         ))}
 
+      </div>
+
+      {/* =====================================================
+          ALL SERVICES
+      ====================================================== */}
+      <div className="flex justify-center px-5 py-12">
+        <Link href="/services">
+          <Button variant="primary">All Services</Button>
+        </Link>
       </div>
     </section>
   );

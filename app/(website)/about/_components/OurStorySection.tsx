@@ -1,6 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Clover, Target, type LucideIcon } from "lucide-react";
 import Button from "@/components/website/ui/Button";
+import SectionLabel from "@/components/website/common/SectionLabel";
+import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
+import SectionDescription from "@/components/website/common/SectionDescription";
+import StatsList from "@/components/website/common/StatsList";
+import CardTitle from "@/components/website/common/CardTitle";
+import CardText from "@/components/website/common/CardText";
 
 const STATS = [
   {
@@ -28,313 +35,96 @@ export default function OurStorySection() {
         {/* =====================================================
             INTRO
         ====================================================== */}
-        <div>
+        <SectionLabel>OUR STORY</SectionLabel>
 
-          {/* Label */}
-          <div className="mb-6">
-            <span
-              className="
-                inline-flex
-                rounded-full
-                border border-zinc-200
-                px-4 py-2
-                text-xs
-                font-semibold
-                uppercase
-                tracking-wider
-                text-zinc-800
-                font-heading
-              "
-            >
-              OUR STORY
-            </span>
-          </div>
+        <SectionTitle>
+          Built Around One Simple Belief :{" "}
+          <Highlight>Every Smile Matters</Highlight>
+        </SectionTitle>
 
-          {/* Heading */}
-          <h2
-            className="
-              font-heading
-              text-3xl
-              font-normal
-              leading-[1.15]
-              tracking-tight
-              sm:text-4xl
-              lg:text-[42px]
-            "
-          >
-            <span className="text-zinc-950">
-              Built Around One Simple Belief :{" "}
-            </span>
-
-            <span className="text-brand">
-              Every Smile Matters
-            </span>
-          </h2>
-
-          {/* Description */}
-          <p
-            className="
-              mt-5
-              max-w-7xl
-              text-base
-              leading-relaxed
-              text-zinc-800
-              sm:text-lg
-              lg:text-[20px]
-            "
-          >
-            Ilaj Dental Care Was Created With A Simple Goal: To Make
-            Professional Dental Care Feel More Comfortable, Accessible, And
-            Reassuring. From Routine Checkups To Advanced Treatments, We Focus
-            On Understanding Each Patient’s Needs And Creating A Treatment
-            Experience That Feels Clear And Stress-Free. We Combine Clinical
-            Expertise, Modern Technology, And Genuine Attention To Detail To
-            Help Our Patients Maintain Healthier Smiles And Greater Confidence.
-          </p>
-        </div>
+        <SectionDescription className="mt-5">
+          Ilaj Dental Care Was Created With A Simple Goal: To Make
+          Professional Dental Care Feel More Comfortable, Accessible, And
+          Reassuring. From Routine Checkups To Advanced Treatments, We Focus
+          On Understanding Each Patient’s Needs And Creating A Treatment
+          Experience That Feels Clear And Stress-Free. We Combine Clinical
+          Expertise, Modern Technology, And Genuine Attention To Detail To
+          Help Our Patients Maintain Healthier Smiles And Greater Confidence.
+        </SectionDescription>
 
         {/* =====================================================
             MISSION / IMAGE / VISION
         ====================================================== */}
-        <div
-          className="
-            mt-14
-            grid
-            grid-cols-1
-            gap-4
-            md:grid-cols-3
-            lg:mt-16
-          "
-        >
+        <div className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-3 lg:mt-28">
 
-          {/* Mission */}
-          <div
-            className="
-              flex
-              min-h-[500px]
-              flex-col
-              rounded-3xl
-              border
-              border-zinc-200
-              bg-zinc-50
-              p-8
-              sm:p-10
-            "
-          >
+          <ValueCard icon={Clover} title="Mission">
+            Our mission is to deliver high-quality dental care in an
+            environment where patients feel heard, respected, and
+            comfortable. We strive to make modern dentistry accessible
+            while maintaining the highest standards of care, safety, and
+            professionalism.
+          </ValueCard>
 
-            {/* Icon */}
-            <div className="text-5xl text-zinc-950">
-              ❖
-            </div>
-
-            {/* Content */}
-            <div className="mt-auto">
-
-              <h3
-                className="
-                  text-2xl
-                  font-medium
-                  tracking-tight
-                  text-brand
-                "
-              >
-                Mission
-              </h3>
-
-              <p
-                className="
-                  mt-4
-                  text-base
-                  leading-relaxed
-                  text-zinc-800
-                  sm:text-lg
-                "
-              >
-                Our mission is to deliver high-quality dental care in an
-                environment where patients feel heard, respected, and
-                comfortable. We strive to make modern dentistry accessible
-                while maintaining the highest standards of care, safety, and
-                professionalism.
-              </p>
-
-            </div>
-          </div>
-
-          {/* Center Image */}
-          <div
-            className="
-              relative
-              min-h-[500px]
-              overflow-hidden
-              rounded-3xl
-            "
-          >
+          <div className="relative min-h-[420px] overflow-hidden rounded-[18px]">
             <Image
               src="/images/story/our-story.jpg"
               alt="Dentist providing dental treatment"
               fill
-              priority
               className="object-cover"
-              sizes="
-                (max-width: 768px) 100vw,
-                33vw
-              "
+              sizes="(max-width: 768px) 100vw, 395px"
             />
           </div>
 
-          {/* Vision */}
-          <div
-            className="
-              flex
-              min-h-[500px]
-              flex-col
-              rounded-3xl
-              border
-              border-zinc-200
-              bg-zinc-50
-              p-8
-              sm:p-10
-            "
-          >
-
-            {/* Icon */}
-            <div className="text-5xl text-zinc-950">
-              ◎
-            </div>
-
-            {/* Content */}
-            <div className="mt-auto">
-
-              <h3
-                className="
-                  text-2xl
-                  font-medium
-                  tracking-tight
-                  text-brand
-                "
-              >
-                Vision
-              </h3>
-
-              <p
-                className="
-                  mt-4
-                  text-base
-                  leading-relaxed
-                  text-zinc-800
-                  sm:text-lg
-                "
-              >
-                Our vision is to redefine dental care by fostering a
-                community where every patient feels valued and empowered. We
-                aim to innovate dental practices, ensuring that our services
-                are not only effective but also compassionate, making every
-                visit a step towards a healthier smile.
-              </p>
-
-            </div>
-          </div>
+          <ValueCard icon={Target} title="Vision">
+            Our vision is to redefine dental care by fostering a
+            community where every patient feels valued and empowered. We
+            aim to innovate dental practices, ensuring that our services
+            are not only effective but also compassionate, making every
+            visit a step towards a healthier smile.
+          </ValueCard>
 
         </div>
 
         {/* =====================================================
             STATS + CTA
         ====================================================== */}
-        <div
-          className="
-            mt-14
-            grid
-            grid-cols-1
-            gap-10
-            lg:mt-16
-            lg:grid-cols-10
-            lg:items-end
-          "
-        >
+        <div className="mt-14 flex flex-col gap-10 lg:mt-16 lg:flex-row lg:items-end lg:justify-between">
 
-          {/* Stats */}
-          <div
-            className="
-              grid
-              grid-cols-1
-              gap-8
-              sm:grid-cols-3
-              lg:col-span-7
-              lg:gap-4
-            "
-          >
-            {STATS.map((stat) => (
-              <div
-                key={stat.label}
-                className="
-                  lg:px-5
-                  first:lg:pl-0
-                "
-              >
+          <StatsList stats={STATS} className="lg:w-[787px]" />
 
-                <h3
-                  className="
-                    text-base
-                    font-semibold
-                    text-zinc-950
-                    sm:text-lg
-                  "
-                >
-                  {stat.label}
-                </h3>
-
-                <div
-                  className="
-                    mt-4
-                    border-t
-                    border-zinc-200
-                    pt-8
-                    font-heading
-                    text-5xl
-                    font-normal
-                    leading-none
-                    tracking-tight
-                    text-zinc-950
-                    sm:text-6xl
-                  "
-                >
-                  {stat.value}
-                </div>
-
-                <p
-                  className="
-                    mt-4
-                    text-sm
-                    text-zinc-700
-                    sm:text-base
-                  "
-                >
-                  {stat.description}
-                </p>
-
-              </div>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <div
-            className="
-              flex
-              justify-start
-              lg:col-span-3
-              lg:justify-end
-            "
-          >
-            <Link href="/services">
-              <Button variant="primary">
-                Check Our Services
-              </Button>
-            </Link>
-          </div>
+          <Link href="/services" className="shrink-0">
+            <Button variant="primary">
+              Check Our Services
+            </Button>
+          </Link>
 
         </div>
 
       </div>
     </section>
+  );
+}
+
+function ValueCard({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: LucideIcon;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex min-h-[420px] flex-col rounded-[18px] border border-zinc-200 bg-zinc-50 p-8 lg:min-h-[507px] lg:py-9.5 lg:pl-9.5 lg:pr-6">
+
+      <Icon className="size-10 text-zinc-950" strokeWidth={2.25} aria-hidden="true" />
+
+      <div className="mt-auto pt-12">
+        <CardTitle tone="brand">{title}</CardTitle>
+
+        <CardText className="mt-3">{children}</CardText>
+      </div>
+
+    </div>
   );
 }
