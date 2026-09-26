@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/website/ui/Button";
+import SectionLabel from "@/components/website/common/SectionLabel";
 
 const STATS = [
   {
@@ -26,22 +27,17 @@ export default function AboutSection() {
       <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8">
 
         {/* Section Label */}
-        <div className="mb-6 sm:mb-8">
-          <span className="inline-flex items-center rounded-full border border-zinc-200 px-4 py-2 font-heading text-xs font-semibold uppercase tracking-wider text-zinc-800">
-            ABOUT ILAJ DENTAL CARE
-          </span>
-        </div>
+        <SectionLabel>ABOUT ILAJ DENTAL CARE</SectionLabel>
 
         {/* Top Row */}
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-14">
 
           {/* Heading */}
           <div className="lg:col-span-1">
-            <h2 className="font-heading text-3xl font-normal leading-[1.15] tracking-tight sm:text-4xl lg:text-[36px]">
+            <h2 className="font-heading text-3xl font-medium leading-[1.15] tracking-tight sm:text-4xl lg:text-[36px]">
               <span className="text-brand">
                 Ilaj Dental Care -
               </span>
-              <br />
               <span className="text-zinc-950">
                 The Story Behind Every Smile
               </span>
@@ -50,7 +46,7 @@ export default function AboutSection() {
 
           {/* Paragraph + CTA */}
           <div className="lg:col-span-2">
-            <p className="max-w-4xl text-base font-medium leading-[1.45] text-zinc-950 sm:text-lg lg:text-[19px]">
+            <p className="max-w-4xl text-lg font-medium leading-[1.45] text-zinc-950 sm:text-lg lg:text-[19px]">
               At Ilaj Dental Care, we take pride in delivering exceptional
               dental care with a focus on quality, comfort, and trust. Backed
               by years of experience, our expert team has helped thousands of
@@ -92,15 +88,15 @@ export default function AboutSection() {
               {STATS.map((stat) => (
                 <div key={stat.label}>
 
-                  <h3 className="text-base font-semibold text-zinc-950 sm:text-lg">
+                  <h3 className="text-xl font-medium text-center text-zinc-950 sm:text-lg">
                     {stat.label}
                   </h3>
 
-                  <div className="mt-4 border-t border-zinc-200 pt-8 font-heading text-5xl font-normal leading-none tracking-tight text-zinc-950 sm:text-6xl lg:text-[64px]">
+                  <div className="mt-4 border-t border-zinc-200 pt-8 text-center font-heading text-5xl font-medium leading-none tracking-tight text-zinc-950 sm:text-6xl lg:text-[64px]">
                     {stat.value}
                   </div>
 
-                  <p className="mt-4 text-sm leading-relaxed text-zinc-700 sm:text-base">
+                  <p className="mt-4 text-center text-sm leading-relaxed text-gray-800 sm:text-base">
                     {stat.description}
                   </p>
 
