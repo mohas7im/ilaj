@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import CardTitle from "./CardTitle";
 import CardText from "./CardText";
+import CountUp from "./CountUp";
 
 export type Stat = {
   label: string;
@@ -25,7 +26,7 @@ export function StatsList({ stats, className }: StatsListProps) {
           <CardTitle size="sm">{stat.label}</CardTitle>
 
           <div className="mt-4 border-t border-zinc-200 pt-6 font-heading text-5xl font-medium leading-none tracking-tight text-zinc-950 sm:text-6xl">
-            {stat.value}
+            <CountUp value={stat.value} />
           </div>
 
           <CardText className="mt-2.5">{stat.description}</CardText>

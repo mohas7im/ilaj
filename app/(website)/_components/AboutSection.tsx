@@ -14,9 +14,9 @@ const STATS = [
     description: "Clinical excellence.",
   },
   {
-    label: "Satisfaction",
-    value: "99%",
-    description: "Recommended by patients.",
+    label: "Patients",
+    value: "5000+",
+    description: "Happy smiles treated.",
   },
   {
     label: "Specialists",
