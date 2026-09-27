@@ -13,7 +13,7 @@ export function FieldUnderline() {
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-brand transition-transform duration-300 ease-out peer-focus:scale-x-100 motion-reduce:transition-none"
+      className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-brand transition-transform duration-300 ease-out peer-focus:scale-x-100 peer-aria-expanded:scale-x-100 motion-reduce:transition-none"
     />
   );
 }

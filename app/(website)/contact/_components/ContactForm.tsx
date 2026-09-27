@@ -6,6 +6,8 @@ import Button from "@/components/website/ui/Button";
 import Input from "@/components/website/ui/Input";
 import Select from "@/components/website/ui/Select";
 import Textarea from "@/components/website/ui/Textarea";
+import DatePicker from "@/components/website/ui/DatePicker";
+import TimePicker from "@/components/website/ui/TimePicker";
 import { submitContactInquiry } from "../_api/contactApi";
 
 type Status = "idle" | "submitting" | "success" | "error";
@@ -59,20 +61,11 @@ export default function ContactForm() {
 
         <Input id="email" name="email" type="email" label="Email Address*" placeholder="Enter your email address" required />
 
-        <Select id="treatment" name="treatment" label="Select Treatment*" required defaultValue="">
-          <option value="" disabled>
-            Choose a treatment
-          </option>
-          {TREATMENTS.map((treatment) => (
-            <option key={treatment} value={treatment}>
-              {treatment}
-            </option>
-          ))}
-        </Select>
+        <Select id="treatment" name="treatment" label="Select Treatment*" placeholder="Choose a treatment" options={TREATMENTS} required />
 
-        <Input id="date" name="date" type="date" label="Preferred Date*" required />
+        <DatePicker id="date" name="date" label="Preferred Date*" required />
 
-        <Input id="time" name="time" type="time" label="Preferred Time*" required />
+        <TimePicker id="time" name="time" label="Preferred Time*" required />
 
         <Textarea
           id="message"
