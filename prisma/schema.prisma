@@ -38,6 +38,7 @@ model Service {
   name              String
   slug              String   @unique
   description       String?  @db.Text
+  details           String?  @db.Text
   image             String?  @db.Text
   imageAlt          String?
   secondaryImage    String?  @db.Text

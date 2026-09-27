@@ -5,6 +5,7 @@ export interface Service {
   name: string
   slug?: string
   description?: string | null
+  details?: string | null
   image?: string | null
   imageAlt?: string | null
   secondaryImage?: string | null

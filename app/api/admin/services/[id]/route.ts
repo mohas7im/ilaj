@@ -63,6 +63,7 @@ export async function PUT(req: NextRequest, { params }: Props) {
         ...(formData.has("name") && { name: formData.get("name") }),
         ...(formData.has("slug") && { slug: formData.get("slug") || null }),
         ...(formData.has("description") && { description: formData.get("description") || null }),
+        ...(formData.has("details") && { details: formData.get("details") || null }),
         ...(formData.has("status") && { status: formData.get("status") }),
         ...(formData.has("displayOrder") && { displayOrder: Number(formData.get("displayOrder")) || 1 }),
         ...(formData.has("showInHomePage") && { showInHomePage: formData.get("showInHomePage") === "true" }),

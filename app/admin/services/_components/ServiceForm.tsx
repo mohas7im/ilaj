@@ -39,6 +39,7 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
     name:              initialData?.name              ?? "",
     slug:              initialData?.slug              ?? "",
     description:       initialData?.description       ?? "",
+    details:           initialData?.details           ?? "",
     status:            (initialData?.status           ?? "active") as ServiceStatus,
     displayOrder:      initialData?.displayOrder      ?? 1,
     showInHomePage:    initialData?.showInHomePage    ?? false,
@@ -99,6 +100,8 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
       formData.append("name", form.name)
       if (form.slug) formData.append("slug", form.slug)
       if (form.description) formData.append("description", form.description)
+      // Always sent, so clearing it removes the saved text
+      formData.append("details", form.details)
       formData.append("status", form.status)
       formData.append("displayOrder", String(form.displayOrder))
       formData.append("showInHomePage", String(form.showInHomePage))
@@ -212,6 +215,19 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                 onChange={(e) => set("description", e.target.value)}
                 rows={3}
               />
+            </div>
+
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="details">Detailed Description</Label>
+              <Textarea
+                id="details"
+                value={form.details}
+                onChange={(e) => set("details", e.target.value)}
+                rows={8}
+              />
+              <p className="text-xs text-muted-foreground">
+                Shown under &quot;About this treatment&quot; on the service page. Leave a blank line between paragraphs.
+              </p>
             </div>
           </div>
 

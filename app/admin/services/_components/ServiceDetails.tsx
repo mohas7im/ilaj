@@ -127,6 +127,22 @@ export function ServiceDetails({ service }: ServiceDetailsProps) {
         </CardContent>
       </Card>
 
+      {/* Detailed Description Card */}
+      <Card>
+        <CardHeader className="pb-3 border-b">
+          <CardTitle className="text-base font-medium">Detailed Description</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4">
+          {service.details ? (
+            <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">
+              {service.details}
+            </p>
+          ) : (
+            <p className="text-sm text-muted-foreground italic">No detailed description yet. The website shows placeholder text.</p>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Media / Photos Card */}
       <Card>
         <CardHeader className="pb-3 border-b">

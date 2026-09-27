@@ -52,6 +52,7 @@ export async function POST(req: NextRequest) {
         name: formData.get("name"),
         slug: formData.get("slug") || null,
         description: formData.get("description") || null,
+        details: formData.get("details") || null,
         status: formData.get("status") || "active",
         displayOrder: Number(formData.get("displayOrder")) || 1,
         showInHomePage: formData.get("showInHomePage") === "true",

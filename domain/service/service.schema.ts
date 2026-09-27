@@ -4,6 +4,7 @@ export const serviceSchema = z.object({
   name: z.string().trim().min(1, "Service name is required"),
   slug: z.string().trim().optional().nullable(),
   description: z.string().optional().nullable(),
+  details: z.string().optional().nullable(),
   status: z.enum(["active", "inactive"]).default("active"),
   displayOrder: z.coerce.number().min(1, "Display order must be at least 1").default(1),
   showInHomePage: z.boolean().default(false),
