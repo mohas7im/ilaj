@@ -45,11 +45,11 @@ export default function ServiceDetails({
 
         <Container className="relative flex min-h-108 flex-col justify-center py-14">
           <Link
-            href="/services"
+            href="/treatments"
             className="group inline-flex w-fit items-center gap-2 text-sm font-semibold text-white/80 transition-colors hover:text-white"
           >
             <ArrowLeft aria-hidden="true" className="size-4 transition-transform duration-200 group-hover:-translate-x-1" />
-            All Services
+            All Treatments
           </Link>
 
           <div className="mt-8 max-w-3xl border-t border-white/25 pt-6">
@@ -93,7 +93,7 @@ export default function ServiceDetails({
         </Container>
 
         {/* =====================================================
-            OTHER SERVICES
+            OTHER TREATMENTS
         ====================================================== */}
         {others.length > 0 && (
           <Container className="mt-16 lg:mt-24">
@@ -101,12 +101,12 @@ export default function ServiceDetails({
               <div>
                 <SectionLabel>MORE TREATMENTS</SectionLabel>
                 <SectionTitle>
-                  Explore <Highlight>Other Services</Highlight>
+                  Explore <Highlight>Other Treatments</Highlight>
                 </SectionTitle>
               </div>
 
-              <Link href="/services" className="shrink-0">
-                <Button variant="secondary">All Services</Button>
+              <Link href="/treatments" className="shrink-0">
+                <Button variant="secondary">All Treatments</Button>
               </Link>
             </div>
 

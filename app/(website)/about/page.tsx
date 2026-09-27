@@ -1,6 +1,6 @@
 import AboutIntroSection from "./_components/AboutIntroSection";
 import OurStorySection from "./_components/OurStorySection";
-import ClinicGallerySection from "./_components/ClinicGallerySection";
+import ClinicGallerySection from "../_components/ClinicGallerySection";
 import DoctorsSection from "../_components/DoctorsSection";
 import AppointmentCTA from "../_components/AppointmentCTA";
 import { getWebsiteClinicPhotos } from "../_lib/gallery";

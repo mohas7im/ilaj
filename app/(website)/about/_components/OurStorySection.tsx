@@ -93,9 +93,9 @@ export default function OurStorySection() {
 
           <StatsList stats={STATS} className="lg:w-2/3" />
 
-          <Link href="/services" className="shrink-0">
+          <Link href="/treatments" className="shrink-0">
             <Button variant="primary">
-              Check Our Services
+              Check Our Treatments
             </Button>
           </Link>
 

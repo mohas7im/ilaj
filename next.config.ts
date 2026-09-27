@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
   },
+  // The website's "Services" pages were renamed to "Treatments"; keep old links working
+  async redirects() {
+    return [
+      { source: "/services", destination: "/treatments", permanent: true },
+      { source: "/services/:slug", destination: "/treatments/:slug", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

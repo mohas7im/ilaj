@@ -10,19 +10,29 @@ import SectionDescription from "@/components/website/common/SectionDescription";
 import CardTitle from "@/components/website/common/CardTitle";
 import type { ClinicPhoto } from "@/domain/clinic-photo/clinic-photo.types";
 
-const MAX_PHOTOS = 6;
+/** Photos shown by default (the About page); the Gallery page passes Infinity */
+const DEFAULT_LIMIT = 6;
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
- * About page clinic photos: sticky text + scrolling photos. On desktop the
+ * Clinic photos (About and Gallery pages): sticky text + scrolling photos. On desktop the
  * heading and a numbered list of spaces stay pinned on the left while large
  * photos scroll normally on the right; the space whose photo is in the middle
  * of the screen is highlighted, and clicking a name scrolls to its photo.
  * Phones get the heading, then the photos with their names underneath.
  */
-export default function ClinicGallerySection({ photos }: { photos: ClinicPhoto[] }) {
-  const items = photos.slice(0, MAX_PHOTOS);
+export default function ClinicGallerySection({
+  photos,
+  limit = DEFAULT_LIMIT,
+  titleAs = "h2",
+}: {
+  photos: ClinicPhoto[];
+  limit?: number;
+  /** "h1" when this section is the page's main heading (Gallery page) */
+  titleAs?: "h1" | "h2";
+}) {
+  const items = photos.slice(0, limit);
   const [active, setActive] = useState(0);
   const photoRefs = useRef<(HTMLElement | null)[]>([]);
 
@@ -40,14 +50,39 @@ export default function ClinicGallerySection({ photos }: { photos: ClinicPhoto[]
     return () => observer.disconnect();
   }, []);
 
+  // Smart sticky: if the left column is taller than the screen (long list on
+  // the Gallery page), stick it by its bottom instead, so it scrolls up with
+  // the page until the last item is visible and every name stays reachable.
+  const leftRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const left = leftRef.current;
+    if (!left) return;
+
+    const NAVBAR_GAP = 112; // lg:top-28, just below the navbar
+    const BOTTOM_GAP = 32;
+    const place = () => {
+      const top = Math.min(NAVBAR_GAP, window.innerHeight - left.offsetHeight - BOTTOM_GAP);
+      left.style.top = `${top}px`;
+    };
+
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(left);
+    window.addEventListener("resize", place);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", place);
+    };
+  }, []);
+
   return (
     <Section>
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
 
-        {/* Left — sticky on desktop */}
-        <div className="lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
+        {/* Left — sticky on desktop (top set by the smart sticky effect above) */}
+        <div ref={leftRef} className="lg:sticky lg:top-28 lg:col-span-5 lg:self-start">
           <SectionLabel>OUR CLINIC</SectionLabel>
-          <SectionTitle>
+          <SectionTitle as={titleAs}>
             A Space Designed
             <br />
             <Highlight>Around Your Comfort</Highlight>

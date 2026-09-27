@@ -53,7 +53,7 @@ export default function ServiceList({
 }
 
 function ServiceRow({ service }: { service: WebsiteService }) {
-  const href = `/services/${service.slug}`;
+  const href = `/treatments/${service.slug}`;
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-6">

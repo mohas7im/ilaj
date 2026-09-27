@@ -12,7 +12,7 @@ import type { WebsiteService } from "../../_lib/services";
 export default function ServiceCard({ service, index = 0 }: { service: WebsiteService; index?: number }) {
   return (
     <Link
-      href={`/services/${service.slug}`}
+      href={`/treatments/${service.slug}`}
       style={{ "--i": index } as React.CSSProperties}
       className="panel reveal group relative isolate flex h-80 flex-col justify-end overflow-hidden rounded-2xl bg-neutral-900 p-6 lg:h-auto lg:p-7"
     >

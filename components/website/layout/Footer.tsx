@@ -1,428 +1,160 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import MetaText from "@/components/website/common/MetaText";
+import CardText from "@/components/website/common/CardText";
 
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
-  { label: "Services", href: "/services" },
+  { label: "Treatments", href: "/treatments" },
   { label: "Gallery", href: "/gallery" },
+  { label: "Smile Gallery", href: "/smile-gallery" },
   { label: "Contact", href: "/contact" },
 ];
 
-const SERVICES = [
-  { label: "Teeth Cleaning", href: "/services/teeth-cleaning" },
-  { label: "Teeth Whitening", href: "/services/teeth-whitening" },
-  { label: "Braces & Aligners", href: "/services/braces-aligners" },
-  { label: "Dental Implants", href: "/services/dental-implants" },
-  { label: "Root Canal Treatment", href: "/services/root-canal" },
-];
-
+// Brand icons (lucide-react no longer ships them); 24×24 stroke paths
 const SOCIAL_LINKS = [
-  { label: "Instagram", href: "#" },
-  { label: "Facebook", href: "#" },
-  { label: "LinkedIn", href: "#" },
-  { label: "Twitter", href: "#" },
+  {
+    label: "Instagram",
+    href: "#",
+    icon: (
+      <>
+        <rect x="2" y="2" width="20" height="20" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
+      </>
+    ),
+  },
+  {
+    label: "Facebook",
+    href: "#",
+    icon: <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />,
+  },
+  {
+    label: "LinkedIn",
+    href: "#",
+    icon: (
+      <>
+        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+        <rect x="2" y="9" width="4" height="12" />
+        <circle cx="4" cy="4" r="2" />
+      </>
+    ),
+  },
+  {
+    label: "Twitter",
+    href: "#",
+    icon: <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />,
+  },
 ];
 
-const UTILITY_LINKS = [
-  { label: "Terms & Conditions", href: "/terms" },
-  { label: "Privacy Policy", href: "/privacy" },
-];
+const linkClass = "text-white/80 transition-colors duration-200 hover:text-white";
 
+/**
+ * Site footer: brand + three columns (Visit, Explore, Follow) and a bottom bar.
+ * It tucks under the page's bottom edge (PageTransition.tsx) and its
+ * content rises out from behind it as it scrolls in (.footer-rise, theme.css).
+ */
 export default function Footer() {
   return (
-    <footer className="w-full bg-neutral-900 text-white">
+    <footer className="footer-parallax relative z-0 -mt-10 w-full bg-neutral-900 pt-10 text-white lg:-mt-12 lg:pt-12">
+      <div className="footer-rise mx-auto max-w-7xl px-5 pb-8 pt-14 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
 
-      <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">
 
-        {/* =====================================================
-            MAIN FOOTER
-        ====================================================== */}
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
-
-          {/* =================================================
-              BRAND + CONTACT INFORMATION
-          ================================================== */}
-          <div className="lg:col-span-7">
-
-            {/* Logo */}
-            <Link
-              href="/"
-              className="inline-flex items-center gap-3"
-            >
-              <span
-                className="
-                  flex
-                  h-10
-                  w-10
-                  items-center
-                  justify-center
-                  rounded-md
-                  bg-brand
-                  text-xl
-                  font-bold
-                  text-white
-                "
-              >
+          {/* Brand */}
+          <div className="sm:col-span-2 lg:col-span-4">
+            <Link href="/" className="inline-flex items-center gap-3" aria-label="Ilaj — Home">
+              <span className="flex size-10 items-center justify-center rounded-lg bg-brand text-lg font-bold leading-none text-white">
                 C
               </span>
-
-              <span
-                className="
-                  text-3xl
-                  font-semibold
-                  tracking-tight
-                "
-              >
-                Ilaj
-              </span>
+              <span className="text-2xl font-bold tracking-tight">Ilaj</span>
             </Link>
 
-            {/* Description */}
-            <p
-              className="
-                mt-7
-                max-w-xl
-                text-base
-                leading-relaxed
-                text-white/90
-                sm:text-lg
-              "
-            >
-              Providing exceptional dental care with experienced
-              professionals, advanced technology, and a commitment
-              to your comfort and well-being.
-            </p>
-
-            {/* Contact Details */}
-            <div className="mt-16 grid grid-cols-1 gap-10 sm:grid-cols-2">
-
-              {/* Address */}
-              <div>
-                <h3
-                  className="
-                    text-sm
-                    font-semibold
-                    uppercase
-                    tracking-wider
-                    text-white
-                  "
-                >
-                  Address
-                </h3>
-
-                <address
-                  className="
-                    mt-4
-                    not-italic
-                    text-base
-                    leading-relaxed
-                    text-white/85
-                  "
-                >
-                  Ilaj Dental Care
-                  <br />
-                  Edarikode-Panthakkal Kund Rd
-                  <br />
-                  Kottakkal, Kerala
-                  <br />
-                  India
-                </address>
-              </div>
-
-              {/* Opening Hours */}
-              <div>
-                <h3
-                  className="
-                    text-sm
-                    font-semibold
-                    uppercase
-                    tracking-wider
-                    text-white
-                  "
-                >
-                  Opening Hours
-                </h3>
-
-                <p
-                  className="
-                    mt-4
-                    text-base
-                    leading-relaxed
-                    text-white/85
-                  "
-                >
-                  Mon – Sat: 9:00 AM – 8:00 PM
-                  <br />
-                  Sunday: Closed
-                </p>
-              </div>
-
-              {/* Phone */}
-              <div>
-                <h3
-                  className="
-                    text-sm
-                    font-semibold
-                    uppercase
-                    tracking-wider
-                    text-white
-                  "
-                >
-                  Phone
-                </h3>
-
-                <a
-                  href="tel:+919048581112"
-                  className="
-                    mt-4
-                    block
-                    text-base
-                    text-white/85
-                    transition
-                    hover:text-brand
-                  "
-                >
-                  +91 90485 81112
-                </a>
-              </div>
-
-              {/* Email */}
-              <div>
-                <h3
-                  className="
-                    text-sm
-                    font-semibold
-                    uppercase
-                    tracking-wider
-                    text-white
-                  "
-                >
-                  Email
-                </h3>
-
-                <a
-                  href="mailto:hello@ilajdentalcare.com"
-                  className="
-                    mt-4
-                    block
-                    text-base
-                    text-white/85
-                    transition
-                    hover:text-brand
-                  "
-                >
-                  hello@ilajdentalcare.com
-                </a>
-              </div>
-
-            </div>
+            <CardText tone="light" className="mt-6 max-w-sm">
+              Exceptional dental care with experienced professionals, modern
+              technology and a commitment to your comfort.
+            </CardText>
           </div>
 
-          {/* =================================================
-              RIGHT LINKS
-          ================================================== */}
-          <div
-            className="
-              border-t
-              border-white/30
-              pt-10
-              lg:col-span-5
-              lg:border-l
-              lg:border-t-0
-              lg:pl-16
-              lg:pt-8
-            "
-          >
-
-            <div className="grid grid-cols-2 gap-x-8 gap-y-12">
-
-              {/* Quick Links */}
-              <div>
-                <h3
-                  className="
-                    text-sm
-                    font-semibold
-                    uppercase
-                    tracking-wider
-                  "
-                >
-                  Quick Links
-                </h3>
-
-                <ul className="mt-6 space-y-3">
-                  {QUICK_LINKS.map((link) => (
-                    <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="
-                          text-base
-                          text-white/90
-                          transition
-                          hover:text-brand
-                        "
-                      >
-                        •&nbsp; {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+          {/* Visit */}
+          <div className="lg:col-span-3">
+            <h3><MetaText as="span" tone="light">VISIT US</MetaText></h3>
+            <address className="mt-5 space-y-4 not-italic">
+              <CardText tone="light">
+                Edarikode-Panthakkal Kund Rd,
+                <br />
+                Kottakkal, Kerala, India
+              </CardText>
+              <CardText tone="light">
+                Mon – Sat: 9:00 AM – 8:00 PM
+                <br />
+                Sunday: Closed
+              </CardText>
+              <div className="space-y-1">
+                <a href="tel:+919048581112" className={`block ${linkClass}`}>+91 90485 81112</a>
+                <a href="mailto:hello@ilajdentalcare.com" className={`block ${linkClass}`}>hello@ilajdentalcare.com</a>
               </div>
+            </address>
+          </div>
 
-              {/* Services */}
-              <div>
-                <h3
-                  className="
-                    text-sm
-                    font-semibold
-                    uppercase
-                    tracking-wider
-                  "
-                >
-                  Our Services
-                </h3>
+          {/* Explore */}
+          <div className="lg:col-span-2">
+            <h3><MetaText as="span" tone="light">EXPLORE</MetaText></h3>
+            <ul className="mt-5 space-y-2.5">
+              {QUICK_LINKS.map((link) => (
+                <li key={link.label}>
+                  <Link href={link.href} className={`group inline-flex items-center gap-1.5 ${linkClass}`}>
+                    {link.label}
+                    <ArrowUpRight
+                      aria-hidden="true"
+                      className="size-4 -translate-x-1 text-brand opacity-0 transition-[opacity,translate] duration-200 group-hover:translate-x-0 group-hover:opacity-100"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-                <ul className="mt-6 space-y-3">
-                  {SERVICES.map((service) => (
-                    <li key={service.label}>
-                      <Link
-                        href={service.href}
-                        className="
-                          text-base
-                          text-white/90
-                          transition
-                          hover:text-brand
-                        "
-                      >
-                        •&nbsp; {service.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Social Media */}
-              <div>
-                <h3
-                  className="
-                    text-sm
-                    font-semibold
-                    uppercase
-                    tracking-wider
-                  "
-                >
-                  Social Media
-                </h3>
-
-                <ul className="mt-6 space-y-3">
-                  {SOCIAL_LINKS.map((link) => (
-                    <li key={link.label}>
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="
-                          text-base
-                          text-white/90
-                          transition
-                          hover:text-brand
-                        "
-                      >
-                        •&nbsp; {link.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Utility */}
-              <div>
-                <h3
-                  className="
-                    text-sm
-                    font-semibold
-                    uppercase
-                    tracking-wider
-                  "
-                >
-                  Utility
-                </h3>
-
-                <ul className="mt-6 space-y-3">
-                  {UTILITY_LINKS.map((link) => (
-                    <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="
-                          text-base
-                          text-white/90
-                          transition
-                          hover:text-brand
-                        "
-                      >
-                        •&nbsp; {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-            </div>
+          {/* Follow */}
+          <div className="lg:col-span-3">
+            <h3><MetaText as="span" tone="light">FOLLOW US</MetaText></h3>
+            <ul className="mt-5 flex gap-3">
+              {SOCIAL_LINKS.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={link.label}
+                    className="flex size-11 items-center justify-center rounded-full border border-white/20 text-white transition-colors duration-200 hover:border-brand hover:bg-brand"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                      className="size-4.5"
+                    >
+                      {link.icon}
+                    </svg>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
 
         </div>
 
-        {/* =====================================================
-            BOTTOM DIVIDER
-        ====================================================== */}
-        <div className="mt-12 border-t border-white/30 pt-6">
-
-          <div
-            className="
-              flex
-              flex-col
-              gap-5
-              text-sm
-              text-white/90
-              sm:flex-row
-              sm:items-center
-              sm:justify-between
-            "
-          >
-
-            {/* Copyright */}
-            <div className="flex flex-wrap items-center gap-2">
-              <Link
-                href="/privacy"
-                className="hover:text-brand"
-              >
-                Privacy Policy
-              </Link>
-
-              <span className="text-white/50">|</span>
-
-              <Link
-                href="/terms"
-                className="hover:text-brand"
-              >
-                Terms and Conditions
-              </Link>
-
-              <span className="text-white/50">|</span>
-
-              <span>
-                © {new Date().getFullYear()} Ilaj Dental Care.
-                All rights reserved.
-              </span>
-            </div>
-
-            {/* Credit */}
-            <div>
-              Made By{" "}
-              <span className="text-white/70">
-                UI/UX Designer
-              </span>
-            </div>
-
+        {/* Bottom bar */}
+        <div className="mt-14 flex flex-col gap-4 border-t border-white/15 pt-6 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Ilaj Dental Care. All rights reserved.</p>
+          <div className="flex gap-6">
+            <Link href="/privacy" className="transition-colors hover:text-white">Privacy Policy</Link>
+            <Link href="/terms" className="transition-colors hover:text-white">Terms &amp; Conditions</Link>
           </div>
         </div>
 

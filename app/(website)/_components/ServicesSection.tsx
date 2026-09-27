@@ -7,7 +7,7 @@ import Button from "@/components/website/ui/Button";
 import ServiceList from "./ServiceList";
 import { getWebsiteServices } from "../_lib/services";
 
-// Home page services: header, full-width service bands, "All Services" button.
+// Home page services: header, full-width service bands, "All Treatments" button.
 export default async function ServicesSection() {
   const services = (await getWebsiteServices()).filter((service) => service.showInHomePage);
 
@@ -16,14 +16,14 @@ export default async function ServicesSection() {
 
       {/* Header */}
       <Container>
-        <SectionLabel>OUR DENTAL SERVICES</SectionLabel>
+        <SectionLabel>OUR DENTAL TREATMENTS</SectionLabel>
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-10 lg:gap-14">
           <div className="lg:col-span-6">
             <SectionTitle>
               We Provide A Wide Range
               <br />
-              Of <Highlight>Dental Services</Highlight>
+              Of <Highlight>Dental Treatments</Highlight>
             </SectionTitle>
           </div>
 
@@ -41,10 +41,10 @@ export default async function ServicesSection() {
         <ServiceList services={services} />
       </div>
 
-      {/* All Services */}
+      {/* All Treatments */}
       <Container className="mt-12 flex justify-center">
-        <Link href="/services">
-          <Button variant="primary">All Services</Button>
+        <Link href="/treatments">
+          <Button variant="primary">All Treatments</Button>
         </Link>
       </Container>
 

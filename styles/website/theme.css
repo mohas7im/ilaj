@@ -449,3 +449,23 @@ html[data-website-theme]::-webkit-scrollbar-thumb:hover {
   text-align: left;
 }
 .rich-text th { color: var(--color-zinc-950); font-weight: 600; }
+
+/* Footer parallax: as the footer scrolls in, its content starts higher (hidden
+   behind the page's bottom edge) and settles into place, moving more
+   slowly than the page. Driven by the footer's own view timeline. */
+@keyframes footer-rise {
+  from { translate: 0 -30%; opacity: 0.2; }
+  to { translate: 0 0; opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .footer-parallax {
+      view-timeline-name: --footer;
+    }
+    .footer-rise {
+      animation: footer-rise linear both;
+      animation-timeline: --footer;
+      animation-range: entry 0% entry 100%;
+    }
+  }
+}

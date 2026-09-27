@@ -11,7 +11,9 @@ export default function PageTransition({ children }: { children: React.ReactNode
 
   return (
     <ViewTransition key={pathname} enter="page-in" exit="page-out" default="none">
-      <div className="flex-1">{children}</div>
+      {/* Sits above the footer with a solid background; the footer tucks
+          underneath and its content rises out from behind it (see Footer.tsx). */}
+      <div className="relative z-10 flex-1 bg-white">{children}</div>
     </ViewTransition>
   );
 }

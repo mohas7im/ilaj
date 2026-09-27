@@ -7,7 +7,7 @@ import { getCommonSeo } from "@/server/services/seo.service"
 const PUBLIC_ROUTES = [
   { path: "/",              changeFrequency: "weekly",  priority: 1.0 },
   { path: "/about",         changeFrequency: "monthly", priority: 0.8 },
-  { path: "/services",      changeFrequency: "monthly", priority: 0.9 },
+  { path: "/treatments",    changeFrequency: "monthly", priority: 0.9 },
   { path: "/doctors",       changeFrequency: "monthly", priority: 0.8 },
   { path: "/gallery",       changeFrequency: "monthly", priority: 0.6 },
   { path: "/testimonials",  changeFrequency: "monthly", priority: 0.6 },

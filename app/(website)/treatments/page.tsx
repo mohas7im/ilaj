@@ -20,12 +20,12 @@ export default async function ServicesPage() {
         <div className="rounded-3xl bg-white py-12 sm:py-16 lg:rounded-4xl lg:py-20">
 
           <Container className="text-center">
-            <SectionLabel>OUR DENTAL SERVICES</SectionLabel>
+            <SectionLabel>OUR DENTAL TREATMENTS</SectionLabel>
 
             <SectionTitle as="h1">
               We Provide A Wide Range
               <br />
-              Of <Highlight>Dental Services</Highlight>
+              Of <Highlight>Dental Treatments</Highlight>
             </SectionTitle>
           </Container>
 

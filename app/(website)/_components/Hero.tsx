@@ -110,9 +110,9 @@ export default function Hero() {
                   Contact Ilaj Team
                 </Button>
               </Link>
-              <Link href="/services">
+              <Link href="/treatments">
                 <Button variant="secondary">
-                  Our Services
+                  Our Treatments
                 </Button>
               </Link>
             </div>
