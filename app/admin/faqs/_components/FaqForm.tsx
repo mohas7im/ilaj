@@ -10,12 +10,11 @@ import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
 import {
-  Select, SelectContent, SelectItem, SelectSeparator,
+  Select, SelectContent, SelectItem,
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
 import type { Faq, FaqStatus } from "@/domain/faq/faq.types"
 import { getApiErrorMessage } from "@/lib/api/errors"
-import { GENERAL, GENERAL_LABEL, treatmentItems, type ServiceOption } from "./faq-options"
 import { faqApiService } from "../_services/faq.api"
 
 const STATUS_ITEMS: Record<FaqStatus, string> = {
@@ -23,23 +22,14 @@ const STATUS_ITEMS: Record<FaqStatus, string> = {
   draft: "Draft (Hidden)",
 }
 
+const RETURN_TO = "/admin/faqs"
+
 export type FaqFormProps = {
   mode: "create" | "edit"
-  services: ServiceOption[]
   initialData?: Faq
-  /** Pre-selected treatment for a new FAQ (from ?serviceId=) */
-  defaultServiceId?: string
-  /** Where to go after save / cancel */
-  returnTo?: string
 }
 
-export function FaqForm({
-  mode,
-  services,
-  initialData,
-  defaultServiceId,
-  returnTo = "/admin/faqs",
-}: FaqFormProps) {
+export function FaqForm({ mode, initialData }: FaqFormProps) {
   const router = useRouter()
   const isEdit = mode === "edit"
   const [submitting, setSubmitting] = useState(false)
@@ -48,7 +38,6 @@ export function FaqForm({
   const [form, setForm] = useState({
     question:     initialData?.question ?? "",
     answer:       initialData?.answer ?? "",
-    treatment:    initialData ? (initialData.serviceId ?? GENERAL) : (defaultServiceId ?? GENERAL),
     status:       initialData?.status ?? ("published" as FaqStatus),
     displayOrder: initialData?.displayOrder ?? 1,
   })
@@ -67,7 +56,6 @@ export function FaqForm({
       const payload = {
         question: form.question.trim(),
         answer: form.answer.trim(),
-        serviceId: form.treatment === GENERAL ? null : form.treatment,
         status: form.status,
         displayOrder: Number(form.displayOrder) || 1,
       }
@@ -79,7 +67,7 @@ export function FaqForm({
       }
 
       toast.success(isEdit ? "FAQ updated successfully" : "FAQ added successfully")
-      router.push(returnTo)
+      router.push(RETURN_TO)
       router.refresh()
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to save FAQ")
@@ -101,32 +89,6 @@ export function FaqForm({
           )}
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {/* Treatment */}
-            <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="treatment">Treatment</Label>
-              <Select
-                items={treatmentItems(services)}
-                value={form.treatment}
-                onValueChange={(v) => set("treatment", v ?? GENERAL)}
-              >
-                <SelectTrigger id="treatment" aria-label="Select treatment">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent alignItemWithTrigger={false}>
-                  <SelectItem value={GENERAL}>{GENERAL_LABEL}</SelectItem>
-                  {services.length > 0 && <SelectSeparator />}
-                  {services.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>
-                      {s.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground">
-                General FAQs show on the home page. Treatment FAQs show on that treatment&apos;s page.
-              </p>
-            </div>
-
             {/* Question */}
             <div className="space-y-1.5 sm:col-span-2">
               <Label htmlFor="question">
@@ -191,7 +153,7 @@ export function FaqForm({
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push(returnTo)}
+              onClick={() => router.push(RETURN_TO)}
               disabled={submitting}
             >
               Cancel

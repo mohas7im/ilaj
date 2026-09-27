@@ -4,7 +4,6 @@ import {
   Layers,
   MessageCircleQuestionMark,
   Pencil,
-  Plus,
   Sparkles,
   Link2,
   Calendar,
@@ -15,13 +14,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/
 import { Badge } from "@/components/admin/ui/badge"
 import { Button } from "@/components/admin/ui/button"
 import type { Service } from "@/domain/service/service.types"
-import type { Faq } from "@/domain/faq/faq.types"
 import { toRichTextHtml } from "@/lib/rich-text"
 import { SERVICE_STATUS_CONFIG } from "./service-status"
 
 type ServiceDetailsProps = {
   service: Service
-  faqs: Faq[]
 }
 
 function DetailRow({
@@ -46,7 +43,8 @@ function DetailRow({
   )
 }
 
-export function ServiceDetails({ service, faqs }: ServiceDetailsProps) {
+export function ServiceDetails({ service }: ServiceDetailsProps) {
+  const faqs = service.faqs ?? []
   const { label, variant } = SERVICE_STATUS_CONFIG[service.status] ?? {
     label: service.status,
     variant: "outline",
@@ -165,38 +163,26 @@ export function ServiceDetails({ service, faqs }: ServiceDetailsProps) {
             <Button
               variant="outline"
               size="sm"
-              render={<Link href={`/admin/faqs/create?serviceId=${service.id}`} />}
+              render={<Link href={`/admin/services/${service.id}/edit`} />}
             >
-              <Plus data-icon="inline-start" aria-hidden="true" />
-              Add FAQ
+              <Pencil data-icon="inline-start" aria-hidden="true" />
+              Edit FAQs
             </Button>
           </div>
         </CardHeader>
         <CardContent className="pt-2">
           {faqs.length === 0 ? (
             <p className="py-2 text-sm text-muted-foreground italic">
-              No FAQs yet. The FAQ section is hidden on this treatment&apos;s page until you add one.
+              No FAQs yet. The FAQ section is hidden on this treatment&apos;s page until you add one in Edit Service.
             </p>
           ) : (
             <ul className="divide-y">
               {faqs.map((faq) => (
-                <li key={faq.id} className="flex items-start gap-3 py-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium break-words">{faq.question}</p>
-                    <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap break-words">
-                      {faq.answer}
-                    </p>
-                  </div>
-                  {faq.status === "draft" && <Badge variant="secondary">Draft</Badge>}
-                  <Button
-                    variant="outline"
-                    size="icon-sm"
-                    title="Edit FAQ"
-                    aria-label={`Edit FAQ: ${faq.question}`}
-                    render={<Link href={`/admin/faqs/${faq.id}/edit?from=service`} />}
-                  >
-                    <Pencil aria-hidden="true" />
-                  </Button>
+                <li key={faq.id} className="py-3">
+                  <p className="text-sm font-medium break-words">{faq.question}</p>
+                  <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap break-words">
+                    {faq.answer}
+                  </p>
                 </li>
               ))}
             </ul>

@@ -1,12 +1,10 @@
 export type FaqStatus = "published" | "draft"
 
+/** General FAQ, shown on the home page. Treatment FAQs are ServiceFaq. */
 export interface Faq {
   id: string
   question: string
   answer: string
-  /** null = General FAQ (home page), otherwise the treatment it belongs to */
-  serviceId: string | null
-  serviceName: string | null
   status: FaqStatus
   displayOrder: number
   createdAt?: string

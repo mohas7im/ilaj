@@ -15,6 +15,7 @@ import {
 } from "@/components/admin/ui/select"
 import { Switch } from "@/components/admin/ui/switch"
 import { RichTextEditor } from "@/components/admin/RichTextEditor"
+import { ServiceFaqFields, toServiceFaqRows, type ServiceFaqRow } from "./ServiceFaqFields"
 import type { Service, ServiceStatus } from "@/domain/service/service.types"
 import { SERVICE_STATUS_CONFIG } from "./service-status"
 import { serviceApiService } from "../_services/service.api"
@@ -49,6 +50,8 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
     secondaryImage:    initialData?.secondaryImage    ?? "",
     secondaryImageAlt: initialData?.secondaryImageAlt ?? "",
   })
+
+  const [faqRows, setFaqRows] = useState<ServiceFaqRow[]>(() => toServiceFaqRows(initialData?.faqs))
 
   const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -94,6 +97,16 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Skip fully empty rows; a half-filled row is a mistake worth flagging
+    const faqs = faqRows
+      .map((row) => ({ question: row.question.trim(), answer: row.answer.trim() }))
+      .filter((faq) => faq.question || faq.answer)
+    if (faqs.some((faq) => !faq.question || !faq.answer)) {
+      toast.error("Each FAQ needs both a question and an answer")
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -103,6 +116,8 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
       if (form.description) formData.append("description", form.description)
       // Always sent, so clearing it removes the saved text
       formData.append("details", form.details)
+      // Always sent: the list replaces the saved FAQs (empty list clears them)
+      formData.append("faqs", JSON.stringify(faqs))
       formData.append("status", form.status)
       formData.append("displayOrder", String(form.displayOrder))
       formData.append("showInHomePage", String(form.showInHomePage))
@@ -231,6 +246,8 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
               </p>
             </div>
           </div>
+
+          <ServiceFaqFields rows={faqRows} onChange={setFaqRows} />
 
           {/* Two Images Upload Section */}
           <div className="space-y-3 pt-2">

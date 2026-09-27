@@ -1,5 +1,10 @@
 import { z } from "zod"
 
+export const serviceFaqSchema = z.object({
+  question: z.string().trim().min(1, "Every FAQ needs a question"),
+  answer: z.string().trim().min(1, "Every FAQ needs an answer"),
+})
+
 export const serviceSchema = z.object({
   name: z.string().trim().min(1, "Service name is required"),
   slug: z.string().trim().optional().nullable(),
@@ -12,6 +17,8 @@ export const serviceSchema = z.object({
   imageAlt: z.string().optional().nullable(),
   secondaryImage: z.string().optional().nullable(),
   secondaryImageAlt: z.string().optional().nullable(),
+  // The full list in display order; replaces the saved FAQs. Omit to keep them.
+  faqs: z.array(serviceFaqSchema).max(50, "Too many FAQs").optional(),
 })
 
 export type ServiceFormData = z.infer<typeof serviceSchema>

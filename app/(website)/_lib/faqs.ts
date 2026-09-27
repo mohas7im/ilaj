@@ -1,11 +1,15 @@
 import { getFaqs } from "@/server/services/faq.service";
+import { getServiceFaqs } from "@/server/services/service.service";
 import type { FaqItem } from "@/components/website/common/Faq";
 
-/**
- * Published FAQs from admin, in display order.
- * serviceId null = General FAQs (home page), otherwise that treatment's FAQs.
- */
-export async function getWebsiteFaqs(serviceId: string | null): Promise<FaqItem[]> {
-  const faqs = await getFaqs({ publishedOnly: true, serviceId });
-  return faqs.map(({ question, answer }) => ({ question, answer }));
+const toItem = ({ question, answer }: FaqItem): FaqItem => ({ question, answer });
+
+/** Published General FAQs for the home page, in display order. */
+export async function getHomeFaqs(): Promise<FaqItem[]> {
+  return (await getFaqs({ publishedOnly: true })).map(toItem);
+}
+
+/** A treatment's FAQs (Service form in admin), in display order. */
+export async function getTreatmentFaqs(serviceId: string): Promise<FaqItem[]> {
+  return (await getServiceFaqs(serviceId)).map(toItem);
 }

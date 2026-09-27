@@ -6,6 +6,7 @@ import {
 } from "@/server/services/service.service"
 import { serviceSchema } from "@/domain/service/service.schema"
 import { saveUploadedFile } from "@/server/lib/storage"
+import { parseJsonField } from "@/server/lib/form-data"
 import { requireAdmin } from "@/lib/auth/require-admin"
 
 type Props = { params: Promise<{ id: string }> }
@@ -71,6 +72,7 @@ export async function PUT(req: NextRequest, { params }: Props) {
         ...(formData.has("imageAlt") && { imageAlt: formData.get("imageAlt") || null }),
         ...(secondaryImageUrl !== undefined && { secondaryImage: secondaryImageUrl }),
         ...(formData.has("secondaryImageAlt") && { secondaryImageAlt: formData.get("secondaryImageAlt") || null }),
+        ...(formData.has("faqs") && { faqs: parseJsonField(formData.get("faqs")) }),
       }
     } else {
       data = await req.json()

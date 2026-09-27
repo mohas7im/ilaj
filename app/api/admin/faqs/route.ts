@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { getFaqs, createFaq, isValidFaqService } from "@/server/services/faq.service"
+import { getFaqs, createFaq } from "@/server/services/faq.service"
 import { faqSchema } from "@/domain/faq/faq.schema"
 import { requireAdmin } from "@/lib/auth/require-admin"
 
@@ -25,9 +25,6 @@ export async function POST(req: Request) {
     const parsed = faqSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 })
-    }
-    if (!(await isValidFaqService(parsed.data.serviceId))) {
-      return NextResponse.json({ error: "Selected treatment does not exist" }, { status: 400 })
     }
     const created = await createFaq(parsed.data)
     return NextResponse.json(created, { status: 201 })

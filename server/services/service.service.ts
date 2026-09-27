@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import type { Service } from "@/domain/service/service.types"
+import type { Service, ServiceFaq } from "@/domain/service/service.types"
 import type { ServiceFormData } from "@/domain/service/service.schema"
 import { sanitizeRichText } from "@/server/lib/sanitize"
 
@@ -42,11 +42,32 @@ export async function getServices(): Promise<Service[]> {
   return services as Service[]
 }
 
+const faqsInOrder = {
+  select: { id: true, question: true, answer: true, displayOrder: true },
+  orderBy: { displayOrder: "asc" },
+} as const
+
+/** Includes the service's FAQs, in display order. */
 export async function getServiceById(id: string): Promise<Service | null> {
   const service = await prisma.service.findUnique({
     where: { id },
+    include: { faqs: faqsInOrder },
   })
   return service as Service | null
+}
+
+/** A treatment's FAQs, in display order (for the website). */
+export async function getServiceFaqs(serviceId: string): Promise<ServiceFaq[]> {
+  return prisma.serviceFaq.findMany({ where: { serviceId }, ...faqsInOrder })
+}
+
+// Form rows → rows to create; list position becomes displayOrder.
+function toFaqRows(faqs: NonNullable<ServiceFormData["faqs"]>) {
+  return faqs.map((faq, index) => ({
+    question: faq.question,
+    answer: faq.answer,
+    displayOrder: index + 1,
+  }))
 }
 
 export async function getServiceBySlug(slug: string): Promise<Service | null> {
@@ -72,7 +93,9 @@ export async function createService(data: ServiceFormData): Promise<Service> {
       imageAlt: data.imageAlt || null,
       secondaryImage: data.secondaryImage || null,
       secondaryImageAlt: data.secondaryImageAlt || null,
+      ...(data.faqs?.length && { faqs: { create: toFaqRows(data.faqs) } }),
     },
+    include: { faqs: faqsInOrder },
   })
 
   return created as Service
@@ -106,7 +129,12 @@ export async function updateService(
       ...(data.imageAlt !== undefined && { imageAlt: data.imageAlt || null }),
       ...(data.secondaryImage !== undefined && { secondaryImage: data.secondaryImage || null }),
       ...(data.secondaryImageAlt !== undefined && { secondaryImageAlt: data.secondaryImageAlt || null }),
+      // Replace the whole list; runs in the same transaction as the update
+      ...(data.faqs !== undefined && {
+        faqs: { deleteMany: {}, create: toFaqRows(data.faqs) },
+      }),
     },
+    include: { faqs: faqsInOrder },
   })
 
   return updated as Service

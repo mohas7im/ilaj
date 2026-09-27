@@ -15,7 +15,6 @@ import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
 import type { Faq } from "@/domain/faq/faq.types"
 import { getApiErrorMessage } from "@/lib/api/errors"
 import type { FaqFilterState } from "./FaqFilters"
-import { GENERAL } from "./faq-options"
 import { faqApiService } from "../_services/faq.api"
 
 type FaqTableProps = {
@@ -34,14 +33,7 @@ export function FaqTable({ faqs: initialFaqs, filters }: FaqTableProps) {
 
   const q = filters.search.toLowerCase().trim()
   const filtered = faqs.filter((f) => {
-    const matchesQuery =
-      !q || f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q)
-
-    const matchesTreatment =
-      filters.treatment === "all" ||
-      (filters.treatment === GENERAL ? f.serviceId === null : f.serviceId === filters.treatment)
-
-    return matchesQuery && matchesTreatment
+    return !q || f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q)
   })
 
   const handleDelete = async () => {
@@ -73,7 +65,6 @@ export function FaqTable({ faqs: initialFaqs, filters }: FaqTableProps) {
             <TableHeader>
               <TableRow>
                 <TableHead className="min-w-[280px]">Question</TableHead>
-                <TableHead className="hidden md:table-cell">Treatment</TableHead>
                 <TableHead className="hidden sm:table-cell">Order</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -87,14 +78,6 @@ export function FaqTable({ faqs: initialFaqs, filters }: FaqTableProps) {
                     <p className="mt-1 text-xs text-muted-foreground line-clamp-2 break-words">
                       {item.answer}
                     </p>
-                    <p className="mt-1 text-xs text-muted-foreground md:hidden">
-                      {item.serviceName ?? "General"}
-                    </p>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm">
-                    {item.serviceName ?? (
-                      <Badge variant="outline">General</Badge>
-                    )}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell text-sm">{item.displayOrder}</TableCell>
                   <TableCell>

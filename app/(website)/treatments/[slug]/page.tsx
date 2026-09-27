@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import AppointmentCTA from "../../_components/AppointmentCTA";
 import { getWebsiteService, getWebsiteServices } from "../../_lib/services";
-import { getWebsiteFaqs } from "../../_lib/faqs";
+import { getTreatmentFaqs } from "../../_lib/faqs";
 import ServiceDetails from "../_components/ServiceDetails";
 
 // Rebuilt in the background at most every 5 minutes, so admin edits show up
@@ -36,7 +36,7 @@ export default async function ServiceDetailPage({
   const result = await getWebsiteService(slug);
   if (!result) notFound();
 
-  const faqs = await getWebsiteFaqs(result.service.id);
+  const faqs = await getTreatmentFaqs(result.service.id);
 
   return (
     <main className="pt-20">

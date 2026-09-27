@@ -1,11 +1,11 @@
 import Section from "@/components/website/common/Section";
 import Faq from "@/components/website/common/Faq";
 import { Highlight } from "@/components/website/common/SectionTitle";
-import { getWebsiteFaqs } from "../_lib/faqs";
+import { getHomeFaqs } from "../_lib/faqs";
 
 // Home page FAQ: the "General" FAQs from admin. Hidden until there is one.
 export default async function FaqSection() {
-  const faqs = await getWebsiteFaqs(null);
+  const faqs = await getHomeFaqs();
   if (faqs.length === 0) return null;
 
   return (

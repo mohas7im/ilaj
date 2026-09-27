@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServices, createService } from "@/server/services/service.service"
 import { serviceSchema } from "@/domain/service/service.schema"
 import { saveUploadedFile } from "@/server/lib/storage"
+import { parseJsonField } from "@/server/lib/form-data"
 import { requireAdmin } from "@/lib/auth/require-admin"
 
 export async function GET() {
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
         imageAlt: formData.get("imageAlt") || null,
         secondaryImage: secondaryImageUrl,
         secondaryImageAlt: formData.get("secondaryImageAlt") || null,
+        faqs: parseJsonField(formData.get("faqs")),
       }
     } else {
       data = await req.json()
