@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -26,10 +27,55 @@ const RETURN_TO = "/admin/faqs"
 
 export type FaqFormProps = {
   mode: "create" | "edit"
-  initialData?: Faq
+  id?: string
 }
 
-export function FaqForm({ mode, initialData }: FaqFormProps) {
+export function FaqForm({ mode, id }: FaqFormProps) {
+  if (mode === "create") return <FaqFormFields mode="create" />
+  return <EditFaqForm id={id!} />
+}
+
+function EditFaqForm({ id }: { id: string }) {
+  const router = useRouter()
+  const [initialData, setInitialData] = useState<Faq | null>(null)
+
+  useEffect(() => {
+    let active = true
+    faqApiService
+      .getById(id)
+      .then((data) => {
+        if (active) setInitialData(data)
+      })
+      .catch((error) => {
+        if (!active) return
+        toast.error(getApiErrorMessage(error, "FAQ not found"))
+        router.push(RETURN_TO)
+      })
+    return () => {
+      active = false
+    }
+  }, [id, router])
+
+  if (!initialData) {
+    return (
+      <Card>
+        <CardContent>
+          <LoadingState spinner label="Loading FAQ..." />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return <FaqFormFields mode="edit" initialData={initialData} />
+}
+
+function FaqFormFields({
+  mode,
+  initialData,
+}: {
+  mode: "create" | "edit"
+  initialData?: Faq
+}) {
   const router = useRouter()
   const isEdit = mode === "edit"
   const [submitting, setSubmitting] = useState(false)

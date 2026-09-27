@@ -1,15 +1,11 @@
 import { PageHeader } from "@/components/admin/PageHeader"
-import { getTestimonials } from "@/server/services/testimonial.service"
 import { TestimonialsClientView } from "./_components/TestimonialsClientView"
 
-export const dynamic = "force-dynamic"
 export const metadata = {
   title: "Testimonials | Admin",
 }
 
-export default async function TestimonialsPage() {
-  const testimonials = await getTestimonials()
-
+export default function TestimonialsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
@@ -22,7 +18,7 @@ export default async function TestimonialsPage() {
           },
         ]}
       />
-      <TestimonialsClientView initialTestimonials={testimonials} />
+      <TestimonialsClientView />
     </div>
   )
 }

@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -15,10 +16,55 @@ import { getApiErrorMessage } from "@/lib/api/errors"
 
 export type ClinicPhotoFormProps = {
   mode: "create" | "edit"
-  initialData?: ClinicPhoto
+  id?: string
 }
 
-export function ClinicPhotoForm({ mode, initialData }: ClinicPhotoFormProps) {
+export function ClinicPhotoForm({ mode, id }: ClinicPhotoFormProps) {
+  if (mode === "create") return <ClinicPhotoFormFields mode="create" />
+  return <EditClinicPhotoForm id={id!} />
+}
+
+function EditClinicPhotoForm({ id }: { id: string }) {
+  const router = useRouter()
+  const [initialData, setInitialData] = useState<ClinicPhoto | null>(null)
+
+  useEffect(() => {
+    let active = true
+    clinicPhotoApiService
+      .getById(id)
+      .then((data) => {
+        if (active) setInitialData(data)
+      })
+      .catch((error) => {
+        if (!active) return
+        toast.error(getApiErrorMessage(error, "Clinic photo not found"))
+        router.push("/admin/gallery/clinic")
+      })
+    return () => {
+      active = false
+    }
+  }, [id, router])
+
+  if (!initialData) {
+    return (
+      <Card>
+        <CardContent>
+          <LoadingState spinner label="Loading clinic photo..." />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return <ClinicPhotoFormFields mode="edit" initialData={initialData} />
+}
+
+function ClinicPhotoFormFields({
+  mode,
+  initialData,
+}: {
+  mode: "create" | "edit"
+  initialData?: ClinicPhoto
+}) {
   const router = useRouter()
   const isEdit = mode === "edit"
   const fileInputRef = useRef<HTMLInputElement>(null)

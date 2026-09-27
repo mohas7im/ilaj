@@ -1,18 +1,12 @@
-import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { InquiryDetails } from "../_components/InquiryDetails";
-import { getInquiryById } from "@/server/services/inquiry.service";
 
 type Props = { params: Promise<{ id: string }> };
 
 export const metadata = { title: "View Enquiry" };
-export const dynamic = "force-dynamic";
 
 export default async function InquiryDetailPage({ params }: Props) {
   const { id } = await params;
-  const inquiry = await getInquiryById(id);
-
-  if (!inquiry) notFound();
 
   return (
     <div className="space-y-6">
@@ -24,7 +18,7 @@ export default async function InquiryDetailPage({ params }: Props) {
         ]}
       />
       <div className="max-w-2xl w-full mx-auto">
-        <InquiryDetails inquiry={inquiry} />
+        <InquiryDetails id={id} />
       </div>
     </div>
   );

@@ -8,21 +8,24 @@ import { Card, CardHeader, CardTitle } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog"
 import { EmptyState } from "@/components/admin/EmptyState"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import type { ClinicPhoto } from "@/domain/clinic-photo/clinic-photo.types"
 import { clinicPhotoApiService } from "../_services/clinic-photo.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
-type ClinicGalleryGridProps = {
-  initialPhotos: ClinicPhoto[]
-}
-
-export function ClinicGalleryGrid({ initialPhotos }: ClinicGalleryGridProps) {
-  const [photos, setPhotos] = useState<ClinicPhoto[]>(initialPhotos)
+export function ClinicGalleryGrid() {
+  const [photos, setPhotos] = useState<ClinicPhoto[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    setPhotos(initialPhotos)
-  }, [initialPhotos])
+    clinicPhotoApiService
+      .getAll()
+      .then(setPhotos)
+      .catch((error) => toast.error(getApiErrorMessage(error, "Failed to load clinic photos")))
+      .finally(() => setIsLoading(false))
+  }, [])
 
   const handleDelete = async () => {
     if (!deleteId) return
@@ -42,7 +45,9 @@ export function ClinicGalleryGrid({ initialPhotos }: ClinicGalleryGridProps) {
 
   return (
     <>
-      {photos.length === 0 ? (
+      {isLoading ? (
+        <LoadingState spinner label="Loading clinic photos..." />
+      ) : photos.length === 0 ? (
         <EmptyState
           title="No clinic photos found"
           description="Upload photos of your clinic premises and treatment rooms."

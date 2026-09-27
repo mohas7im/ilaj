@@ -1,15 +1,11 @@
 import { PageHeader } from "@/components/admin/PageHeader"
-import { getClinicPhotos } from "@/server/services/clinic-photo.service"
 import { ClinicGalleryGrid } from "./_components/ClinicGalleryGrid"
 
-export const dynamic = "force-dynamic"
 export const metadata = {
   title: "Clinic Gallery | Admin",
 }
 
-export default async function ClinicGalleryPage() {
-  const photos = await getClinicPhotos()
-
+export default function ClinicGalleryPage() {
   return (
     <div className="space-y-6">
       <PageHeader
@@ -22,7 +18,7 @@ export default async function ClinicGalleryPage() {
           },
         ]}
       />
-      <ClinicGalleryGrid initialPhotos={photos} />
+      <ClinicGalleryGrid />
     </div>
   )
 }

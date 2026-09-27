@@ -1,6 +1,14 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import { Calendar, Clock, Stethoscope, User, Phone, Mail, MessageSquare } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import type { Inquiry } from "@/domain/inquiry/inquiry.types"
+import { getInquiryById } from "../_services/inquiry.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 function DetailRow({
   icon: Icon,
@@ -24,9 +32,50 @@ function DetailRow({
   )
 }
 
-type InquiryDetailsProps = { inquiry: Inquiry }
+type InquiryDetailsProps = { id: string }
 
-export function InquiryDetails({ inquiry: inq }: InquiryDetailsProps) {
+export function InquiryDetails({ id }: InquiryDetailsProps) {
+  const router = useRouter()
+  const [inquiry, setInquiry] = useState<Inquiry | null>(null)
+
+  useEffect(() => {
+    let active = true
+    getInquiryById(id)
+      .then((data) => {
+        if (!active) return
+        if (!data) {
+          toast.error("Inquiry not found")
+          router.push("/admin/inquiries")
+          return
+        }
+        setInquiry(data)
+      })
+      .catch((error) => {
+        if (!active) return
+        toast.error(getApiErrorMessage(error, "Failed to load inquiry"))
+        router.push("/admin/inquiries")
+      })
+    return () => {
+      active = false
+    }
+  }, [id, router])
+
+  if (!inquiry) {
+    return (
+      <Card>
+        <CardContent>
+          <LoadingState spinner label="Loading inquiry..." />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return <InquiryDetailsView inquiry={inquiry} />
+}
+
+type InquiryDetailsViewProps = { inquiry: Inquiry }
+
+function InquiryDetailsView({ inquiry: inq }: InquiryDetailsViewProps) {
   const displayName = inq.fullName
   const treatmentName = inq.treatment
 

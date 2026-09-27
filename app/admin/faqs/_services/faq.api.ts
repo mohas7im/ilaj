@@ -9,6 +9,11 @@ export const faqApiService = {
     return data
   },
 
+  async getById(id: string): Promise<Faq> {
+    const { data } = await apiClient.get<Faq>(ENDPOINTS.admin.faqs.byId(id))
+    return data
+  },
+
   async create(payload: FaqFormData): Promise<Faq> {
     const { data } = await apiClient.post<Faq>(ENDPOINTS.admin.faqs.list, payload)
     return data

@@ -1,15 +1,11 @@
 import { PageHeader } from "@/components/admin/PageHeader"
-import { getFaqs } from "@/server/services/faq.service"
 import { FaqsClientView } from "./_components/FaqsClientView"
 
-export const dynamic = "force-dynamic"
 export const metadata = {
   title: "FAQs | Admin",
 }
 
-export default async function FaqsPage() {
-  const faqs = await getFaqs()
-
+export default function FaqsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
@@ -22,7 +18,7 @@ export default async function FaqsPage() {
           },
         ]}
       />
-      <FaqsClientView initialFaqs={faqs} />
+      <FaqsClientView />
     </div>
   )
 }

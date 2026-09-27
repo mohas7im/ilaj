@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import {
   Mail,
   Phone,
@@ -32,31 +32,45 @@ import {
 import type { ClinicSettings } from "@/domain/settings/settings.types"
 import { settingsApiService } from "../_services/settings.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 
-type SettingsFormProps = {
-  initialSettings: ClinicSettings
+export function SettingsForm() {
+  const [settings, setSettings] = useState<ClinicSettings | null>(null)
+
+  useEffect(() => {
+    let active = true
+    settingsApiService
+      .get()
+      .then((data) => {
+        if (active) setSettings(data)
+      })
+      .catch((err) => {
+        if (active) toast.error(getApiErrorMessage(err, "Failed to load settings"))
+      })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  if (!settings) {
+    return (
+      <Card className="max-w-4xl w-full mx-auto">
+        <CardContent>
+          <LoadingState spinner label="Loading settings..." />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return <SettingsFormFields initialSettings={settings} />
 }
 
-export function SettingsForm({ initialSettings }: SettingsFormProps) {
+function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettings }) {
   const [initialData, setInitialData] = useState<ClinicSettings>(initialSettings)
   const [formData, setFormData] = useState<ClinicSettings>(initialSettings)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  const fetchSettings = useCallback(async () => {
-    try {
-      const data = await settingsApiService.get()
-      setFormData(data)
-      setInitialData(data)
-    } catch (err: unknown) {
-      console.error("Error fetching settings:", err)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchSettings()
-  }, [fetchSettings])
 
   const handleChange = <K extends keyof ClinicSettings>(field: K, value: ClinicSettings[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }))

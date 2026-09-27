@@ -1,23 +1,18 @@
-import { notFound } from "next/navigation"
 import { PageHeader } from "@/components/admin/PageHeader"
 import { PatientCaseForm } from "../../_components/PatientCaseForm"
-import { getPatientCaseById } from "@/server/services/patient-case.service"
 
 type Props = { params: Promise<{ id: string }> }
 
-export const dynamic = "force-dynamic"
 export const metadata = { title: "Edit Patient Case" }
 
 export default async function PatientCaseEditPage({ params }: Props) {
   const { id } = await params
-  const patientCase = await getPatientCaseById(id)
-  if (!patientCase) notFound()
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Edit Patient Case"
-        description={`Case: ${patientCase.heading}`}
+        description="Update the before & after case details."
         actions={[
           {
             label: "Back to Gallery",
@@ -27,7 +22,7 @@ export default async function PatientCaseEditPage({ params }: Props) {
         ]}
       />
       <div className="max-w-3xl mx-auto">
-        <PatientCaseForm mode="edit" initialData={patientCase} />
+        <PatientCaseForm mode="edit" id={id} />
       </div>
     </div>
   )

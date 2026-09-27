@@ -1,18 +1,14 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { format } from "date-fns"
 import { toast } from "sonner"
 import { InquiryFilters, type InquiryFilterState } from "./InquiryFilters"
 import { InquiryTable } from "./InquiryTable"
 import { fetchInquiries, deleteInquiry } from "../_services/inquiry.api"
-import type { Inquiry, InquiryPaginatedResponse } from "@/domain/inquiry/inquiry.types"
+import type { Inquiry } from "@/domain/inquiry/inquiry.types"
 
-interface InquiriesClientViewProps {
-  initialData: InquiryPaginatedResponse
-}
-
-export function InquiriesClientView({ initialData }: InquiriesClientViewProps) {
+export function InquiriesClientView() {
   const [filters, setFilters] = useState<InquiryFilterState>({
     search: "",
     treatment: "all",
@@ -20,15 +16,12 @@ export function InquiriesClientView({ initialData }: InquiriesClientViewProps) {
     dateTo: undefined,
   })
 
-  const [pageNumber, setPageNumber] = useState(initialData.pagination.pageNumber)
-  const [pageSize, setPageSize] = useState(initialData.pagination.pageSize)
-  const [inquiries, setInquiries] = useState<Inquiry[]>(initialData.inquiries)
-  const [total, setTotal] = useState(initialData.pagination.total)
-  const [totalPages, setTotalPages] = useState(initialData.pagination.totalPages)
-  const [isLoading, setIsLoading] = useState(false)
-
-  // Track if initial mount has occurred so we don't refetch on first render
-  const isInitialMount = useRef(true)
+  const [pageNumber, setPageNumber] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [inquiries, setInquiries] = useState<Inquiry[]>([])
+  const [total, setTotal] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
 
   // Debounce search query to avoid excess backend requests while typing
   const [debouncedSearch, setDebouncedSearch] = useState("")
@@ -73,10 +66,6 @@ export function InquiriesClientView({ initialData }: InquiriesClientViewProps) {
   }, [pageNumber, pageSize, debouncedSearch, filters.treatment, filters.dateFrom, filters.dateTo])
 
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false
-      return
-    }
     loadData()
   }, [loadData])
 

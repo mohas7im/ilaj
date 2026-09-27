@@ -8,21 +8,24 @@ import { Card, CardHeader, CardTitle } from "@/components/admin/ui/card"
 import { Button } from "@/components/admin/ui/button"
 import { ConfirmDialog } from "@/components/admin/ConfirmDialog"
 import { EmptyState } from "@/components/admin/EmptyState"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import type { PatientCase } from "@/domain/patient-case/patient-case.types"
 import { patientCaseApiService } from "../_services/patient-case.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
-type PatientGalleryGridProps = {
-  initialCases: PatientCase[]
-}
-
-export function PatientGalleryGrid({ initialCases }: PatientGalleryGridProps) {
-  const [cases, setCases] = useState<PatientCase[]>(initialCases)
+export function PatientGalleryGrid() {
+  const [cases, setCases] = useState<PatientCase[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    setCases(initialCases)
-  }, [initialCases])
+    patientCaseApiService
+      .getAll()
+      .then(setCases)
+      .catch((error) => toast.error(getApiErrorMessage(error, "Failed to load patient cases")))
+      .finally(() => setIsLoading(false))
+  }, [])
 
   const handleDelete = async () => {
     if (!deleteId) return
@@ -42,7 +45,9 @@ export function PatientGalleryGrid({ initialCases }: PatientGalleryGridProps) {
 
   return (
     <>
-      {cases.length === 0 ? (
+      {isLoading ? (
+        <LoadingState spinner label="Loading patient cases..." />
+      ) : cases.length === 0 ? (
         <EmptyState
           title="No patient cases found"
           description="Start showcasing smile transformations by adding your first before & after case."

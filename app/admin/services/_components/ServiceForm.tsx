@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -23,10 +24,55 @@ import { getApiErrorMessage } from "@/lib/api/errors"
 
 export type ServiceFormProps = {
   mode: "create" | "edit"
-  initialData?: Service
+  id?: string
 }
 
-export function ServiceForm({ mode, initialData }: ServiceFormProps) {
+export function ServiceForm({ mode, id }: ServiceFormProps) {
+  if (mode === "create") return <ServiceFormFields mode="create" />
+  return <EditServiceForm id={id!} />
+}
+
+function EditServiceForm({ id }: { id: string }) {
+  const router = useRouter()
+  const [initialData, setInitialData] = useState<Service | null>(null)
+
+  useEffect(() => {
+    let active = true
+    serviceApiService
+      .getById(id)
+      .then((data) => {
+        if (active) setInitialData(data)
+      })
+      .catch((error) => {
+        if (!active) return
+        toast.error(getApiErrorMessage(error, "Service not found"))
+        router.push("/admin/services")
+      })
+    return () => {
+      active = false
+    }
+  }, [id, router])
+
+  if (!initialData) {
+    return (
+      <Card>
+        <CardContent>
+          <LoadingState spinner label="Loading service..." />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return <ServiceFormFields mode="edit" initialData={initialData} />
+}
+
+function ServiceFormFields({
+  mode,
+  initialData,
+}: {
+  mode: "create" | "edit"
+  initialData?: Service
+}) {
   const router = useRouter()
   const isEdit = mode === "edit"
   const primaryFileInputRef = useRef<HTMLInputElement>(null)

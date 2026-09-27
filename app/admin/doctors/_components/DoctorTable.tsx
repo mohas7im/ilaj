@@ -13,24 +13,31 @@ import { Badge } from "@/components/admin/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar"
 import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import type { Doctor } from "@/domain/doctor/doctor.types"
 import { doctorApiService } from "../_services/doctor.api"
-
-type DoctorTableProps = {
-  doctors: Doctor[]
-}
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 function initials(name: string) {
   return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
 }
 
-export function DoctorTable({ doctors: initialDoctors }: DoctorTableProps) {
-  const [doctors, setDoctors] = useState<Doctor[]>(initialDoctors)
+export function DoctorTable() {
+  const [doctors, setDoctors] = useState<Doctor[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
   useEffect(() => {
-    setDoctors(initialDoctors)
-  }, [initialDoctors])
+    doctorApiService
+      .getAll()
+      .then(setDoctors)
+      .catch((error) => toast.error(getApiErrorMessage(error, "Failed to load doctors")))
+      .finally(() => setIsLoading(false))
+  }, [])
+
+  if (isLoading) {
+    return <LoadingState spinner label="Loading doctors..." />
+  }
 
   const sortedDoctors = [...doctors].sort(
     (a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999)

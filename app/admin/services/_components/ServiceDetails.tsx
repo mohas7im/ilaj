@@ -1,5 +1,10 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { format } from "date-fns"
+import { toast } from "sonner"
 import {
   Layers,
   MessageCircleQuestionMark,
@@ -13,11 +18,52 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
 import { Badge } from "@/components/admin/ui/badge"
 import { Button } from "@/components/admin/ui/button"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import type { Service } from "@/domain/service/service.types"
 import { toRichTextHtml } from "@/lib/rich-text"
 import { SERVICE_STATUS_CONFIG } from "./service-status"
+import { serviceApiService } from "../_services/service.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 
 type ServiceDetailsProps = {
+  id: string
+}
+
+export function ServiceDetails({ id }: ServiceDetailsProps) {
+  const router = useRouter()
+  const [service, setService] = useState<Service | null>(null)
+
+  useEffect(() => {
+    let active = true
+    serviceApiService
+      .getById(id)
+      .then((data) => {
+        if (active) setService(data)
+      })
+      .catch((error) => {
+        if (!active) return
+        toast.error(getApiErrorMessage(error, "Service not found"))
+        router.push("/admin/services")
+      })
+    return () => {
+      active = false
+    }
+  }, [id, router])
+
+  if (!service) {
+    return (
+      <Card>
+        <CardContent>
+          <LoadingState spinner label="Loading service..." />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return <ServiceDetailsView service={service} />
+}
+
+type ServiceDetailsViewProps = {
   service: Service
 }
 
@@ -43,7 +89,7 @@ function DetailRow({
   )
 }
 
-export function ServiceDetails({ service }: ServiceDetailsProps) {
+function ServiceDetailsView({ service }: ServiceDetailsViewProps) {
   const faqs = service.faqs ?? []
   const { label, variant } = SERVICE_STATUS_CONFIG[service.status] ?? {
     label: service.status,

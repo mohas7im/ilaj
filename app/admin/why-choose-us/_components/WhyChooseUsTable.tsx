@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Plus, Pencil, Trash2, Loader2 } from "lucide-react"
 import { toast } from "sonner"
@@ -26,19 +26,16 @@ import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
 import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import { PageHeader } from "@/components/admin/ui/page-header"
 import { whyChooseUsApiService } from "../_services/why-choose-us.api"
+import { getApiErrorMessage } from "@/lib/api/errors"
 import type { WhyChooseUsItem } from "@/domain/why-choose-us/why-choose-us.types"
 
-type WhyChooseUsTableProps = {
-  initialItems: WhyChooseUsItem[]
-}
-
-export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
+export function WhyChooseUsTable() {
   const router = useRouter()
-  const [items, setItems] = useState<WhyChooseUsItem[]>(() =>
-    [...initialItems].sort((a, b) => a.displayOrder - b.displayOrder)
-  )
+  const [items, setItems] = useState<WhyChooseUsItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<WhyChooseUsItem | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -50,6 +47,14 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
     description: "",
     displayOrder: 1,
   })
+
+  useEffect(() => {
+    whyChooseUsApiService
+      .getAll()
+      .then((data) => setItems([...data].sort((a, b) => a.displayOrder - b.displayOrder)))
+      .catch((error) => toast.error(getApiErrorMessage(error, "Failed to load highlight points")))
+      .finally(() => setIsLoading(false))
+  }, [])
 
   const handleOpenAdd = () => {
     const nextOrder =
@@ -143,7 +148,9 @@ export function WhyChooseUsTable({ initialItems }: WhyChooseUsTableProps) {
         </Button>
       </PageHeader>
 
-      {items.length === 0 ? (
+      {isLoading ? (
+        <LoadingState spinner label="Loading highlight points..." />
+      ) : items.length === 0 ? (
         <EmptyState
           title="No points found"
           description="Add highlight points to display in the Why Choose Us section."

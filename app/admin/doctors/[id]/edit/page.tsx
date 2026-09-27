@@ -1,7 +1,5 @@
-import { notFound } from "next/navigation"
 import { PageHeader } from "@/components/admin/PageHeader"
 import { DoctorForm } from "../../_components/DoctorForm"
-import { getDoctorById } from "@/server/services/doctor.service"
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -9,8 +7,6 @@ export const metadata = { title: "Edit Doctor" }
 
 export default async function DoctorEditPage({ params }: Props) {
   const { id } = await params
-  const doctor = await getDoctorById(id)
-  if (!doctor) notFound()
 
   return (
     <div className="space-y-6">
@@ -26,7 +22,7 @@ export default async function DoctorEditPage({ params }: Props) {
         ]}
       />
       <div className="max-w-2xl mx-auto">
-        <DoctorForm mode="edit" initialData={doctor} />
+        <DoctorForm mode="edit" id={id} />
       </div>
     </div>
   )

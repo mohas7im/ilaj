@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Star, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
@@ -19,10 +20,55 @@ import { getApiErrorMessage } from "@/lib/api/errors"
 
 export type TestimonialFormProps = {
   mode: "create" | "edit"
-  initialData?: Testimonial
+  id?: string
 }
 
-export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
+export function TestimonialForm({ mode, id }: TestimonialFormProps) {
+  if (mode === "create") return <TestimonialFormFields mode="create" />
+  return <EditTestimonialForm id={id!} />
+}
+
+function EditTestimonialForm({ id }: { id: string }) {
+  const router = useRouter()
+  const [initialData, setInitialData] = useState<Testimonial | null>(null)
+
+  useEffect(() => {
+    let active = true
+    testimonialApiService
+      .getById(id)
+      .then((data) => {
+        if (active) setInitialData(data)
+      })
+      .catch((error) => {
+        if (!active) return
+        toast.error(getApiErrorMessage(error, "Testimonial not found"))
+        router.push("/admin/testimonials")
+      })
+    return () => {
+      active = false
+    }
+  }, [id, router])
+
+  if (!initialData) {
+    return (
+      <Card>
+        <CardContent>
+          <LoadingState spinner label="Loading testimonial..." />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return <TestimonialFormFields mode="edit" initialData={initialData} />
+}
+
+function TestimonialFormFields({
+  mode,
+  initialData,
+}: {
+  mode: "create" | "edit"
+  initialData?: Testimonial
+}) {
   const router = useRouter()
   const isEdit = mode === "edit"
   const [submitting, setSubmitting] = useState(false)

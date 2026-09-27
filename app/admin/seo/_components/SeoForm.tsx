@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import {
   Globe,
   Search,
@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
+import { LoadingState } from "@/components/admin/ui/loading-state"
 import { Input } from "@/components/admin/ui/input"
 import { Textarea } from "@/components/admin/ui/textarea"
 import { Label } from "@/components/admin/ui/label"
@@ -267,7 +268,39 @@ function SeoHealth({
 
 // ─── SeoForm ──────────────────────────────────────────────────────────────────
 
-export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
+export function SeoForm() {
+  const [initialCommonSeo, setInitialCommonSeo] = useState<CommonSeo | null>(null)
+  const [initialPageSeoMap, setInitialPageSeoMap] = useState<Record<string, PageSeo> | null>(null)
+
+  useEffect(() => {
+    seoApiService
+      .getCommon()
+      .then(setInitialCommonSeo)
+      .catch((err) => toast.error(getApiErrorMessage(err, "Failed to load SEO settings")))
+
+    Promise.all(
+      PAGE_OPTIONS.map((opt) =>
+        seoApiService.getPage(opt.value).then((seo) => [opt.value, seo] as const)
+      )
+    )
+      .then((entries) => setInitialPageSeoMap(Object.fromEntries(entries)))
+      .catch((err) => toast.error(getApiErrorMessage(err, "Failed to load page SEO settings")))
+  }, [])
+
+  if (!initialCommonSeo || !initialPageSeoMap) {
+    return (
+      <Card>
+        <CardContent>
+          <LoadingState spinner label="Loading SEO settings..." />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return <SeoFormFields initialCommonSeo={initialCommonSeo} initialPageSeoMap={initialPageSeoMap} />
+}
+
+function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
   const [selectedPage, setSelectedPage] = useState<string>("common")
 
   // ── Common SEO state

@@ -17,19 +17,11 @@ import type {
 import { Skeleton } from "@/components/admin/ui/skeleton"
 import { Card, CardContent, CardHeader } from "@/components/admin/ui/card"
 
-type DashboardClientViewProps = {
-  initialStats?: DashboardStats | null
-  initialInquiries?: DashboardInquiry[]
-}
-
-export function DashboardClientView({
-  initialStats,
-  initialInquiries,
-}: DashboardClientViewProps) {
-  const [stats, setStats] = useState<DashboardStats | null>(initialStats ?? null)
-  const [inquiries, setInquiries] = useState<DashboardInquiry[]>(initialInquiries ?? [])
-  const [loadingStats, setLoadingStats] = useState(!initialStats)
-  const [loadingInquiries, setLoadingInquiries] = useState(!initialInquiries)
+export function DashboardClientView() {
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [inquiries, setInquiries] = useState<DashboardInquiry[]>([])
+  const [loadingStats, setLoadingStats] = useState(true)
+  const [loadingInquiries, setLoadingInquiries] = useState(true)
 
   useEffect(() => {
     let isMounted = true
