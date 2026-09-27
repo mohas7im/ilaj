@@ -537,7 +537,7 @@ export function SeoForm({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 <SelectTrigger id="page-select" aria-label="Select page to edit SEO">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent alignItemWithTrigger={false}>
                   <SelectItem value="common">Common (Global Defaults)</SelectItem>
                   {PAGE_OPTIONS.map((page) => (
                     <SelectItem key={page.value} value={page.value}>

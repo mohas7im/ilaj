@@ -160,7 +160,7 @@ export function TestimonialForm({ mode, initialData }: TestimonialFormProps) {
                 <SelectTrigger id="status" className="w-full" aria-label="Select status">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="min-w-[280px]">
+                <SelectContent alignItemWithTrigger={false} className="min-w-[280px]">
                   <SelectItem value="published">Published (Visible on website)</SelectItem>
                   <SelectItem value="draft">Draft (Hidden)</SelectItem>
                 </SelectContent>

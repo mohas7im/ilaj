@@ -1,7 +1,11 @@
 "use client"
 
 import { Search } from "lucide-react"
-import { Input } from "@/components/admin/ui/input"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/admin/ui/input-group"
 import {
   Select,
   SelectContent,
@@ -36,16 +40,17 @@ export function DoctorFilters({
 }: DoctorFiltersProps) {
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-      <div className="relative flex-1 max-w-sm">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden="true" />
-        <Input
+      <InputGroup className="sm:flex-1 sm:max-w-sm">
+        <InputGroupInput
           value={filters.search}
           onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
           placeholder="Search doctor name..."
-          className="pl-8 h-9"
           aria-label="Search doctor name"
         />
-      </div>
+        <InputGroupAddon>
+          <Search aria-hidden="true" />
+        </InputGroupAddon>
+      </InputGroup>
 
       <Select
         value={filters.specialization}
@@ -53,10 +58,10 @@ export function DoctorFilters({
           onFiltersChange({ ...filters, specialization: val ?? "all" })
         }
       >
-        <SelectTrigger className="w-full sm:w-48 h-9" aria-label="Filter by specialization">
+        <SelectTrigger className="sm:w-48" aria-label="Filter by specialization">
           <SelectValue placeholder="All Specializations" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent alignItemWithTrigger={false}>
           <SelectItem value="all">All Specializations</SelectItem>
           {specializations.map((spec) => (
             <SelectItem key={spec} value={spec}>

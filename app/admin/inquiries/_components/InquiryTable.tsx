@@ -188,10 +188,10 @@ export function InquiryTable({
               onPageSizeChange(Number(v))
             }}
           >
-            <SelectTrigger className="h-7 w-[68px] text-xs" aria-label="Rows per page">
+            <SelectTrigger size="sm" className="w-[68px] text-xs" aria-label="Rows per page">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent alignItemWithTrigger={false}>
               {PAGE_SIZE_OPTIONS.map((size) => (
                 <SelectItem key={size} value={String(size)} className="text-xs">
                   {size}

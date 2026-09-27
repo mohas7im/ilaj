@@ -27,6 +27,7 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
+  InputGroupText,
 } from "@/components/admin/ui/input-group"
 import type { ClinicSettings } from "@/domain/settings/settings.types"
 import { settingsApiService } from "../_services/settings.api"
@@ -359,8 +360,8 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
           <div className="space-y-1.5">
             <Label htmlFor="facebook">Facebook :</Label>
             <InputGroup>
-              <InputGroupAddon align="inline-start" className="bg-muted px-3 border-r text-xs font-mono select-none">
-                https://facebook.com/
+              <InputGroupAddon>
+                <InputGroupText>https://facebook.com/</InputGroupText>
               </InputGroupAddon>
               <InputGroupInput
                 id="facebook"
@@ -374,8 +375,8 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
           <div className="space-y-1.5">
             <Label htmlFor="instagram">Instagram :</Label>
             <InputGroup>
-              <InputGroupAddon align="inline-start" className="bg-muted px-3 border-r text-xs font-mono select-none">
-                https://instagram.com/
+              <InputGroupAddon>
+                <InputGroupText>https://instagram.com/</InputGroupText>
               </InputGroupAddon>
               <InputGroupInput
                 id="instagram"
@@ -389,8 +390,8 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
           <div className="space-y-1.5">
             <Label htmlFor="linkedin">Linkedin :</Label>
             <InputGroup>
-              <InputGroupAddon align="inline-start" className="bg-muted px-3 border-r text-xs font-mono select-none">
-                https://linkedin.com/
+              <InputGroupAddon>
+                <InputGroupText>https://linkedin.com/</InputGroupText>
               </InputGroupAddon>
               <InputGroupInput
                 id="linkedin"
@@ -404,8 +405,8 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
           <div className="space-y-1.5">
             <Label htmlFor="twitter">Twitter :</Label>
             <InputGroup>
-              <InputGroupAddon align="inline-start" className="bg-muted px-3 border-r text-xs font-mono select-none">
-                https://x.com/
+              <InputGroupAddon>
+                <InputGroupText>https://x.com/</InputGroupText>
               </InputGroupAddon>
               <InputGroupInput
                 id="twitter"
@@ -419,8 +420,8 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
           <div className="space-y-1.5">
             <Label htmlFor="pinterest">Pinterest :</Label>
             <InputGroup>
-              <InputGroupAddon align="inline-start" className="bg-muted px-3 border-r text-xs font-mono select-none">
-                https://pinterest.com/
+              <InputGroupAddon>
+                <InputGroupText>https://pinterest.com/</InputGroupText>
               </InputGroupAddon>
               <InputGroupInput
                 id="pinterest"
@@ -434,8 +435,8 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
           <div className="space-y-1.5">
             <Label htmlFor="mapLink">Map Link :</Label>
             <InputGroup>
-              <InputGroupAddon align="inline-start" className="bg-muted px-3 border-r text-xs font-mono select-none">
-                https://www.google.com/maps/
+              <InputGroupAddon>
+                <InputGroupText>https://www.google.com/maps/</InputGroupText>
               </InputGroupAddon>
               <InputGroupInput
                 id="mapLink"

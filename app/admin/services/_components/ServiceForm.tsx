@@ -163,7 +163,7 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                 <SelectTrigger id="status" className="w-full" aria-label="Select status">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent alignItemWithTrigger={false}>
                   {(Object.keys(SERVICE_STATUS_CONFIG) as ServiceStatus[]).map((s) => (
                     <SelectItem key={s} value={s}>
                       {SERVICE_STATUS_CONFIG[s].label}

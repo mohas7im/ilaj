@@ -3,7 +3,11 @@
 import { useState, useEffect } from "react"
 import { CalendarIcon, Search, X } from "lucide-react"
 import { format } from "date-fns"
-import { Input } from "@/components/admin/ui/input"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/admin/ui/input-group"
 import { Button } from "@/components/admin/ui/button"
 import {
   Select,
@@ -59,26 +63,27 @@ export function InquiryFilters({ filters, onFiltersChange }: InquiryFiltersProps
   return (
     <div className="flex flex-wrap items-center gap-2">
       {/* Search */}
-      <div className="relative min-w-[240px] flex-1">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden="true" />
-        <Input
+      <InputGroup className="min-w-[240px] flex-1">
+        <InputGroupInput
           value={filters.search}
           onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
           placeholder="Search by name, email, phone, or message..."
-          className="pl-8 h-9"
           aria-label="Search inquiries"
         />
-      </div>
+        <InputGroupAddon>
+          <Search aria-hidden="true" />
+        </InputGroupAddon>
+      </InputGroup>
 
       {/* Treatment filter */}
       <Select
         value={filters.treatment}
         onValueChange={(v) => onFiltersChange({ ...filters, treatment: v ?? "all" })}
       >
-        <SelectTrigger className="h-9 w-[210px]" aria-label="Filter by treatment">
+        <SelectTrigger className="w-[210px]" aria-label="Filter by treatment">
           <SelectValue placeholder="All Treatments" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent alignItemWithTrigger={false}>
           <SelectItem value="all">All Treatments</SelectItem>
           {treatmentOptions.map((t) => (
             <SelectItem key={t} value={t}>{t}</SelectItem>
@@ -89,10 +94,16 @@ export function InquiryFilters({ filters, onFiltersChange }: InquiryFiltersProps
       {/* Date From */}
       <Popover>
         <PopoverTrigger
-          className={`inline-flex h-9 w-[150px] items-center justify-start gap-2 rounded-md border border-input bg-background px-3 text-sm font-normal transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${!filters.dateFrom ? "text-muted-foreground" : ""}`}
+          render={
+            <Button
+              variant="outline"
+              data-empty={!filters.dateFrom}
+              className="w-[150px] justify-start font-normal data-[empty=true]:text-muted-foreground"
+            />
+          }
           aria-label="Filter from date"
         >
-          <CalendarIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <CalendarIcon data-icon="inline-start" aria-hidden="true" />
           {filters.dateFrom ? format(filters.dateFrom, "dd MMM yyyy") : "From date"}
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
@@ -108,10 +119,16 @@ export function InquiryFilters({ filters, onFiltersChange }: InquiryFiltersProps
       {/* Date To */}
       <Popover>
         <PopoverTrigger
-          className={`inline-flex h-9 w-[150px] items-center justify-start gap-2 rounded-md border border-input bg-background px-3 text-sm font-normal transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${!filters.dateTo ? "text-muted-foreground" : ""}`}
+          render={
+            <Button
+              variant="outline"
+              data-empty={!filters.dateTo}
+              className="w-[150px] justify-start font-normal data-[empty=true]:text-muted-foreground"
+            />
+          }
           aria-label="Filter to date"
         >
-          <CalendarIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <CalendarIcon data-icon="inline-start" aria-hidden="true" />
           {filters.dateTo ? format(filters.dateTo, "dd MMM yyyy") : "To date"}
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
@@ -128,12 +145,11 @@ export function InquiryFilters({ filters, onFiltersChange }: InquiryFiltersProps
       {hasActive && (
         <Button
           variant="ghost"
-          size="sm"
           onClick={reset}
-          className="h-9 px-2 text-muted-foreground"
+          className="text-muted-foreground"
           aria-label="Reset filters"
         >
-          <X className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
+          <X data-icon="inline-start" aria-hidden="true" />
           Reset
         </Button>
       )}

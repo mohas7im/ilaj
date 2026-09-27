@@ -6,7 +6,12 @@ import { toast } from "sonner"
 import { authService } from "@/lib/auth/auth.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 import { Button } from "@/components/admin/ui/button"
-import { Input } from "@/components/admin/ui/input"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/admin/ui/input-group"
 import { Label } from "@/components/admin/ui/label"
 import {
   Dialog,
@@ -133,29 +138,26 @@ export function ChangePasswordDialog({
             <Label htmlFor="current-password" className="text-xs font-medium">
               Current Password
             </Label>
-            <div className="relative">
-              <Input
+            <InputGroup>
+              <InputGroupInput
                 id="current-password"
                 type={showCurrent ? "text" : "password"}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 required
                 disabled={loading}
-                className="pr-10 text-sm"
               />
-              <button
-                type="button"
-                onClick={() => setShowCurrent(!showCurrent)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                tabIndex={-1}
-              >
-                {showCurrent ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  size="icon-xs"
+                  onClick={() => setShowCurrent(!showCurrent)}
+                  tabIndex={-1}
+                  aria-label={showCurrent ? "Hide password" : "Show password"}
+                >
+                  {showCurrent ? <EyeOff /> : <Eye />}
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
           </div>
 
           {/* New Password */}
@@ -163,8 +165,8 @@ export function ChangePasswordDialog({
             <Label htmlFor="new-password" className="text-xs font-medium">
               New Password
             </Label>
-            <div className="relative">
-              <Input
+            <InputGroup>
+              <InputGroupInput
                 id="new-password"
                 type={showNew ? "text" : "password"}
                 value={newPassword}
@@ -172,21 +174,18 @@ export function ChangePasswordDialog({
                 required
                 minLength={6}
                 disabled={loading}
-                className="pr-10 text-sm"
               />
-              <button
-                type="button"
-                onClick={() => setShowNew(!showNew)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                tabIndex={-1}
-              >
-                {showNew ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  size="icon-xs"
+                  onClick={() => setShowNew(!showNew)}
+                  tabIndex={-1}
+                  aria-label={showNew ? "Hide password" : "Show password"}
+                >
+                  {showNew ? <EyeOff /> : <Eye />}
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
             <p className="text-[11px] text-muted-foreground">
               Minimum 6 characters
             </p>
@@ -197,29 +196,26 @@ export function ChangePasswordDialog({
             <Label htmlFor="confirm-password" className="text-xs font-medium">
               Confirm New Password
             </Label>
-            <div className="relative">
-              <Input
+            <InputGroup>
+              <InputGroupInput
                 id="confirm-password"
                 type={showConfirm ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={loading}
-                className="pr-10 text-sm"
               />
-              <button
-                type="button"
-                onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                tabIndex={-1}
-              >
-                {showConfirm ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </button>
-            </div>
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  size="icon-xs"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  tabIndex={-1}
+                  aria-label={showConfirm ? "Hide password" : "Show password"}
+                >
+                  {showConfirm ? <EyeOff /> : <Eye />}
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
           </div>
 
           <DialogFooter className="pt-2">
