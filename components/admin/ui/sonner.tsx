@@ -16,7 +16,6 @@ const Toaster = ({ theme = "light", ...props }: ToasterProps) => {
       theme={theme}
       position="top-right"
       richColors={false}
-      closeButton
       className="toaster group font-sans"
       icons={{
         success: (
@@ -70,8 +69,6 @@ const Toaster = ({ theme = "light", ...props }: ToasterProps) => {
             "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground group-[.toast]:font-medium group-[.toast]:text-xs group-[.toast]:rounded-md group-[.toast]:px-2.5 group-[.toast]:py-1.5",
           cancelButton:
             "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground group-[.toast]:text-xs group-[.toast]:rounded-md group-[.toast]:px-2.5 group-[.toast]:py-1.5",
-          closeButton:
-            "!bg-popover !border-border !text-muted-foreground hover:!text-foreground !border !rounded-md !transition-colors",
           success:
             "group-[.toaster]:!bg-popover group-[.toaster]:!text-popover-foreground group-[.toaster]:!border-border",
           error:
