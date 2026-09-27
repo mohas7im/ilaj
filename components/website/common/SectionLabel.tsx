@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import MetaText from "./MetaText";
 
 export interface SectionLabelProps {
   children: React.ReactNode;
@@ -10,16 +11,19 @@ export interface SectionLabelProps {
 }
 
 // Small rounded pill shown above a section heading, e.g. "ABOUT ILAJ DENTAL CARE".
+// The text inside is MetaText, so pills and small uppercase card text always match.
 export function SectionLabel({ children, tone = "dark", className }: SectionLabelProps) {
   return (
     <div className={cn("mb-4", className)}>
       <span
         className={cn(
-          "inline-flex items-center rounded-full border px-4 py-2 font-heading text-xs font-medium uppercase tracking-wider",
-          tone === "light" ? "border-white bg-white text-zinc-900" : "border-zinc-200 text-zinc-800"
+          "inline-flex items-center rounded-full border px-4 py-2",
+          tone === "light" ? "border-white bg-white" : "border-zinc-200"
         )}
       >
-        {children}
+        <MetaText as="span" className={tone === "light" ? "text-zinc-900" : undefined}>
+          {children}
+        </MetaText>
       </span>
     </div>
   );

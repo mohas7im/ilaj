@@ -25,6 +25,14 @@
 @theme {
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+
+  /* Continuous marquee (testimonials). The track holds its items twice,
+     so sliding it by -50% lands on an identical frame and loops seamlessly. */
+  --animate-marquee: marquee 45s linear infinite;
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
 }
 
 @theme inline {

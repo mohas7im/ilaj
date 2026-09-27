@@ -35,7 +35,7 @@ export default function ContactPage() {
       {/* =====================================================
           HERO
       ====================================================== */}
-      <section className="px-5 pt-12 sm:px-6 lg:px-8 lg:pt-20">
+      <section className="px-5 pt-12 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
         <div className="mx-auto max-w-7xl text-center">
 
           <SectionLabel>OUR DENTAL SERVICES</SectionLabel>
@@ -58,7 +58,7 @@ export default function ContactPage() {
       {/* =====================================================
           CONTACT + FORM + MAP
       ====================================================== */}
-      <section className="relative mt-11 pb-16 sm:pb-20 lg:pb-24">
+      <section className="relative mt-11 pb-12 sm:pb-16 lg:pb-20">
 
         {/* Decorative photo — pinned to the left edge, faded by the panel over it */}
         <div

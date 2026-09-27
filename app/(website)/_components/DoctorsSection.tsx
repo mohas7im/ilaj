@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Section from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
 import CardTitle from "@/components/website/common/CardTitle";
@@ -11,36 +11,27 @@ const DOCTORS = [
     name: "Dr. Arya",
     qualification: "BDS, MDS (ORTHODONTICS)",
     image: "/images/doctors/dr-arya.jpg",
-    instagram: "#",
-    linkedin: "#",
   },
   {
     name: "Dr. Meera Thomas",
     qualification: "BDS, MDS (ENDODONTICS)",
     image: "/images/doctors/dr-meera-thomas.jpg",
-    instagram: "#",
-    linkedin: "#",
   },
   {
     name: "Dr. Aisha Rahman",
     qualification: "BDS, MDS (PROSTHODONTICS)",
     image: "/images/doctors/dr-aisha-rahman.jpg",
-    instagram: "#",
-    linkedin: "#",
   },
   {
     name: "Dr. Sona Menon",
     qualification: "BDS, PG DIPLOMA IN IMPLANTOLOGY",
     image: "/images/doctors/dr-sona-menon.jpg",
-    instagram: "#",
-    linkedin: "#",
   },
 ];
 
 export default function DoctorsSection() {
   return (
-    <section className="w-full bg-white py-14 text-zinc-950 sm:py-16 lg:py-20">
-      <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+    <Section>
 
         {/* =====================================================
             HEADER
@@ -87,6 +78,8 @@ export default function DoctorsSection() {
             <article
               key={doctor.name}
               className="
+                flex
+                flex-col
                 overflow-hidden
                 rounded-2xl
                 border
@@ -95,51 +88,14 @@ export default function DoctorsSection() {
               "
             >
 
-              {/* Card Information */}
-              <div className="flex h-50 flex-col p-7">
-
-                {/* Doctor Name */}
+              {/* Card Information — qualification always reserves 2 lines so cards stay even */}
+              <div className="p-6">
                 <CardTitle>{doctor.name}</CardTitle>
-
-                {/* Qualification */}
-                <MetaText className="mt-2">{doctor.qualification}</MetaText>
-
-                {/* Social Links */}
-                <div className="mt-auto flex items-center gap-4">
-
-                  <Link
-                    href={doctor.instagram}
-                    aria-label={`${doctor.name} Instagram`}
-                    className="
-                      text-xl
-                      font-semibold
-                      text-zinc-950
-                      transition
-                      hover:text-brand
-                    "
-                  >
-                    ◎
-                  </Link>
-
-                  <Link
-                    href={doctor.linkedin}
-                    aria-label={`${doctor.name} LinkedIn`}
-                    className="
-                      text-lg
-                      font-bold
-                      text-zinc-950
-                      transition
-                      hover:text-brand
-                    "
-                  >
-                    in
-                  </Link>
-
-                </div>
+                <MetaText className="mt-2 min-h-8">{doctor.qualification}</MetaText>
               </div>
 
               {/* Doctor Image */}
-              <div className="relative aspect-9/10 w-full">
+              <div className="relative mt-auto aspect-9/10 w-full">
                 <Image
                   src={doctor.image}
                   alt={doctor.name}
@@ -153,7 +109,6 @@ export default function DoctorsSection() {
           ))}
         </div>
 
-      </div>
-    </section>
+      </Section>
   );
 }

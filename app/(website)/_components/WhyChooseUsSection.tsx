@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Section from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
 import SectionDescription from "@/components/website/common/SectionDescription";
@@ -14,8 +15,7 @@ const FEATURES = [
 
 export default function WhyChooseUsSection() {
   return (
-    <section className="w-full bg-white text-zinc-950 py-16 sm:py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+    <Section>
 
         {/* Label */}
         <SectionLabel>WHY CHOOSE US</SectionLabel>
@@ -94,7 +94,6 @@ export default function WhyChooseUsSection() {
 
         </div>
 
-      </div>
-    </section>
+      </Section>
   );
 }

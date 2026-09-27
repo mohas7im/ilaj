@@ -26,11 +26,15 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Transparent with white text only over the dark home hero; every other page
+  // (and the home page once scrolled) uses the solid, dark-text style.
+  const solid = scrolled || pathname !== "/";
+
   return (
     <header
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-300",
-        scrolled
+        solid
           ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-zinc-200"
           : "bg-transparent border-b border-gray-300"
       )}
@@ -49,7 +53,7 @@ export default function Navbar() {
             <span
               className={cn(
                 "font-bold text-2xl tracking-tight transition-colors duration-200",
-                scrolled ? "text-zinc-950" : "text-white"
+                solid ? "text-zinc-950" : "text-white"
               )}
             >
               Ilaj
@@ -73,7 +77,7 @@ export default function Navbar() {
                   href={link.href}
                   className={cn(
                     "text-base font-medium transition-colors duration-150",
-                    scrolled
+                    solid
                       ? active
                         ? "text-zinc-950 font-semibold"
                         : "text-zinc-600 hover:text-zinc-950"
@@ -102,7 +106,7 @@ export default function Navbar() {
             type="button"
             className={cn(
               "md:hidden flex items-center justify-center w-11 h-11 rounded-full transition-colors",
-              scrolled
+              solid
                 ? "text-zinc-900 hover:bg-zinc-100"
                 : "text-white hover:bg-white/10"
             )}
@@ -120,7 +124,7 @@ export default function Navbar() {
         <div
           className={cn(
             "md:hidden border-b px-6 pt-3 pb-8 space-y-5 backdrop-blur-md",
-            scrolled
+            solid
               ? "bg-white/95 border-zinc-200"
               : "bg-neutral-950/95 border-white/10"
           )}
@@ -133,7 +137,7 @@ export default function Navbar() {
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   "text-lg font-medium py-1 transition-colors",
-                  scrolled
+                  solid
                     ? "text-zinc-800 hover:text-zinc-950"
                     : "text-white/85 hover:text-white"
                 )}

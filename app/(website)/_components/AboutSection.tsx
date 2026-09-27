@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/website/ui/Button";
+import Section from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
 import SectionDescription from "@/components/website/common/SectionDescription";
@@ -26,17 +27,16 @@ const STATS = [
 
 export default function AboutSection() {
   return (
-    <section className="w-full bg-white py-10 text-zinc-950 sm:py-16 lg:py-20">
-      <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8">
+    <Section>
 
         {/* Section Label */}
         <SectionLabel>ABOUT ILAJ DENTAL CARE</SectionLabel>
 
         {/* Top Row */}
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-14">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-8 lg:gap-14">
 
           {/* Heading */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-3">
             <SectionTitle>
               <Highlight>Ilaj Dental Care -</Highlight>{" "}
               The Story Behind Every Smile
@@ -44,7 +44,7 @@ export default function AboutSection() {
           </div>
 
           {/* Paragraph + CTA */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-5">
             <SectionDescription className="max-w-4xl">
               At Ilaj Dental Care, we take pride in delivering exceptional
               dental care with a focus on quality, comfort, and trust. Backed
@@ -64,10 +64,10 @@ export default function AboutSection() {
         </div>
 
         {/* Bottom Row */}
-        <div className="mt-16 grid grid-cols-1 gap-10 sm:mt-20 lg:grid-cols-3 lg:gap-14 lg:items-center">
+        <div className="mt-16 grid grid-cols-1 gap-10 sm:mt-20 lg:grid-cols-8 lg:gap-14 lg:items-center">
 
           {/* Image */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-3">
             <div className="relative aspect-3/2 w-full overflow-hidden rounded-3xl shadow-sm">
               <Image
                 src="/images/about-dental.jpg"
@@ -81,13 +81,12 @@ export default function AboutSection() {
           </div>
 
           {/* Stats */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-5">
             <StatsList stats={STATS} />
           </div>
 
         </div>
 
-      </div>
-    </section>
+      </Section>
   );
 }

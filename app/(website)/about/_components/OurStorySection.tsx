@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Clover, Target, type LucideIcon } from "lucide-react";
 import Button from "@/components/website/ui/Button";
+import Section from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
 import SectionDescription from "@/components/website/common/SectionDescription";
@@ -29,8 +30,7 @@ const STATS = [
 
 export default function OurStorySection() {
   return (
-    <section className="w-full bg-white text-zinc-950">
-      <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <Section>
 
         {/* =====================================================
             INTRO
@@ -55,7 +55,8 @@ export default function OurStorySection() {
         {/* =====================================================
             MISSION / IMAGE / VISION
         ====================================================== */}
-        <div className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-3 lg:mt-28">
+        {/* Shared rows (icon / space / title / text) so Mission and Vision titles line up */}
+        <div className="mt-14 grid grid-cols-1 gap-4 md:min-h-96 md:grid-cols-3 md:grid-rows-[auto_1fr_auto_auto] md:gap-y-0 lg:mt-28 lg:min-h-128">
 
           <ValueCard icon={Clover} title="Mission">
             Our mission is to deliver high-quality dental care in an
@@ -65,7 +66,7 @@ export default function OurStorySection() {
             professionalism.
           </ValueCard>
 
-          <div className="relative min-h-96 overflow-hidden rounded-2xl">
+          <div className="relative min-h-96 overflow-hidden rounded-2xl md:row-span-4 md:min-h-0">
             <Image
               src="/images/story/our-story.jpg"
               alt="Dentist providing dental treatment"
@@ -100,8 +101,7 @@ export default function OurStorySection() {
 
         </div>
 
-      </div>
-    </section>
+      </Section>
   );
 }
 
@@ -115,15 +115,15 @@ function ValueCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-96 flex-col rounded-2xl border border-zinc-200 bg-zinc-50 p-8 lg:min-h-128 lg:py-10 lg:pl-10 lg:pr-6">
+    <div className="flex min-h-96 flex-col rounded-2xl border border-zinc-200 bg-zinc-50 p-8 md:row-span-4 md:grid md:min-h-0 md:grid-rows-subgrid lg:py-10 lg:pl-10 lg:pr-6">
 
-      <Icon className="size-10 text-zinc-950" strokeWidth={2.25} aria-hidden="true" />
+      <Icon className="size-10 text-zinc-950 md:row-start-1" strokeWidth={2.25} aria-hidden="true" />
 
-      <div className="mt-auto pt-12">
-        <CardTitle tone="brand">{title}</CardTitle>
+      <CardTitle tone="brand" className="mt-auto pt-12 md:row-start-3 md:mt-0">
+        {title}
+      </CardTitle>
 
-        <CardText className="mt-3">{children}</CardText>
-      </div>
+      <CardText className="mt-3 md:row-start-4">{children}</CardText>
 
     </div>
   );

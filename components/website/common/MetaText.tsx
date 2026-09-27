@@ -14,7 +14,7 @@ export function MetaText({ children, tone = "dark", as: Tag = "p", className }: 
   return (
     <Tag
       className={cn(
-        "font-heading text-xs font-medium uppercase tracking-wide",
+        "font-heading text-xs font-medium uppercase tracking-wider",
         tone === "light" ? "text-white" : "text-zinc-800",
         className
       )}

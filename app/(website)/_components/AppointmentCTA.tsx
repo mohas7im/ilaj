@@ -20,7 +20,7 @@ export default function AppointmentCTA() {
       <div className="absolute inset-0 bg-black/60" />
 
       {/* Content */}
-      <div className="relative mx-auto flex max-w-7xl flex-col items-center px-5 py-20 text-center sm:px-6 lg:px-8 lg:py-24">
+      <div className="relative mx-auto flex min-h-96 max-w-7xl flex-col items-center justify-center px-5 py-16 text-center sm:px-6 sm:py-20 lg:min-h-100 lg:px-8">
 
         <SectionLabel tone="light">GET STARTED</SectionLabel>
 

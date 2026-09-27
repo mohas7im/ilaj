@@ -7,8 +7,8 @@ import SectionDescription from "@/components/website/common/SectionDescription";
 
 export default function AboutIntroSection() {
   return (
-    <section className="w-full bg-zinc-50 text-zinc-950">
-      <div className="mx-auto max-w-7xl px-5 pb-12 pt-12 sm:px-6 lg:px-8 lg:pt-16">
+    <section className="w-full bg-zinc-50 text-zinc-950 lg:flex lg:min-h-[calc(100dvh-5rem)] lg:items-center">
+      <div className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-6 lg:px-8 lg:py-16">
 
         {/* Label — above both columns, so the images line up with the heading */}
         <SectionLabel>ABOUT ILAJ DENTAL CARE</SectionLabel>
@@ -48,7 +48,7 @@ export default function AboutIntroSection() {
           {/* =====================================================
               RIGHT IMAGE COLLAGE
           ====================================================== */}
-          <div className="grid h-96 grid-cols-2 gap-4 sm:h-128 lg:h-160">
+          <div className="grid aspect-square grid-cols-2 gap-4 lg:aspect-9/8">
 
             {/* Tall Image */}
             <div className="relative overflow-hidden rounded-2xl">

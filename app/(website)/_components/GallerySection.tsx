@@ -1,6 +1,7 @@
 "use client";
 
 import BeforeAfterCard from "./BeforeAfterCard";
+import Section from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle from "@/components/website/common/SectionTitle";
 import SectionDescription from "@/components/website/common/SectionDescription";
@@ -23,8 +24,7 @@ const GALLERY = [
 
 export default function GallerySection() {
   return (
-    <section className="w-full bg-white py-16 text-zinc-950 sm:py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+    <Section>
 
         {/* =====================================================
             HEADER
@@ -93,7 +93,6 @@ export default function GallerySection() {
 
         </div>
 
-      </div>
-    </section>
+      </Section>
   );
 }
