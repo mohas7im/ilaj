@@ -3,6 +3,7 @@ import { Geist, Manrope } from "next/font/google";
 import { generateRootMetadata } from "@/lib/seo";
 import Navbar from "@/components/website/layout/Navbar";
 import Footer from "@/components/website/layout/Footer";
+import SmoothScroll from "@/components/website/layout/SmoothScroll";
 import "@/styles/website/theme.css";
 
 // Website root layout — owns <html>/<body>, fonts and the website stylesheet.
@@ -39,6 +40,7 @@ export default function WebsiteRootLayout({
       className={`${geist.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col relative">
+        <SmoothScroll />
         <Navbar />
         <div className="flex-1">{children}</div>
         <Footer />
