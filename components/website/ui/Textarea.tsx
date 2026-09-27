@@ -15,7 +15,7 @@ export function Textarea({ label, id, className, ...props }: TextareaProps) {
         {label}
       </label>
       <div className="relative">
-        <textarea id={id} className={cn(fieldControlClass, "h-16 resize-none py-2")} {...props} />
+        <textarea id={id} className={cn(fieldControlClass, "h-32 resize-none py-2")} {...props} />
         <FieldUnderline />
       </div>
     </div>

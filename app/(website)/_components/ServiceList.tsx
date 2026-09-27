@@ -12,6 +12,9 @@ import type { WebsiteService } from "../_lib/services";
  * The service rows, shared by the home section and the Services page.
  * - boxed = false: full-width gray/white bands, content centered inside (home)
  * - boxed = true:  rows inside a bordered box within the page container (Services page)
+ *
+ * On desktop the rows stack: each pins below the navbar and the next slides
+ * over it (CSS sticky). Phones scroll normally, since rows are taller there.
  */
 export default function ServiceList({
   services,
@@ -24,6 +27,7 @@ export default function ServiceList({
     <article
       key={service.slug}
       className={cn(
+        "overflow-clip lg:sticky lg:top-20",
         index % 2 === 0 ? "bg-zinc-50" : "bg-white",
         index > 0 && "border-t border-zinc-100"
       )}
@@ -40,8 +44,9 @@ export default function ServiceList({
     </article>
   ));
 
+  // overflow-clip (not hidden) so the rows can still stick
   return boxed ? (
-    <div className="overflow-hidden border border-zinc-100">{rows}</div>
+    <div className="overflow-clip border border-zinc-100">{rows}</div>
   ) : (
     <div className="border-t border-zinc-100">{rows}</div>
   );

@@ -28,7 +28,8 @@ export default function AppointmentCTA() {
           Ready to take a Beautiful Smile with us!
         </SectionTitle>
 
-        <Link href="/contact#book-appointment" className="mt-3">
+        {/* mt-4 matches the label's mb-4, so the heading has equal space above and below */}
+        <Link href="/contact#book-appointment" className="mt-4">
           <Button variant="primary">Book a Consultation</Button>
         </Link>
 

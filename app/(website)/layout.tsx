@@ -42,7 +42,6 @@ export default function WebsiteRootLayout({
     >
       <body className="min-h-full flex flex-col relative">
         <SmoothScroll />
-        <div className="scroll-progress" aria-hidden="true" />
         <Navbar />
         <PageTransition>{children}</PageTransition>
         <Footer />

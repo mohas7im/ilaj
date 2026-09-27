@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 const NAV_LINKS = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
-  { name: "Gallery", href: "/doctors" },
+  { name: "Gallery", href: "/gallery" },
   { name: "Services", href: "/services" },
   { name: "Contact", href: "/contact" },
 ];
@@ -36,7 +36,7 @@ export default function Navbar() {
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-300",
         solid
-          ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-zinc-200"
+          ? "bg-white shadow-sm border-b border-zinc-200"
           : "bg-transparent border-b border-gray-300"
       )}
     >

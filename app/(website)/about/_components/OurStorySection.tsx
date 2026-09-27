@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Clover, Target, type LucideIcon } from "lucide-react";
+import { Clover, Target, type LucideIcon } from "lucide-react";
 import Button from "@/components/website/ui/Button";
 import Section from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
@@ -56,7 +56,7 @@ export default function OurStorySection() {
             MISSION / IMAGE / VISION
         ====================================================== */}
         {/* Shared rows (icon / space / title / text) so Mission and Vision titles line up */}
-        <div className="mt-14 grid grid-cols-1 gap-4 md:min-h-96 md:grid-cols-3 md:grid-rows-[auto_1fr_auto_auto] md:gap-y-0 lg:mt-28 lg:min-h-128">
+        <div className="mt-14 grid grid-cols-1 gap-4 md:min-h-96 md:grid-cols-3 md:grid-rows-[auto_1fr_auto_auto] md:gap-y-0 lg:mt-16 lg:min-h-128">
 
           <ValueCard icon={Clover} title="Mission">
             Our mission is to deliver high-quality dental care in an
@@ -100,15 +100,6 @@ export default function OurStorySection() {
           </Link>
 
         </div>
-
-        {/* FAQ link — goes to the Contact page questions */}
-        <CardText className="reveal mt-14 border-t border-zinc-200 pt-8 lg:mt-16">
-          Have questions?{" "}
-          <Link href="/contact#faq" className="group inline-flex items-center gap-2 font-semibold text-brand">
-            Read our FAQ
-            <ArrowRight aria-hidden="true" className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
-          </Link>
-        </CardText>
 
       </Section>
   );

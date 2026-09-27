@@ -1,6 +1,6 @@
 import type { FaqItem } from "@/components/website/common/Faq";
 
-// PLACEHOLDER FAQs for the home and contact pages, until FAQs are managed in admin.
+// PLACEHOLDER FAQs for the home page, until FAQs are managed in admin.
 
 export const HOME_FAQS: FaqItem[] = [
   {
@@ -27,28 +27,5 @@ export const HOME_FAQS: FaqItem[] = [
     question: "Do you handle dental emergencies?",
     answer:
       "Yes. If you have severe pain, swelling or a broken tooth, call us and we will do our best to see you the same day.",
-  },
-];
-
-export const CONTACT_FAQS: FaqItem[] = [
-  {
-    question: "Do I need an appointment, or can I walk in?",
-    answer:
-      "We recommend booking in advance so we can give you our full attention. Walk-ins are welcome, but waiting times may vary.",
-  },
-  {
-    question: "What should I bring to my first visit?",
-    answer:
-      "Please bring a photo ID, any previous dental records or X-rays, and a list of medicines you currently take.",
-  },
-  {
-    question: "Can I reschedule or cancel my appointment?",
-    answer:
-      "Yes. Just call us or send a message at least 24 hours before your appointment and we will find a new time for you.",
-  },
-  {
-    question: "Is parking available at the clinic?",
-    answer:
-      "Yes, parking is available near the clinic. Our team can share directions when you book your appointment.",
   },
 ];

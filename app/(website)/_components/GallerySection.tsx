@@ -6,8 +6,22 @@ import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle from "@/components/website/common/SectionTitle";
 import SectionDescription from "@/components/website/common/SectionDescription";
 import ArrowButton from "@/components/website/ui/ArrowButton";
+import { useSnapCarousel } from "@/components/website/common/useSnapCarousel";
 
 const GALLERY = [
+  {
+    before: "/images/gallery/smile-before-1.jpg",
+    after: "/images/gallery/smile-after-1.jpg",
+  },
+  {
+    before: "/images/gallery/smile-before-2.jpg",
+    after: "/images/gallery/smile-after-2.jpg",
+  },
+  {
+    before: "/images/gallery/smile-before-3.jpg",
+    after: "/images/gallery/smile-after-3.jpg",
+  },
+  // PLACEHOLDER cases (reusing existing photos) so the arrows have more to show
   {
     before: "/images/gallery/smile-before-1.jpg",
     after: "/images/gallery/smile-after-1.jpg",
@@ -23,6 +37,8 @@ const GALLERY = [
 ];
 
 export default function GallerySection() {
+  const { trackRef, canPrev, canNext, scrollByCard } = useSnapCarousel();
+
   return (
     <Section>
 
@@ -59,26 +75,34 @@ export default function GallerySection() {
         </div>
 
         {/* =====================================================
-            GALLERY
+            GALLERY — snapping strip: 3 cards on desktop, 2 on tablet, 1 on phones
         ====================================================== */}
         <div
+          ref={trackRef}
           className="
             mt-12
-            grid
-            grid-cols-1
+            flex
+            snap-x
+            snap-mandatory
             gap-4
+            overflow-x-auto
+            overscroll-x-contain
             sm:mt-14
-            md:grid-cols-2
-            lg:grid-cols-3
+            [scrollbar-width:none]
+            [&::-webkit-scrollbar]:hidden
           "
         >
           {GALLERY.map((item, index) => (
-            <BeforeAfterCard
+            <div
               key={index}
-              before={item.before}
-              after={item.after}
-              alt={`Ilaj Dental Care transformation ${index + 1}`}
-            />
+              className="shrink-0 basis-[85%] snap-start md:basis-[calc((100%-1rem)/2)] lg:basis-[calc((100%-2rem)/3)]"
+            >
+              <BeforeAfterCard
+                before={item.before}
+                after={item.after}
+                alt={`Ilaj Dental Care transformation ${index + 1}`}
+              />
+            </div>
           ))}
         </div>
 
@@ -87,9 +111,9 @@ export default function GallerySection() {
         ====================================================== */}
         <div className="mt-10 flex justify-center gap-2">
 
-          <ArrowButton direction="prev" label="Previous gallery" />
+          <ArrowButton direction="prev" label="Previous gallery" disabled={!canPrev} onClick={() => scrollByCard(-1)} />
 
-          <ArrowButton direction="next" label="Next gallery" />
+          <ArrowButton direction="next" label="Next gallery" disabled={!canNext} onClick={() => scrollByCard(1)} />
 
         </div>
 
