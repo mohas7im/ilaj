@@ -74,10 +74,13 @@ export default function DoctorsSection() {
             lg:grid-cols-4
           "
         >
-          {DOCTORS.map((doctor) => (
+          {DOCTORS.map((doctor, index) => (
             <article
               key={doctor.name}
+              style={{ "--i": index } as React.CSSProperties}
               className="
+                reveal
+                group
                 flex
                 flex-col
                 overflow-hidden
@@ -95,12 +98,12 @@ export default function DoctorsSection() {
               </div>
 
               {/* Doctor Image */}
-              <div className="relative mt-auto aspect-9/10 w-full">
+              <div className="relative mt-auto aspect-9/10 w-full overflow-hidden">
                 <Image
                   src={doctor.image}
                   alt={doctor.name}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-[filter,scale] duration-700 ease-out group-hover:scale-105 [@media(hover:hover)]:grayscale [@media(hover:hover)]:group-hover:grayscale-0"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 />
               </div>

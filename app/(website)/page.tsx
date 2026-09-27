@@ -7,6 +7,9 @@ import DoctorsSection from "./_components/DoctorsSection";
 import GallerySection from "./_components/GallerySection";
 import TestimonialsSection from "./_components/TestimonialsSection";
 
+// Services come from the admin database; refresh at most every 5 minutes.
+export const revalidate = 300;
+
 export default function HomePage() {
   return (
     <main>

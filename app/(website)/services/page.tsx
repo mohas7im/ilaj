@@ -1,12 +1,18 @@
 import { Container } from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
-import ServiceList from "../_components/ServiceList";
+import ServiceBento from "./_components/ServiceBento";
 import AppointmentCTA from "../_components/AppointmentCTA";
+import { getWebsiteServices } from "../_lib/services";
+
+// Services come from the admin database; refresh at most every 5 minutes.
+export const revalidate = 300;
 
 // Services page: a white rounded panel on a gray page, centered header,
-// boxed service rows, then the "Get Started" banner.
-export default function ServicesPage() {
+// bento grid of services, then the "Get Started" banner.
+export default async function ServicesPage() {
+  const services = await getWebsiteServices();
+
   return (
     <main className="bg-zinc-100 pt-20">
 
@@ -24,7 +30,7 @@ export default function ServicesPage() {
           </Container>
 
           <Container className="mt-12 lg:mt-14">
-            <ServiceList boxed />
+            <ServiceBento services={services} />
           </Container>
 
         </div>

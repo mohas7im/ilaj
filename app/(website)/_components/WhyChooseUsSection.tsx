@@ -25,7 +25,7 @@ export default function WhyChooseUsSection() {
           {/* =================================================
               LEFT CONTENT
           ================================================== */}
-          <div className="flex flex-col lg:col-span-7">
+          <div className="flex flex-col lg:col-span-7 lg:pr-14">
 
             {/* Heading */}
             <SectionTitle>
@@ -39,13 +39,13 @@ export default function WhyChooseUsSection() {
               high-quality care in a patient-first environment.
             </SectionDescription>
 
-            {/* Feature List — sits at the bottom, level with the image */}
-            <div className="mt-16 space-y-8 lg:mt-auto lg:pt-16">
+            {/* Feature List — spaced out so it scrolls past the pinned image */}
+            <div className="mt-16 border-b border-zinc-200 lg:mt-20">
 
               {FEATURES.map((feature, index) => (
                 <div
                   key={feature}
-                  className="flex items-baseline gap-4"
+                  className="flex items-baseline gap-4 border-t border-zinc-200 py-8 lg:py-12"
                 >
 
                   {/* Number */}
@@ -79,7 +79,10 @@ export default function WhyChooseUsSection() {
               overflow-hidden
               rounded-2xl
               sm:h-128
-              lg:h-152
+              lg:sticky
+              lg:top-28
+              lg:self-start
+              lg:h-[min(38rem,calc(100vh-9rem))]
             "
           >
             <Image

@@ -66,7 +66,7 @@ export default function OurStorySection() {
             professionalism.
           </ValueCard>
 
-          <div className="relative min-h-96 overflow-hidden rounded-2xl md:row-span-4 md:min-h-0">
+          <div className="reveal-image relative min-h-96 overflow-hidden rounded-2xl md:row-span-4 md:min-h-0">
             <Image
               src="/images/story/our-story.jpg"
               alt="Dentist providing dental treatment"
@@ -115,7 +115,7 @@ function ValueCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-96 flex-col rounded-2xl border border-zinc-200 bg-zinc-50 p-8 md:row-span-4 md:grid md:min-h-0 md:grid-rows-subgrid lg:py-10 lg:pl-10 lg:pr-6">
+    <div className="reveal flex min-h-96 flex-col rounded-2xl border border-zinc-200 bg-zinc-50 p-8 md:row-span-4 md:grid md:min-h-0 md:grid-rows-subgrid lg:py-10 lg:pl-10 lg:pr-6">
 
       <Icon className="size-10 text-zinc-950 md:row-start-1" strokeWidth={2.25} aria-hidden="true" />
 

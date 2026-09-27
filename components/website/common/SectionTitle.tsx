@@ -18,7 +18,7 @@ export function SectionTitle({ children, tone = "dark", as: Tag = "h2", classNam
   return (
     <Tag
       className={cn(
-        "font-heading text-3xl font-medium tracking-tight sm:text-4xl",
+        "reveal font-heading text-3xl font-medium tracking-tight sm:text-4xl",
         tone === "light" ? "text-white" : "text-zinc-950",
         className
       )}

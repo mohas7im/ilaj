@@ -9,15 +9,19 @@ const CLIENT_AVATARS = [
   "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop&crop=faces",
 ];
 
+const HEADLINE = "Your Smile, Our Priority : Expert Dental Care You Trust";
+
 export default function Hero() {
   return (
     <section className="relative w-full min-h-screen flex flex-col justify-between bg-neutral-950 overflow-hidden">
-      {/* Background Image */}
-      <img
-        src="/images/hero-bg.png"
-        alt="Hero background"
-        className="absolute inset-0 w-full h-full object-cover"
-      />
+      {/* Background Image — wrapper drifts on scroll (parallax), image settles in (hero-image) */}
+      <div className="parallax absolute inset-0">
+        <img
+          src="/images/hero-bg.png"
+          alt="Hero background"
+          className="hero-image w-full h-full object-cover"
+        />
+      </div>
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/40 pointer-events-none" />
       {/* Glossy & Subtle Vignette Overlay */}
@@ -28,11 +32,18 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24 sm:pt-28 lg:pt-32">
         <div className="max-w-7xl space-y-5">
           <h1 className="font-heading font-semibold text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight max-w-7xl">
-            Your Smile, Our Priority : Expert Dental Care You Trust
+            {/* Each word rises out of its own mask, one after another */}
+            {HEADLINE.split(" ").map((word, i) => (
+              <span key={i}>
+                <span className="hero-word">
+                  <span style={{ "--i": i } as React.CSSProperties}>{word}</span>
+                </span>{" "}
+              </span>
+            ))}
           </h1>
 
           {/* Happy Clients Badge */}
-          <div className="rounded-xl border border-white/35 bg-white/12 backdrop-blur-md px-5 py-4 w-68 sm:w-72 space-y-4 shadow-xl transition-transform duration-200 hover:scale-102">
+          <div className="hero-fade rounded-xl border border-white/35 bg-white/12 backdrop-blur-md px-5 py-4 w-68 sm:w-72 space-y-4 shadow-xl transition-transform duration-200 hover:scale-102">
             <div className="flex items-center justify-between">
               <div className="flex -space-x-2.5 items-center">
                 {CLIENT_AVATARS.map((src, i) => (
@@ -60,7 +71,7 @@ export default function Hero() {
       </div>
 
       {/* Bottom Hero Bar */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8 sm:pb-10 pt-8 mt-auto">
+      <div style={{ "--delay": "0.8s" } as React.CSSProperties} className="hero-fade relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8 sm:pb-10 pt-8 mt-auto">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 lg:gap-12">
           {/* Left: Address & Opening Hours */}
           <div className="flex flex-col sm:flex-row gap-10 sm:gap-16 lg:gap-20 font-heading">

@@ -14,7 +14,7 @@ export interface SectionLabelProps {
 // The text inside is MetaText, so pills and small uppercase card text always match.
 export function SectionLabel({ children, tone = "dark", className }: SectionLabelProps) {
   return (
-    <div className={cn("mb-4", className)}>
+    <div className={cn("reveal mb-4", className)}>
       <span
         className={cn(
           "inline-flex items-center rounded-full border px-4 py-2",

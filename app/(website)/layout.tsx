@@ -4,6 +4,7 @@ import { generateRootMetadata } from "@/lib/seo";
 import Navbar from "@/components/website/layout/Navbar";
 import Footer from "@/components/website/layout/Footer";
 import SmoothScroll from "@/components/website/layout/SmoothScroll";
+import PageTransition from "@/components/website/layout/PageTransition";
 import "@/styles/website/theme.css";
 
 // Website root layout — owns <html>/<body>, fonts and the website stylesheet.
@@ -41,8 +42,9 @@ export default function WebsiteRootLayout({
     >
       <body className="min-h-full flex flex-col relative">
         <SmoothScroll />
+        <div className="scroll-progress" aria-hidden="true" />
         <Navbar />
-        <div className="flex-1">{children}</div>
+        <PageTransition>{children}</PageTransition>
         <Footer />
       </body>
     </html>

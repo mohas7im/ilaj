@@ -20,8 +20,8 @@ export interface StatsListProps {
 export function StatsList({ stats, className }: StatsListProps) {
   return (
     <div className={cn("grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-3", className)}>
-      {stats.map((stat) => (
-        <div key={stat.label} className="text-center">
+      {stats.map((stat, index) => (
+        <div key={stat.label} className="reveal text-center" style={{ "--i": index } as React.CSSProperties}>
 
           <CardTitle size="sm">{stat.label}</CardTitle>
 

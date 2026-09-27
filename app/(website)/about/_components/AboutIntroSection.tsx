@@ -51,7 +51,7 @@ export default function AboutIntroSection() {
           <div className="grid aspect-square grid-cols-2 gap-4 lg:aspect-9/8">
 
             {/* Tall Image */}
-            <div className="relative overflow-hidden rounded-2xl">
+            <div className="reveal-image relative overflow-hidden rounded-2xl">
               <Image
                 src="/images/about/about-main.jpg"
                 alt="Dentist providing dental treatment"
@@ -64,7 +64,7 @@ export default function AboutIntroSection() {
 
             {/* Two Stacked Images */}
             <div className="grid grid-rows-2 gap-4">
-              <div className="relative overflow-hidden rounded-2xl">
+              <div className="reveal-image relative overflow-hidden rounded-2xl">
                 <Image
                   src="/images/about/about-small-1.jpg"
                   alt="Dental care model"
@@ -74,7 +74,7 @@ export default function AboutIntroSection() {
                 />
               </div>
 
-              <div className="relative overflow-hidden rounded-2xl">
+              <div className="reveal-image relative overflow-hidden rounded-2xl">
                 <Image
                   src="/images/about/about-small-2.jpg"
                   alt="Dental hygiene demonstration"

@@ -5,9 +5,12 @@ import SectionTitle, { Highlight } from "@/components/website/common/SectionTitl
 import SectionDescription from "@/components/website/common/SectionDescription";
 import Button from "@/components/website/ui/Button";
 import ServiceList from "./ServiceList";
+import { getWebsiteServices } from "../_lib/services";
 
 // Home page services: header, full-width service bands, "All Services" button.
-export default function ServicesSection() {
+export default async function ServicesSection() {
+  const services = (await getWebsiteServices()).filter((service) => service.showInHomePage);
+
   return (
     <Section contained={false}>
 
@@ -35,7 +38,7 @@ export default function ServicesSection() {
 
       {/* Services — full-width bands */}
       <div className="mt-12 lg:mt-16">
-        <ServiceList />
+        <ServiceList services={services} />
       </div>
 
       {/* All Services */}

@@ -96,9 +96,16 @@ export default function ContactForm() {
       </Button>
 
       {status === "success" && (
-        <p role="status" className="mt-4 text-center text-sm text-zinc-700">
-          Thank you! We have received your request and will contact you soon.
-        </p>
+        <div role="status" className="mt-6 flex flex-col items-center gap-3 text-center">
+          {/* Circle and tick draw themselves in (.draw-check) */}
+          <svg viewBox="0 0 52 52" className="size-14 text-brand" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="26" cy="26" r="23" pathLength={1} className="draw-check" />
+            <path d="M16 27l7 7 13-15" pathLength={1} className="draw-check" style={{ "--delay": "0.6s" } as React.CSSProperties} />
+          </svg>
+          <p className="text-sm text-zinc-700">
+            Thank you! We have received your request and will contact you soon.
+          </p>
+        </div>
       )}
 
       {status === "error" && (

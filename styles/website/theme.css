@@ -122,3 +122,220 @@ html[data-website-theme] ::-webkit-scrollbar-thumb:hover,
 html[data-website-theme]::-webkit-scrollbar-thumb:hover {
   background-color: var(--scrollbar-thumb-hover);
 }
+
+/* ─── Motion ─────────────────────────────────────────────────
+   Everything here animates only transform / opacity / clip-path, so it stays
+   off the main thread. Scroll effects use CSS scroll-driven animations: no JS,
+   and content is fully visible in browsers without support. Everything is
+   disabled for prefers-reduced-motion. */
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(2rem); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes reveal-clip {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes reveal-zoom {
+  from { transform: scale(1.2); }
+  to { transform: none; }
+}
+
+@keyframes fade-up-in {
+  from { opacity: 0; transform: translateY(1.5rem); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes word-rise {
+  from { transform: translateY(110%); }
+  to { transform: none; }
+}
+
+@keyframes hero-zoom {
+  from { transform: scale(1.12); }
+  to { transform: none; }
+}
+
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes highlight-in {
+  from { opacity: 0.25; }
+  to { opacity: 1; }
+}
+
+@keyframes parallax-down {
+  to { translate: 0 25%; }
+}
+
+@keyframes draw-stroke {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Hero: words rise out of a mask, background slowly settles.
+     Time-based (not scroll), and the image itself is never hidden. */
+  .hero-word {
+    display: inline-block;
+    overflow: clip;
+    vertical-align: top;
+    padding-bottom: 0.08em;
+  }
+  .hero-word > span {
+    display: inline-block;
+    animation: word-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 60ms + 100ms);
+  }
+  .hero-image {
+    animation: hero-zoom 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .hero-fade {
+    animation: fade-up-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--delay, 0.6s);
+  }
+
+  /* Checkmark that draws itself (form success) */
+  .draw-check {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw-stroke 0.6s cubic-bezier(0.65, 0, 0.35, 1) var(--delay, 0.15s) forwards;
+  }
+
+  @supports (animation-timeline: view()) {
+
+    /* Fade + rise as the element scrolls into view.
+       Stagger siblings with style={{ "--i": index }}. */
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry calc(var(--i, 0) * 6%) entry calc(60% + var(--i, 0) * 6%);
+    }
+
+    /* Image wrapper wipes open from the bottom while the image settles.
+       Put it on the (overflow-hidden) box that directly wraps the <img>. */
+    .reveal-image {
+      animation: reveal-clip linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 80%;
+    }
+    .reveal-image > img {
+      animation: reveal-zoom linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 50%;
+    }
+
+    /* Rows light up as they pass the middle of the screen */
+    .scroll-highlight {
+      animation: highlight-in linear both;
+      animation-timeline: view();
+      animation-range: cover 15% cover 45%;
+    }
+
+    /* Moves slower than the page while the first screen scrolls away */
+    .parallax {
+      animation: parallax-down linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+  }
+}
+
+/* Reading progress bar along the top of the page */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 3px;
+  background: var(--brand);
+  transform-origin: left;
+  transform: scaleX(0);
+  pointer-events: none;
+  view-transition-name: scroll-progress;
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: grow-x linear both;
+    animation-timeline: scroll(root);
+  }
+}
+@supports not (animation-timeline: scroll()) {
+  .scroll-progress { display: none; }
+}
+
+/* ─── Page transitions (React <ViewTransition>) ─────────────── */
+::view-transition {
+  pointer-events: none;
+}
+
+/* Page content: old page fades out fast, new page rises in */
+::view-transition-old(.page-out) {
+  animation: 150ms ease-in both page-fade-out;
+}
+::view-transition-new(.page-in) {
+  animation: 350ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both page-fade-in;
+}
+@keyframes page-fade-out {
+  to { opacity: 0; }
+}
+@keyframes page-fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
+/* Service image flies from the card into the detail page hero */
+::view-transition-group(.morph) {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  30% { filter: blur(3px); }
+}
+
+/* Navbar and progress bar stay put while the page changes */
+::view-transition-group(site-header),
+::view-transition-group(scroll-progress) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header),
+::view-transition-old(scroll-progress) {
+  display: none;
+}
+::view-transition-new(site-header),
+::view-transition-new(scroll-progress) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* FAQ accordion (<details class="faq-item">): answer slides open where the
+   browser supports animating to height:auto; elsewhere it opens instantly. */
+.faq-item {
+  interpolate-size: allow-keywords;
+}
+.faq-item::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition: block-size 0.35s cubic-bezier(0.22, 1, 0.36, 1), content-visibility 0.35s allow-discrete;
+}
+.faq-item[open]::details-content {
+  block-size: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq-item::details-content { transition: none; }
+}

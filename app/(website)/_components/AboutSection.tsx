@@ -68,7 +68,7 @@ export default function AboutSection() {
 
           {/* Image */}
           <div className="lg:col-span-3">
-            <div className="relative aspect-3/2 w-full overflow-hidden rounded-3xl shadow-sm">
+            <div className="reveal-image relative aspect-3/2 w-full overflow-hidden rounded-3xl shadow-sm">
               <Image
                 src="/images/about-dental.jpg"
                 alt="Dentist consulting patient with teeth model"

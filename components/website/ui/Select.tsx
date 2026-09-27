@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { fieldControlClass, fieldLabelClass } from "./Input";
+import { FieldUnderline, fieldControlClass, fieldLabelClass } from "./Input";
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
@@ -13,13 +13,16 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
  */
 export function Select({ label, id, className, children, ...props }: SelectProps) {
   return (
-    <div className={className}>
+    <div className={cn("group", className)}>
       <label htmlFor={id} className={fieldLabelClass}>
         {label}
       </label>
-      <select id={id} className={cn(fieldControlClass, "h-10 invalid:text-zinc-500")} {...props}>
-        {children}
-      </select>
+      <div className="relative">
+        <select id={id} className={cn(fieldControlClass, "h-10 invalid:text-zinc-500")} {...props}>
+          {children}
+        </select>
+        <FieldUnderline />
+      </div>
     </div>
   );
 }
