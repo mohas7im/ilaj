@@ -226,7 +226,7 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
                 rows={8}
               />
               <p className="text-xs text-muted-foreground">
-                Shown under &quot;About this treatment&quot; on the service page. Leave a blank line between paragraphs.
+                Main content of the service page. Accepts HTML (from a rich text editor) or plain text with a blank line between paragraphs.
               </p>
             </div>
           </div>

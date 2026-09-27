@@ -8,24 +8,42 @@ import CardTitle from "@/components/website/common/CardTitle";
 import CardText from "@/components/website/common/CardText";
 import type { WebsiteService } from "../_lib/services";
 
-/** Home page service rows: full-width gray/white bands, content centered inside. */
-export default function ServiceList({ services }: { services: WebsiteService[] }) {
-  return (
-    <div className="border-t border-zinc-100">
-      {services.map((service, index) => (
-        <article
-          key={service.slug}
-          className={cn(
-            index % 2 === 0 ? "bg-zinc-50" : "bg-white",
-            index > 0 && "border-t border-zinc-100"
-          )}
-        >
-          <Container className="py-12 sm:py-14 lg:py-9">
-            <ServiceRow service={service} />
-          </Container>
-        </article>
-      ))}
-    </div>
+/**
+ * The service rows, shared by the home section and the Services page.
+ * - boxed = false: full-width gray/white bands, content centered inside (home)
+ * - boxed = true:  rows inside a bordered box within the page container (Services page)
+ */
+export default function ServiceList({
+  services,
+  boxed = false,
+}: {
+  services: WebsiteService[];
+  boxed?: boolean;
+}) {
+  const rows = services.map((service, index) => (
+    <article
+      key={service.slug}
+      className={cn(
+        index % 2 === 0 ? "bg-zinc-50" : "bg-white",
+        index > 0 && "border-t border-zinc-100"
+      )}
+    >
+      {boxed ? (
+        <div className="px-6 py-10 sm:px-8 lg:px-12 lg:py-10">
+          <ServiceRow service={service} />
+        </div>
+      ) : (
+        <Container className="py-12 sm:py-14 lg:py-9">
+          <ServiceRow service={service} />
+        </Container>
+      )}
+    </article>
+  ));
+
+  return boxed ? (
+    <div className="overflow-hidden border border-zinc-100">{rows}</div>
+  ) : (
+    <div className="border-t border-zinc-100">{rows}</div>
   );
 }
 

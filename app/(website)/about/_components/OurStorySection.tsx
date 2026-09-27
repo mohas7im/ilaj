@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Clover, Target, type LucideIcon } from "lucide-react";
+import { ArrowRight, Clover, Target, type LucideIcon } from "lucide-react";
 import Button from "@/components/website/ui/Button";
 import Section from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
@@ -100,6 +100,15 @@ export default function OurStorySection() {
           </Link>
 
         </div>
+
+        {/* FAQ link — goes to the Contact page questions */}
+        <CardText className="reveal mt-14 border-t border-zinc-200 pt-8 lg:mt-16">
+          Have questions?{" "}
+          <Link href="/contact#faq" className="group inline-flex items-center gap-2 font-semibold text-brand">
+            Read our FAQ
+            <ArrowRight aria-hidden="true" className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </Link>
+        </CardText>
 
       </Section>
   );

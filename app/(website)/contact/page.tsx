@@ -6,6 +6,9 @@ import SectionTitle, { Highlight } from "@/components/website/common/SectionTitl
 import SectionDescription from "@/components/website/common/SectionDescription";
 import CardTitle from "@/components/website/common/CardTitle";
 import CardText from "@/components/website/common/CardText";
+import Section from "@/components/website/common/Section";
+import Faq from "@/components/website/common/Faq";
+import { CONTACT_FAQS } from "../_data/faqs";
 
 const CONTACT_INFO = [
   {
@@ -131,6 +134,18 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      {/* =====================================================
+          FAQ — visit and booking questions (the About page links here)
+      ====================================================== */}
+      <Section id="faq" className="pt-0 sm:pt-0 lg:pt-0">
+        <Faq
+          name="contact-faq"
+          title={<>Before You <Highlight>Visit Us</Highlight></>}
+          description="Quick answers about booking and your first appointment."
+          faqs={CONTACT_FAQS}
+        />
+      </Section>
 
       {/* =====================================================
           GET STARTED

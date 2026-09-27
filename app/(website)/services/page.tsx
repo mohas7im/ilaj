@@ -1,7 +1,7 @@
 import { Container } from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
-import ServiceBento from "./_components/ServiceBento";
+import ServiceList from "../_components/ServiceList";
 import AppointmentCTA from "../_components/AppointmentCTA";
 import { getWebsiteServices } from "../_lib/services";
 
@@ -9,7 +9,7 @@ import { getWebsiteServices } from "../_lib/services";
 export const revalidate = 300;
 
 // Services page: a white rounded panel on a gray page, centered header,
-// bento grid of services, then the "Get Started" banner.
+// boxed service rows, then the "Get Started" banner.
 export default async function ServicesPage() {
   const services = await getWebsiteServices();
 
@@ -30,7 +30,7 @@ export default async function ServicesPage() {
           </Container>
 
           <Container className="mt-12 lg:mt-14">
-            <ServiceBento services={services} />
+            <ServiceList services={services} boxed />
           </Container>
 
         </div>
