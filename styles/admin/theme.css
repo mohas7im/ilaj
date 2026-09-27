@@ -25,6 +25,7 @@
  */
 
 @import "../base.css";
+@import "./rich-text.css";
 
 @source "../../app/admin";
 @source "../../components/admin";

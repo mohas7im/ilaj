@@ -23,6 +23,7 @@ export const ENDPOINTS = {
     doctors: crud("/api/admin/doctors"),
     services: crud("/api/admin/services"),
     testimonials: crud("/api/admin/testimonials"),
+    faqs: crud("/api/admin/faqs"),
     whyChooseUs: crud("/api/admin/why-choose-us"),
     inquiries: crud("/api/admin/inquiries"),
     gallery: {

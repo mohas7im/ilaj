@@ -49,9 +49,30 @@ model Service {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
+  faqs Faq[]
+
   @@index([status])
   @@index([displayOrder])
   @@map("services")
+}
+
+// FAQ with no serviceId is "General" (home page); otherwise it belongs to
+// that treatment and is deleted with it.
+model Faq {
+  id           String   @id @default(uuid())
+  question     String
+  answer       String   @db.Text
+  serviceId    String?
+  service      Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  status       String   @default("published")
+  displayOrder Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([serviceId])
+  @@index([status])
+  @@index([displayOrder])
+  @@map("faqs")
 }
 
 model Doctor {

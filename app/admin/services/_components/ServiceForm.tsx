@@ -14,6 +14,7 @@ import {
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
 import { Switch } from "@/components/admin/ui/switch"
+import { RichTextEditor } from "@/components/admin/RichTextEditor"
 import type { Service, ServiceStatus } from "@/domain/service/service.types"
 import { SERVICE_STATUS_CONFIG } from "./service-status"
 import { serviceApiService } from "../_services/service.api"
@@ -218,15 +219,15 @@ export function ServiceForm({ mode, initialData }: ServiceFormProps) {
             </div>
 
             <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="details">Detailed Description</Label>
-              <Textarea
+              <Label id="details-label">Detailed Description</Label>
+              <RichTextEditor
                 id="details"
+                aria-labelledby="details-label"
                 value={form.details}
-                onChange={(e) => set("details", e.target.value)}
-                rows={8}
+                onChange={(html) => set("details", html)}
               />
               <p className="text-xs text-muted-foreground">
-                Main content of the service page. Accepts HTML (from a rich text editor) or plain text with a blank line between paragraphs.
+                Main content of the treatment page on the website.
               </p>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import { PageHeader } from "@/components/admin/PageHeader"
 import { ServiceDetails } from "../_components/ServiceDetails"
 import { getServiceById } from "@/server/services/service.service"
+import { getFaqs } from "@/server/services/faq.service"
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -10,7 +11,7 @@ export const metadata = { title: "View Service" }
 
 export default async function ServiceDetailPage({ params }: Props) {
   const { id } = await params
-  const service = await getServiceById(id)
+  const [service, faqs] = await Promise.all([getServiceById(id), getFaqs({ serviceId: id })])
 
   if (!service) notFound()
 
@@ -33,7 +34,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         ]}
       />
       <div className="max-w-4xl mx-auto w-full">
-        <ServiceDetails service={service} />
+        <ServiceDetails service={service} faqs={faqs} />
       </div>
     </div>
   )

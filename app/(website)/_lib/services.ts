@@ -3,6 +3,7 @@ import type { Service } from "@/domain/service/service.types";
 
 // Website view of a service from the admin Service table.
 export type WebsiteService = {
+  id: string;
   slug: string;
   number: string;
   title: string;
@@ -27,6 +28,7 @@ function toWebsiteService(service: Service, index: number): WebsiteService {
   const [fallback, fallbackSecondary] = FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
 
   return {
+    id: service.id,
     slug: service.slug ?? "",
     number: `${String(index + 1).padStart(2, "0")}//`,
     title: service.name,

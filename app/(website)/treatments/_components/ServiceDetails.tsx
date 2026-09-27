@@ -6,21 +6,24 @@ import { Container } from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
 import SectionDescription from "@/components/website/common/SectionDescription";
-import Faq from "@/components/website/common/Faq";
+import Faq, { type FaqItem } from "@/components/website/common/Faq";
 import Button from "@/components/website/ui/Button";
 import type { WebsiteService } from "../../_lib/services";
-import { PLACEHOLDER_CONTENT, PLACEHOLDER_FAQS } from "../_data/placeholder";
+import { toRichTextHtml } from "@/lib/rich-text";
+import { PLACEHOLDER_CONTENT } from "../_data/placeholder";
 import ServiceCard from "./ServiceCard";
 
-// Service detail: header, hero image (morph target), overview + benefits,
 // Service detail: full-width image banner with the title on it (morph target),
-// then admin rich-text content, FAQ and other services on white.
+// then admin rich-text content, the treatment's FAQs and other services on white.
 export default function ServiceDetails({
   service,
   others,
+  faqs,
 }: {
   service: WebsiteService;
   others: WebsiteService[];
+  /** Published FAQs for this treatment; the section is hidden when empty */
+  faqs: FaqItem[];
 }) {
   return (
     <>
@@ -80,17 +83,16 @@ export default function ServiceDetails({
         {/* =====================================================
             FAQ — native <details>, one open at a time (same name), no JS
         ====================================================== */}
-        <Container className="mt-16 lg:mt-24">
-          <Faq
-            name="service-faq"
-            title={<>Questions About <Highlight>{service.title}</Highlight></>}
-            description={<>Can&apos;t find your answer? Our team is happy to help.</>}
-            faqs={PLACEHOLDER_FAQS.map((faq) => ({
-              question: faq.question.replaceAll("{service}", service.title),
-              answer: faq.answer.replaceAll("{service}", service.title),
-            }))}
-          />
-        </Container>
+        {faqs.length > 0 && (
+          <Container className="mt-16 lg:mt-24">
+            <Faq
+              name="service-faq"
+              title={<>Questions About <Highlight>{service.title}</Highlight></>}
+              description={<>Can&apos;t find your answer? Our team is happy to help.</>}
+              faqs={faqs}
+            />
+          </Container>
+        )}
 
         {/* =====================================================
             OTHER TREATMENTS
@@ -124,19 +126,9 @@ export default function ServiceDetails({
   );
 }
 
-// Admin content may be rich-text HTML or plain text (blank lines = paragraphs).
-// It is written by clinic admins only, so it is trusted and not sanitized here.
+// Admin content is rich-text HTML, sanitized when saved (server/lib/sanitize.ts);
+// older entries may still be plain text. Empty → placeholder until filled in.
 function toHtml(details: string, serviceName: string): string {
   if (!details.trim()) return PLACEHOLDER_CONTENT.replaceAll("{service}", serviceName);
-  if (/<[a-z][\s\S]*>/i.test(details)) return details;
-
-  const escape = (text: string) =>
-    text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-  return details
-    .split(/\n\s*\n/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean)
-    .map((paragraph) => `<p>${escape(paragraph).replace(/\n/g, "<br />")}</p>`)
-    .join("");
+  return toRichTextHtml(details);
 }

@@ -10,6 +10,7 @@ import {
   Images,
   Sparkles,
   Search,
+  MessageCircleQuestionMark,
   type LucideIcon,
 } from "lucide-react"
 
@@ -109,6 +110,11 @@ export const NAV_GROUPS: NavGroup[] = [
         title: "Testimonials",
         href: "/admin/testimonials",
         icon: Star,
+      },
+      {
+        title: "FAQs",
+        href: "/admin/faqs",
+        icon: MessageCircleQuestionMark,
       },
       {
         title: "Why Choose Us",

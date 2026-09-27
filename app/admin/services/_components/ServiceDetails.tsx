@@ -1,6 +1,10 @@
+import Link from "next/link"
 import { format } from "date-fns"
 import {
   Layers,
+  MessageCircleQuestionMark,
+  Pencil,
+  Plus,
   Sparkles,
   Link2,
   Calendar,
@@ -9,11 +13,15 @@ import {
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
 import { Badge } from "@/components/admin/ui/badge"
+import { Button } from "@/components/admin/ui/button"
 import type { Service } from "@/domain/service/service.types"
+import type { Faq } from "@/domain/faq/faq.types"
+import { toRichTextHtml } from "@/lib/rich-text"
 import { SERVICE_STATUS_CONFIG } from "./service-status"
 
 type ServiceDetailsProps = {
   service: Service
+  faqs: Faq[]
 }
 
 function DetailRow({
@@ -38,7 +46,7 @@ function DetailRow({
   )
 }
 
-export function ServiceDetails({ service }: ServiceDetailsProps) {
+export function ServiceDetails({ service, faqs }: ServiceDetailsProps) {
   const { label, variant } = SERVICE_STATUS_CONFIG[service.status] ?? {
     label: service.status,
     variant: "outline",
@@ -134,11 +142,64 @@ export function ServiceDetails({ service }: ServiceDetailsProps) {
         </CardHeader>
         <CardContent className="pt-4">
           {service.details ? (
-            <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">
-              {service.details}
-            </p>
+            // Sanitized on save (server/lib/sanitize.ts)
+            <div
+              className="admin-rich-text text-sm text-foreground/90"
+              dangerouslySetInnerHTML={{ __html: toRichTextHtml(service.details) }}
+            />
           ) : (
             <p className="text-sm text-muted-foreground italic">No detailed description yet. The website shows placeholder text.</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* FAQs Card */}
+      <Card>
+        <CardHeader className="pb-3 border-b">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="text-base font-medium flex items-center gap-2">
+              <MessageCircleQuestionMark className="h-4 w-4 text-primary" />
+              FAQs
+              <Badge variant="secondary">{faqs.length}</Badge>
+            </CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              render={<Link href={`/admin/faqs/create?serviceId=${service.id}`} />}
+            >
+              <Plus data-icon="inline-start" aria-hidden="true" />
+              Add FAQ
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-2">
+          {faqs.length === 0 ? (
+            <p className="py-2 text-sm text-muted-foreground italic">
+              No FAQs yet. The FAQ section is hidden on this treatment&apos;s page until you add one.
+            </p>
+          ) : (
+            <ul className="divide-y">
+              {faqs.map((faq) => (
+                <li key={faq.id} className="flex items-start gap-3 py-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium break-words">{faq.question}</p>
+                    <p className="mt-1 text-sm text-muted-foreground whitespace-pre-wrap break-words">
+                      {faq.answer}
+                    </p>
+                  </div>
+                  {faq.status === "draft" && <Badge variant="secondary">Draft</Badge>}
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    title="Edit FAQ"
+                    aria-label={`Edit FAQ: ${faq.question}`}
+                    render={<Link href={`/admin/faqs/${faq.id}/edit?from=service`} />}
+                  >
+                    <Pencil aria-hidden="true" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
           )}
         </CardContent>
       </Card>

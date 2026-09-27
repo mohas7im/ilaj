@@ -6,12 +6,9 @@ import WhyChooseUsSection from "./_components/WhyChooseUsSection";
 import DoctorsSection from "./_components/DoctorsSection";
 import GallerySection from "./_components/GallerySection";
 import TestimonialsSection from "./_components/TestimonialsSection";
-import Section from "@/components/website/common/Section";
-import Faq from "@/components/website/common/Faq";
-import { Highlight } from "@/components/website/common/SectionTitle";
-import { HOME_FAQS } from "./_data/faqs";
+import FaqSection from "./_components/FaqSection";
 
-// Services come from the admin database; refresh at most every 5 minutes.
+// Services and FAQs come from the admin database; refresh at most every 5 minutes.
 export const revalidate = 300;
 
 export default function HomePage() {
@@ -24,14 +21,7 @@ export default function HomePage() {
       <WhyChooseUsSection />
       <DoctorsSection />
       <GallerySection />
-      <Section id="faq">
-        <Faq
-          name="home-faq"
-          title={<>Answers To Your <Highlight>Common Questions</Highlight></>}
-          description="Everything you need to know before your visit."
-          faqs={HOME_FAQS}
-        />
-      </Section>
+      <FaqSection />
       <TestimonialsSection />
     </main>
   );

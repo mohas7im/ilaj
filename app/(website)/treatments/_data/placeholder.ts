@@ -1,4 +1,5 @@
 // PLACEHOLDER CONTENT for the service detail page, shared by every service.
+// (FAQs are real admin data now; the FAQ section hides when a service has none.)
 // {service} is replaced with the service name.
 //
 // PLACEHOLDER_CONTENT is only shown when a service has no "Detailed
@@ -30,31 +31,3 @@ export const PLACEHOLDER_CONTENT = `
 <h3>Recovery and aftercare</h3>
 <p>Most patients return to their normal routine quickly. We share simple aftercare instructions and are always available if you have questions. <a href="/contact">Contact us</a> to book your consultation.</p>
 `;
-
-export const PLACEHOLDER_FAQS = [
-  {
-    question: "Is {service} painful?",
-    answer:
-      "Most patients feel little to no discomfort. We use local anaesthesia and gentle techniques, and we check in with you throughout the treatment.",
-  },
-  {
-    question: "How long does {service} take?",
-    answer:
-      "It depends on your needs. After your consultation we give you a clear timeline, including the number of visits and how long each one takes.",
-  },
-  {
-    question: "How much does {service} cost?",
-    answer:
-      "The cost depends on your treatment plan. We always share a clear price before we begin, with no hidden charges.",
-  },
-  {
-    question: "How do I care for my teeth afterwards?",
-    answer:
-      "We give you simple aftercare instructions and book a follow-up visit to make sure everything is healing and working as it should.",
-  },
-  {
-    question: "Do I need an appointment for a consultation?",
-    answer:
-      "Yes. Book online or call us, and we will find a time that suits you. Your first consultation includes a full check-up and a treatment plan.",
-  },
-];

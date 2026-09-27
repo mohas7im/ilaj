@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import type { Service } from "@/domain/service/service.types"
 import type { ServiceFormData } from "@/domain/service/service.schema"
+import { sanitizeRichText } from "@/server/lib/sanitize"
 
 export function slugify(text: string): string {
   return text
@@ -63,7 +64,7 @@ export async function createService(data: ServiceFormData): Promise<Service> {
       name: data.name,
       slug,
       description: data.description || null,
-      details: data.details || null,
+      details: sanitizeRichText(data.details),
       status: data.status,
       displayOrder: data.displayOrder ?? 1,
       showInHomePage: data.showInHomePage ?? false,
@@ -97,7 +98,7 @@ export async function updateService(
       ...(data.name !== undefined && { name: data.name }),
       slug,
       ...(data.description !== undefined && { description: data.description || null }),
-      ...(data.details !== undefined && { details: data.details || null }),
+      ...(data.details !== undefined && { details: sanitizeRichText(data.details) }),
       ...(data.status !== undefined && { status: data.status }),
       ...(data.displayOrder !== undefined && { displayOrder: data.displayOrder }),
       ...(data.showInHomePage !== undefined && { showInHomePage: data.showInHomePage }),
