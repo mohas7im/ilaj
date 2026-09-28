@@ -151,7 +151,8 @@ export function PatientGalleryGrid() {
         onOpenChange={(open) => !open && !isDeleting && setDeleteId(null)}
         title="Delete patient case?"
         description="This will permanently remove this before & after case from the gallery. This action cannot be undone."
-        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
+        confirmLabel="Delete"
+        isLoading={isDeleting}
         variant="destructive"
         onConfirm={handleDelete}
       />

@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Mail,
   Phone,
@@ -13,7 +15,6 @@ import {
   Save,
   RotateCcw,
   MessageCircle,
-  Loader2,
 } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
@@ -29,7 +30,9 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@/components/admin/ui/input-group"
+import { Spinner } from "@/components/admin/ui/spinner"
 import type { ClinicSettings } from "@/domain/settings/settings.types"
+import { settingsSchema, type SettingsFormData } from "@/domain/settings/settings.schema"
 import { settingsApiService } from "../_services/settings.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 import { LoadingState } from "@/components/admin/ui/loading-state"
@@ -66,48 +69,87 @@ export function SettingsForm() {
 }
 
 function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettings }) {
-  const [initialData, setInitialData] = useState<ClinicSettings>(initialSettings)
-  const [formData, setFormData] = useState<ClinicSettings>(initialSettings)
-  const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [apiError, setApiError] = useState<string | null>(null)
 
-  const handleChange = <K extends keyof ClinicSettings>(field: K, value: ClinicSettings[K]) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    setSuccess(false)
-    setError(null)
-  }
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<SettingsFormData>({
+    resolver: zodResolver(settingsSchema) as any,
+    defaultValues: {
+      ...initialSettings,
+      secondaryEmail: initialSettings.secondaryEmail ?? "",
+      phone2: initialSettings.phone2 ?? "",
+      whatsappNumber: initialSettings.whatsappNumber ?? "",
+      workingHoursSunday: initialSettings.workingHoursSunday ?? "",
+      facebook: initialSettings.facebook ?? "",
+      instagram: initialSettings.instagram ?? "",
+      linkedin: initialSettings.linkedin ?? "",
+      twitter: initialSettings.twitter ?? "",
+      pinterest: initialSettings.pinterest ?? "",
+      mapLink: initialSettings.mapLink ?? "",
+    },
+  })
+
+  const sundayOpen = watch("sundayOpen")
 
   const handleReset = () => {
-    setFormData(initialData)
+    reset({
+      ...initialSettings,
+      secondaryEmail: initialSettings.secondaryEmail ?? "",
+      phone2: initialSettings.phone2 ?? "",
+      whatsappNumber: initialSettings.whatsappNumber ?? "",
+      workingHoursSunday: initialSettings.workingHoursSunday ?? "",
+      facebook: initialSettings.facebook ?? "",
+      instagram: initialSettings.instagram ?? "",
+      linkedin: initialSettings.linkedin ?? "",
+      twitter: initialSettings.twitter ?? "",
+      pinterest: initialSettings.pinterest ?? "",
+      mapLink: initialSettings.mapLink ?? "",
+    })
     setSuccess(false)
-    setError(null)
+    setApiError(null)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+  const onSubmit = async (data: SettingsFormData) => {
+    setApiError(null)
     setSuccess(false)
 
     try {
-      const updated = await settingsApiService.update(formData)
-      setFormData(updated)
-      setInitialData(updated)
+      // Create full object mapped back to ClinicSettings types if needed by API
+      // The API should accept data that aligns with ClinicSettings or SettingsFormData
+      const updated = await settingsApiService.update(data as unknown as ClinicSettings)
+      
+      reset({
+        ...updated,
+        secondaryEmail: updated.secondaryEmail ?? "",
+        phone2: updated.phone2 ?? "",
+        whatsappNumber: updated.whatsappNumber ?? "",
+        workingHoursSunday: updated.workingHoursSunday ?? "",
+        facebook: updated.facebook ?? "",
+        instagram: updated.instagram ?? "",
+        linkedin: updated.linkedin ?? "",
+        twitter: updated.twitter ?? "",
+        pinterest: updated.pinterest ?? "",
+        mapLink: updated.mapLink ?? "",
+      })
       setSuccess(true)
       toast.success("Settings saved successfully!")
       window.scrollTo({ top: 0, behavior: "smooth" })
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to update settings")
-      setError(msg)
+      setApiError(msg)
       toast.error(msg)
-    } finally {
-      setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl w-full mx-auto">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-4xl w-full mx-auto" noValidate>
       {/* Top Banner Alert */}
       {success && (
         <div className="flex items-center gap-3 rounded-lg border border-emerald-500/20 bg-emerald-50 p-4 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
@@ -119,10 +161,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
         </div>
       )}
 
-      {error && (
+      {apiError && (
         <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
           <AlertCircle className="h-5 w-5 shrink-0" />
-          <span>{error}</span>
+          <span>{apiError}</span>
         </div>
       )}
 
@@ -147,10 +189,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               <Input
                 id="primaryEmail"
                 type="email"
-                required
-                value={formData.primaryEmail}
-                onChange={(e) => handleChange("primaryEmail", e.target.value)}
+                {...register("primaryEmail")}
+                aria-invalid={!!errors.primaryEmail}
               />
+              {errors.primaryEmail && <p className="text-xs text-destructive">{errors.primaryEmail.message}</p>}
             </div>
 
             {/* Secondary Email */}
@@ -159,9 +201,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               <Input
                 id="secondaryEmail"
                 type="email"
-                value={formData.secondaryEmail}
-                onChange={(e) => handleChange("secondaryEmail", e.target.value)}
+                {...register("secondaryEmail")}
+                aria-invalid={!!errors.secondaryEmail}
               />
+              {errors.secondaryEmail && <p className="text-xs text-destructive">{errors.secondaryEmail.message}</p>}
             </div>
 
             {/* Phone Number 1 */}
@@ -172,10 +215,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               <Input
                 id="phone1"
                 type="tel"
-                required
-                value={formData.phone1}
-                onChange={(e) => handleChange("phone1", e.target.value)}
+                {...register("phone1")}
+                aria-invalid={!!errors.phone1}
               />
+              {errors.phone1 && <p className="text-xs text-destructive">{errors.phone1.message}</p>}
             </div>
 
             {/* Phone Number 2 */}
@@ -184,9 +227,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               <Input
                 id="phone2"
                 type="tel"
-                value={formData.phone2}
-                onChange={(e) => handleChange("phone2", e.target.value)}
+                {...register("phone2")}
+                aria-invalid={!!errors.phone2}
               />
+              {errors.phone2 && <p className="text-xs text-destructive">{errors.phone2.message}</p>}
             </div>
 
             {/* WhatsApp Number */}
@@ -198,9 +242,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               <Input
                 id="whatsappNumber"
                 type="tel"
-                value={formData.whatsappNumber}
-                onChange={(e) => handleChange("whatsappNumber", e.target.value)}
+                {...register("whatsappNumber")}
+                aria-invalid={!!errors.whatsappNumber}
               />
+              {errors.whatsappNumber && <p className="text-xs text-destructive">{errors.whatsappNumber.message}</p>}
             </div>
 
             {/* Address Textarea */}
@@ -211,11 +256,11 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </Label>
               <Textarea
                 id="address"
-                required
                 rows={3}
-                value={formData.address}
-                onChange={(e) => handleChange("address", e.target.value)}
+                {...register("address")}
+                aria-invalid={!!errors.address}
               />
+              {errors.address && <p className="text-xs text-destructive">{errors.address.message}</p>}
             </div>
           </div>
         </CardContent>
@@ -241,10 +286,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </Label>
               <Input
                 id="yearsOfExperience"
-                required
-                value={formData.yearsOfExperience}
-                onChange={(e) => handleChange("yearsOfExperience", e.target.value)}
+                {...register("yearsOfExperience")}
+                aria-invalid={!!errors.yearsOfExperience}
               />
+              {errors.yearsOfExperience && <p className="text-xs text-destructive">{errors.yearsOfExperience.message}</p>}
             </div>
 
             {/* Total Patients */}
@@ -254,10 +299,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </Label>
               <Input
                 id="totalPatients"
-                required
-                value={formData.totalPatients}
-                onChange={(e) => handleChange("totalPatients", e.target.value)}
+                {...register("totalPatients")}
+                aria-invalid={!!errors.totalPatients}
               />
+              {errors.totalPatients && <p className="text-xs text-destructive">{errors.totalPatients.message}</p>}
             </div>
 
             {/* Satisfaction */}
@@ -267,10 +312,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </Label>
               <Input
                 id="satisfactionRate"
-                required
-                value={formData.satisfactionRate}
-                onChange={(e) => handleChange("satisfactionRate", e.target.value)}
+                {...register("satisfactionRate")}
+                aria-invalid={!!errors.satisfactionRate}
               />
+              {errors.satisfactionRate && <p className="text-xs text-destructive">{errors.satisfactionRate.message}</p>}
             </div>
           </div>
         </CardContent>
@@ -296,10 +341,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </Label>
               <Input
                 id="workingHoursWeekday"
-                required
-                value={formData.workingHoursWeekday}
-                onChange={(e) => handleChange("workingHoursWeekday", e.target.value)}
+                {...register("workingHoursWeekday")}
+                aria-invalid={!!errors.workingHoursWeekday}
               />
+              {errors.workingHoursWeekday && <p className="text-xs text-destructive">{errors.workingHoursWeekday.message}</p>}
             </div>
 
             {/* Saturday Working Time */}
@@ -309,10 +354,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </Label>
               <Input
                 id="workingHoursSaturday"
-                required
-                value={formData.workingHoursSaturday}
-                onChange={(e) => handleChange("workingHoursSaturday", e.target.value)}
+                {...register("workingHoursSaturday")}
+                aria-invalid={!!errors.workingHoursSaturday}
               />
+              {errors.workingHoursSaturday && <p className="text-xs text-destructive">{errors.workingHoursSaturday.message}</p>}
             </div>
           </div>
 
@@ -324,8 +369,8 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
                   <Label htmlFor="sundayOpen" className="text-sm font-semibold cursor-pointer">
                     Sunday Clinic Status
                   </Label>
-                  <Badge variant={formData.sundayOpen ? "default" : "secondary"}>
-                    {formData.sundayOpen ? "Open" : "Closed"}
+                  <Badge variant={sundayOpen ? "default" : "secondary"}>
+                    {sundayOpen ? "Open" : "Closed"}
                   </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -334,23 +379,30 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </div>
 
               <div className="flex items-center gap-2 pt-1 sm:pt-0">
-                <Switch
-                  id="sundayOpen"
-                  checked={formData.sundayOpen}
-                  onCheckedChange={(checked) => handleChange("sundayOpen", Boolean(checked))}
+                <Controller
+                  control={control}
+                  name="sundayOpen"
+                  render={({ field }) => (
+                    <Switch
+                      id="sundayOpen"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
                 />
               </div>
             </div>
 
-            {formData.sundayOpen && (
+            {sundayOpen && (
               <div className="mt-4 pt-3 border-t border-border/60">
                 <div className="space-y-2 max-w-sm">
                   <Label htmlFor="workingHoursSunday">Sunday Working Hours</Label>
                   <Input
                     id="workingHoursSunday"
-                    value={formData.workingHoursSunday}
-                    onChange={(e) => handleChange("workingHoursSunday", e.target.value)}
+                    {...register("workingHoursSunday")}
+                    aria-invalid={!!errors.workingHoursSunday}
                   />
+                  {errors.workingHoursSunday && <p className="text-xs text-destructive">{errors.workingHoursSunday.message}</p>}
                 </div>
               </div>
             )}
@@ -379,8 +431,7 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </InputGroupAddon>
               <InputGroupInput
                 id="facebook"
-                value={formData.facebook}
-                onChange={(e) => handleChange("facebook", e.target.value)}
+                {...register("facebook")}
               />
             </InputGroup>
           </div>
@@ -394,8 +445,7 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </InputGroupAddon>
               <InputGroupInput
                 id="instagram"
-                value={formData.instagram}
-                onChange={(e) => handleChange("instagram", e.target.value)}
+                {...register("instagram")}
               />
             </InputGroup>
           </div>
@@ -409,8 +459,7 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </InputGroupAddon>
               <InputGroupInput
                 id="linkedin"
-                value={formData.linkedin}
-                onChange={(e) => handleChange("linkedin", e.target.value)}
+                {...register("linkedin")}
               />
             </InputGroup>
           </div>
@@ -424,8 +473,7 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </InputGroupAddon>
               <InputGroupInput
                 id="twitter"
-                value={formData.twitter}
-                onChange={(e) => handleChange("twitter", e.target.value)}
+                {...register("twitter")}
               />
             </InputGroup>
           </div>
@@ -439,8 +487,7 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </InputGroupAddon>
               <InputGroupInput
                 id="pinterest"
-                value={formData.pinterest}
-                onChange={(e) => handleChange("pinterest", e.target.value)}
+                {...register("pinterest")}
               />
             </InputGroup>
           </div>
@@ -454,8 +501,7 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               </InputGroupAddon>
               <InputGroupInput
                 id="mapLink"
-                value={formData.mapLink}
-                onChange={(e) => handleChange("mapLink", e.target.value)}
+                {...register("mapLink")}
               />
             </InputGroup>
           </div>
@@ -468,7 +514,7 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
           type="button"
           variant="outline"
           onClick={handleReset}
-          disabled={loading}
+          disabled={isSubmitting}
           className="gap-1.5"
         >
           <RotateCcw className="h-4 w-4" />
@@ -476,12 +522,12 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
         </Button>
         <Button
           type="submit"
-          disabled={loading}
+          disabled={isSubmitting}
           className="gap-1.5 px-6 font-medium shadow-sm"
         >
-          {loading ? (
+          {isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Spinner className="mr-1 h-4 w-4" />
               Saving...
             </>
           ) : (

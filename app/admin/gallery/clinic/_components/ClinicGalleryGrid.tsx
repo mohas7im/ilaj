@@ -125,7 +125,8 @@ export function ClinicGalleryGrid() {
         onOpenChange={(open) => !open && !isDeleting && setDeleteId(null)}
         title="Delete clinic photo?"
         description="This will permanently remove this photo from the clinic gallery. This action cannot be undone."
-        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
+        confirmLabel="Delete"
+        isLoading={isDeleting}
         variant="destructive"
         onConfirm={handleDelete}
       />

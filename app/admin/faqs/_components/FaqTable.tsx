@@ -120,7 +120,8 @@ export function FaqTable({ faqs: initialFaqs, filters }: FaqTableProps) {
         onOpenChange={(open) => !open && !isDeleting && setDeleteId(null)}
         title="Delete FAQ?"
         description="This will permanently delete this question and its answer. This action cannot be undone."
-        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
+        confirmLabel="Delete"
+        isLoading={isDeleting}
         variant="destructive"
         onConfirm={handleDelete}
       />

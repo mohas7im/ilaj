@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Upload, X, ImageIcon } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { LoadingState } from "@/components/admin/ui/loading-state"
@@ -10,7 +12,9 @@ import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
+import { Spinner } from "@/components/admin/ui/spinner"
 import type { ClinicPhoto } from "@/domain/clinic-photo/clinic-photo.types"
+import { clinicPhotoSchema, type ClinicPhotoInput } from "@/domain/clinic-photo/clinic-photo.schema"
 import { clinicPhotoApiService } from "../_services/clinic-photo.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 
@@ -68,23 +72,34 @@ function ClinicPhotoFormFields({
   const router = useRouter()
   const isEdit = mode === "edit"
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [submitting, setSubmitting] = useState(false)
+  
+  const [apiError, setApiError] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>(initialData?.image ?? "")
-  const [error, setError] = useState<string | null>(null)
 
-  const [form, setForm] = useState({
-    heading: initialData?.heading ?? "",
-    description: initialData?.description ?? "",
-    image: initialData?.image ?? "",
-    alt: initialData?.alt ?? "",
-    displayOrder: initialData?.displayOrder ?? 1,
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<ClinicPhotoInput>({
+    // We make image optional in schema validation if they are uploading a file
+    // But our base schema requires it, so we'll bypass it if imageFile exists
+    resolver: zodResolver(clinicPhotoSchema) as any,
+    defaultValues: {
+      heading: initialData?.heading ?? "",
+      description: initialData?.description ?? "",
+      image: initialData?.image ?? "temp-file", // We manage the file separately or pass dummy to pass zod before checking file
+      alt: initialData?.alt ?? "",
+      displayOrder: initialData?.displayOrder ?? 1,
+    },
   })
 
-  const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }))
-    if (error) setError(null)
-  }
+  // We actually need the image field to be valid if there's a file
+  // Let's set it to some string when a file is selected so zod doesn't complain.
+  
+  const currentImage = watch("image")
 
   const handleImageFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -95,47 +110,42 @@ function ClinicPhotoFormFields({
       return
     }
 
-    setError(null)
+    setApiError(null)
     setImageFile(file)
     setPreviewUrl(URL.createObjectURL(file))
+    setValue("image", "new-upload", { shouldValidate: true })
   }
 
   const handleRemoveImage = () => {
     setImageFile(null)
     setPreviewUrl("")
-    set("image", "")
+    setValue("image", "", { shouldValidate: true })
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
   }
 
-  const currentDisplayImage = previewUrl || form.image
+  const currentDisplayImage = previewUrl || (currentImage !== "new-upload" && currentImage !== "temp-file" ? currentImage : "") || initialData?.image
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!imageFile && !form.image) {
-      setError("Please select a photo.")
+  const onSubmit = async (data: ClinicPhotoInput) => {
+    setApiError(null)
+
+    if (!imageFile && (!data.image || data.image === "new-upload" || data.image === "temp-file") && !initialData?.image) {
+      setApiError("Please select a photo.")
       return
     }
-    if (!form.alt.trim()) {
-      setError("Please provide an alternative text (alt text) for the image.")
-      return
-    }
-
-    setSubmitting(true)
-    setError(null)
 
     try {
       const formData = new FormData()
-      formData.append("heading", form.heading)
-      formData.append("description", form.description)
-      formData.append("alt", form.alt)
-      formData.append("displayOrder", String(form.displayOrder))
+      formData.append("heading", data.heading)
+      formData.append("description", data.description ?? "")
+      formData.append("alt", data.alt)
+      formData.append("displayOrder", String(data.displayOrder))
 
       if (imageFile) {
         formData.append("image", imageFile)
-      } else if (form.image) {
-        formData.append("existingImage", form.image)
+      } else if (initialData?.image) {
+        formData.append("existingImage", initialData.image)
       }
 
       if (isEdit && initialData?.id) {
@@ -149,20 +159,18 @@ function ClinicPhotoFormFields({
       router.refresh()
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to save clinic photo")
-      setError(msg)
+      setApiError(msg)
       toast.error(msg)
-    } finally {
-      setSubmitting(false)
     }
   }
 
   return (
     <Card>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {error && (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          {apiError && (
             <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
-              {error}
+              {apiError}
             </div>
           )}
 
@@ -173,10 +181,10 @@ function ClinicPhotoFormFields({
             </Label>
             <Input
               id="heading"
-              value={form.heading}
-              onChange={(e) => set("heading", e.target.value)}
-              required
+              {...register("heading")}
+              aria-invalid={!!errors.heading}
             />
+            {errors.heading && <p className="mt-1 text-xs text-destructive">{errors.heading.message}</p>}
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
@@ -189,10 +197,10 @@ function ClinicPhotoFormFields({
                 id="displayOrder"
                 type="number"
                 min={1}
-                value={form.displayOrder}
-                onChange={(e) => set("displayOrder", parseInt(e.target.value) || 1)}
-                required
+                {...register("displayOrder")}
+                aria-invalid={!!errors.displayOrder}
               />
+              {errors.displayOrder && <p className="mt-1 text-xs text-destructive">{errors.displayOrder.message}</p>}
             </div>
 
             {/* Image Alt Text Input */}
@@ -202,10 +210,10 @@ function ClinicPhotoFormFields({
               </Label>
               <Input
                 id="alt"
-                value={form.alt}
-                onChange={(e) => set("alt", e.target.value)}
-                required
+                {...register("alt")}
+                aria-invalid={!!errors.alt}
               />
+              {errors.alt && <p className="mt-1 text-xs text-destructive">{errors.alt.message}</p>}
             </div>
           </div>
 
@@ -224,7 +232,7 @@ function ClinicPhotoFormFields({
               {currentDisplayImage ? (
                 <img
                   src={currentDisplayImage}
-                  alt={form.alt || "Clinic photo preview"}
+                  alt={watch("alt") || "Clinic photo preview"}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -238,14 +246,14 @@ function ClinicPhotoFormFields({
                 type="file"
                 accept="image/*"
                 className="hidden"
-                disabled={submitting}
+                disabled={isSubmitting}
                 onChange={handleImageFile}
               />
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                disabled={submitting}
+                disabled={isSubmitting}
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload className="mr-1.5 h-3.5 w-3.5" />
@@ -256,7 +264,7 @@ function ClinicPhotoFormFields({
                   type="button"
                   variant="ghost"
                   size="sm"
-                  disabled={submitting}
+                  disabled={isSubmitting}
                   className="text-destructive hover:text-destructive hover:bg-destructive/10"
                   onClick={handleRemoveImage}
                 >
@@ -265,6 +273,7 @@ function ClinicPhotoFormFields({
                 </Button>
               )}
             </div>
+            {errors.image && <p className="text-xs text-destructive">{errors.image.message}</p>}
           </div>
 
           {/* Description */}
@@ -272,10 +281,11 @@ function ClinicPhotoFormFields({
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              value={form.description}
-              onChange={(e) => set("description", e.target.value)}
+              {...register("description")}
               rows={4}
+              aria-invalid={!!errors.description}
             />
+            {errors.description && <p className="mt-1 text-xs text-destructive">{errors.description.message}</p>}
           </div>
 
           {/* Form Actions */}
@@ -284,12 +294,12 @@ function ClinicPhotoFormFields({
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/gallery/clinic")}
-              disabled={submitting}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting}>
-              {submitting && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Spinner className="mr-1.5 size-3.5" />}
               {isEdit ? "Save Changes" : "Add Photo"}
             </Button>
           </div>

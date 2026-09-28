@@ -145,7 +145,8 @@ export function TestimonialTable({ testimonials: initialTestimonials, filters }:
         onOpenChange={(open) => !open && !isDeleting && setDeleteId(null)}
         title="Delete testimonial?"
         description="This will permanently delete this patient review. This action cannot be undone."
-        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
+        confirmLabel="Delete"
+        isLoading={isDeleting}
         variant="destructive"
         onConfirm={handleDelete}
       />

@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Globe,
   Search,
@@ -15,7 +17,6 @@ import {
   X,
   Save,
   RotateCcw,
-  Loader2,
 } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
@@ -25,6 +26,7 @@ import { Textarea } from "@/components/admin/ui/textarea"
 import { Label } from "@/components/admin/ui/label"
 import { Button } from "@/components/admin/ui/button"
 import { Badge } from "@/components/admin/ui/badge"
+import { Spinner } from "@/components/admin/ui/spinner"
 import {
   Select,
   SelectContent,
@@ -34,6 +36,7 @@ import {
 } from "@/components/admin/ui/select"
 import type { CommonSeo, PageSeo } from "@/domain/seo/seo.types"
 import { PAGE_OPTIONS } from "@/domain/seo/seo.types"
+import { commonSeoSchema, pageSeoSchema, type CommonSeoFormData, type PageSeoFormData } from "@/domain/seo/seo.schema"
 import { seoApiService } from "../_services/seo.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 
@@ -80,10 +83,12 @@ function OgImageUploader({
   value,
   onChange,
   onFileSelect,
+  isSubmitting,
 }: {
   value: string
   onChange: (url: string) => void
   onFileSelect?: (file: File | null) => void
+  isSubmitting?: boolean
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -123,12 +128,14 @@ function OgImageUploader({
           accept="image/*"
           className="hidden"
           onChange={handleFileChange}
+          disabled={isSubmitting}
           aria-label="Upload OG image"
         />
         <Button
           type="button"
           variant="outline"
           size="sm"
+          disabled={isSubmitting}
           onClick={() => fileInputRef.current?.click()}
         >
           <Upload className="mr-1.5 h-3.5 w-3.5" />
@@ -139,6 +146,7 @@ function OgImageUploader({
             type="button"
             variant="ghost"
             size="sm"
+            disabled={isSubmitting}
             className="text-destructive hover:text-destructive hover:bg-destructive/10"
             onClick={handleRemove}
           >
@@ -302,119 +310,209 @@ export function SeoForm() {
 
 function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
   const [selectedPage, setSelectedPage] = useState<string>("common")
-
-  // ── Common SEO state
-  const [common, setCommon] = useState<CommonSeo>(initialCommonSeo)
-  const setCommonField = <K extends keyof CommonSeo>(key: K, value: CommonSeo[K]) =>
-    setCommon((prev) => ({ ...prev, [key]: value }))
-
-  // ── Page SEO state — indexed by page slug
-  const [pageSeoMap, setPageSeoMap] = useState<Record<string, PageSeo>>(initialPageSeoMap)
-  const setPageField = <K extends keyof PageSeo>(key: K, value: PageSeo[K]) => {
-    setPageSeoMap((prev) => ({
-      ...prev,
-      [selectedPage]: {
-        ...{
-          page:        selectedPage,
-          title:       "",
-          description: "",
-          ogImage:     "",
-        },
-        ...prev[selectedPage],
-        [key]: value,
-      },
-    }))
-  }
-
-  // ── Save state
+  const [success, setSuccess] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
+  
+  // Track files
   const [commonOgFile, setCommonOgFile] = useState<File | null>(null)
   const [pageOgFiles, setPageOgFiles] = useState<Record<string, File | null>>({})
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [error, setError]     = useState<string | null>(null)
 
-  const currentPage = pageSeoMap[selectedPage]
+  // Track initial state updates so we can reset cleanly
+  const [currentCommonInitial, setCurrentCommonInitial] = useState(initialCommonSeo)
+  const [currentPageSeoMap, setCurrentPageSeoMap] = useState(initialPageSeoMap)
 
-  // ── Effective values (applying fallback chain) for preview / health
+  const commonForm = useForm<CommonSeoFormData>({
+    resolver: zodResolver(commonSeoSchema) as any,
+    defaultValues: { ...initialCommonSeo },
+  })
+
+  const pageForm = useForm<PageSeoFormData>({
+    resolver: zodResolver(pageSeoSchema) as any,
+    defaultValues: {
+      page: "home",
+      title: "",
+      description: "",
+      ogImage: "",
+    },
+  })
+
+  // When selectedPage changes, reset the page form to the correct values
+  useEffect(() => {
+    if (selectedPage !== "common") {
+      const data = currentPageSeoMap[selectedPage] ?? { page: selectedPage, title: "", description: "", ogImage: "" }
+      pageForm.reset({
+        page: selectedPage as any,
+        title: data.title ?? "",
+        description: data.description ?? "",
+        ogImage: data.ogImage ?? "",
+      })
+    }
+    setSuccess(false)
+    setApiError(null)
+  }, [selectedPage, currentPageSeoMap, pageForm])
+
+  const onCommonSubmit = async (data: CommonSeoFormData) => {
+    setApiError(null)
+    setSuccess(false)
+    try {
+      if (commonOgFile) {
+        const formData = new FormData()
+        formData.append("siteName", data.siteName)
+        formData.append("siteUrl", data.siteUrl)
+        formData.append("defaultTitle", data.defaultTitle)
+        formData.append("defaultDescription", data.defaultDescription ?? "")
+        formData.append("googleVerification", data.googleVerification ?? "")
+        formData.append("bingVerification", data.bingVerification ?? "")
+        formData.append("defaultOgImage", commonOgFile)
+        await seoApiService.updateCommon(formData)
+      } else {
+        await seoApiService.updateCommon(data as CommonSeo)
+      }
+      
+      setCurrentCommonInitial(data as CommonSeo)
+      setSuccess(true)
+      toast.success("SEO settings saved successfully")
+    } catch (err: unknown) {
+      const msg = getApiErrorMessage(err, "Failed to save SEO settings")
+      setApiError(msg)
+      toast.error(msg)
+    }
+  }
+
+  const onPageSubmit = async (data: PageSeoFormData) => {
+    setApiError(null)
+    setSuccess(false)
+    try {
+      const pageFile = pageOgFiles[selectedPage]
+      if (pageFile) {
+        const formData = new FormData()
+        formData.append("title", data.title ?? "")
+        formData.append("description", data.description ?? "")
+        formData.append("ogImage", pageFile)
+        await seoApiService.updatePage(selectedPage, formData)
+      } else {
+        await seoApiService.updatePage(
+          selectedPage,
+          { ...data, page: selectedPage } as PageSeo
+        )
+      }
+
+      setCurrentPageSeoMap(prev => ({
+        ...prev,
+        [selectedPage]: { ...data, page: selectedPage } as PageSeo
+      }))
+      setSuccess(true)
+      toast.success("SEO settings saved successfully")
+    } catch (err: unknown) {
+      const msg = getApiErrorMessage(err, "Failed to save SEO settings")
+      setApiError(msg)
+      toast.error(msg)
+    }
+  }
+
+  const handleReset = () => {
+    if (selectedPage === "common") {
+      commonForm.reset(currentCommonInitial)
+      setCommonOgFile(null)
+    } else {
+      const data = currentPageSeoMap[selectedPage] ?? { page: selectedPage, title: "", description: "", ogImage: "" }
+      pageForm.reset({
+        page: selectedPage as any,
+        title: data.title ?? "",
+        description: data.description ?? "",
+        ogImage: data.ogImage ?? "",
+      })
+      setPageOgFiles(prev => ({ ...prev, [selectedPage]: null }))
+    }
+    setSuccess(false)
+    setApiError(null)
+  }
+
+  const isSubmitting = selectedPage === "common" ? commonForm.formState.isSubmitting : pageForm.formState.isSubmitting
+
+  // Live watch for preview and health
+  const commonWatch = commonForm.watch()
+  const pageWatch = pageForm.watch()
+
   const effectiveTitle = selectedPage === "common"
-    ? common.defaultTitle
-    : currentPage?.title || common.defaultTitle
+    ? commonWatch.defaultTitle || ""
+    : pageWatch.title || commonWatch.defaultTitle || ""
   const effectiveDesc = selectedPage === "common"
-    ? common.defaultDescription
-    : currentPage?.description || common.defaultDescription
+    ? commonWatch.defaultDescription || ""
+    : pageWatch.description || commonWatch.defaultDescription || ""
   const effectiveOg = selectedPage === "common"
-    ? common.defaultOgImage
-    : currentPage?.ogImage || common.defaultOgImage
+    ? commonWatch.defaultOgImage || ""
+    : pageWatch.ogImage || commonWatch.defaultOgImage || ""
 
   const pageOption = PAGE_OPTIONS.find((p) => p.value === selectedPage)
   const canonicalUrl =
     selectedPage === "common"
-      ? common.siteUrl
-      : `${common.siteUrl.replace(/\/$/, "")}${pageOption?.path ?? ""}`
+      ? commonWatch.siteUrl || ""
+      : `${(commonWatch.siteUrl || "").replace(/\/$/, "")}${pageOption?.path ?? ""}`
 
-  // ── Health checks
+  // Health checks
   const healthItems: HealthItem[] = selectedPage === "common"
     ? [
         {
           label: "Site Name configured",
-          pass: Boolean(common.siteName),
-          message: common.siteName ? undefined : "Enter a site name",
+          pass: Boolean(commonWatch.siteName),
+          message: commonWatch.siteName ? undefined : "Enter a site name",
         },
         {
           label: "Site URL configured",
-          pass: Boolean(common.siteUrl),
-          message: common.siteUrl ? undefined : "Enter the public URL of your website",
+          pass: Boolean(commonWatch.siteUrl),
+          message: commonWatch.siteUrl ? undefined : "Enter the public URL of your website",
         },
         {
           label: "Default SEO title configured",
-          pass: Boolean(common.defaultTitle),
-          message: common.defaultTitle ? undefined : "Enter a default title used as fallback",
+          pass: Boolean(commonWatch.defaultTitle),
+          message: commonWatch.defaultTitle ? undefined : "Enter a default title used as fallback",
         },
         {
           label: "Default SEO title length",
-          pass: common.defaultTitle.length >= 50 && common.defaultTitle.length <= 60,
-          warning: common.defaultTitle.length > 0 && (common.defaultTitle.length < 50 || common.defaultTitle.length > 60),
-          message: common.defaultTitle.length === 0
+          pass: (commonWatch.defaultTitle?.length || 0) >= 50 && (commonWatch.defaultTitle?.length || 0) <= 60,
+          warning: (commonWatch.defaultTitle?.length || 0) > 0 && ((commonWatch.defaultTitle?.length || 0) < 50 || (commonWatch.defaultTitle?.length || 0) > 60),
+          message: !commonWatch.defaultTitle
             ? "No title entered"
-            : common.defaultTitle.length < 50
+            : commonWatch.defaultTitle.length < 50
             ? "Too short — aim for 50–60 characters"
-            : common.defaultTitle.length > 60
+            : commonWatch.defaultTitle.length > 60
             ? "Too long — trim to 60 characters"
             : undefined,
         },
         {
           label: "Default meta description configured",
-          pass: Boolean(common.defaultDescription),
-          warning: !common.defaultDescription,
-          message: common.defaultDescription ? undefined : "Enter a default description used as fallback",
+          pass: Boolean(commonWatch.defaultDescription),
+          warning: !commonWatch.defaultDescription,
+          message: commonWatch.defaultDescription ? undefined : "Enter a default description used as fallback",
         },
         {
           label: "Default meta description length",
-          pass: common.defaultDescription.length >= 150 && common.defaultDescription.length <= 160,
-          warning: common.defaultDescription.length > 0 && (common.defaultDescription.length < 150 || common.defaultDescription.length > 160),
-          message: common.defaultDescription.length === 0
+          pass: (commonWatch.defaultDescription?.length || 0) >= 150 && (commonWatch.defaultDescription?.length || 0) <= 160,
+          warning: (commonWatch.defaultDescription?.length || 0) > 0 && ((commonWatch.defaultDescription?.length || 0) < 150 || (commonWatch.defaultDescription?.length || 0) > 160),
+          message: !commonWatch.defaultDescription
             ? "No description entered"
-            : common.defaultDescription.length < 150
+            : commonWatch.defaultDescription.length < 150
             ? "Too short — aim for 150–160 characters"
-            : common.defaultDescription.length > 160
+            : commonWatch.defaultDescription.length > 160
             ? "Too long — trim to 160 characters"
             : undefined,
         },
         {
           label: "Default OG image configured",
-          pass: Boolean(common.defaultOgImage),
-          warning: !common.defaultOgImage,
-          message: common.defaultOgImage ? undefined : "Upload a default social sharing image",
+          pass: Boolean(commonWatch.defaultOgImage),
+          warning: !commonWatch.defaultOgImage,
+          message: commonWatch.defaultOgImage ? undefined : "Upload a default social sharing image",
         },
       ]
     : [
         {
           label: "SEO title configured",
           pass: Boolean(effectiveTitle),
-          warning: !currentPage?.title && Boolean(common.defaultTitle),
-          message: currentPage?.title
+          warning: !pageWatch.title && Boolean(commonWatch.defaultTitle),
+          message: pageWatch.title
             ? undefined
-            : common.defaultTitle
+            : commonWatch.defaultTitle
             ? "Using global default title"
             : "No title — enter a page title or configure a global default",
         },
@@ -431,10 +529,10 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
         {
           label: "Meta description configured",
           pass: Boolean(effectiveDesc),
-          warning: !currentPage?.description && Boolean(common.defaultDescription),
-          message: currentPage?.description
+          warning: !pageWatch.description && Boolean(commonWatch.defaultDescription),
+          message: pageWatch.description
             ? undefined
-            : common.defaultDescription
+            : commonWatch.defaultDescription
             ? "Using global default description"
             : "No description — enter a page description or configure a global default",
         },
@@ -450,91 +548,36 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
         },
         {
           label: "Canonical URL generated",
-          pass: Boolean(common.siteUrl),
-          message: common.siteUrl
+          pass: Boolean(commonWatch.siteUrl),
+          message: commonWatch.siteUrl
             ? canonicalUrl
             : "Configure the Site URL in Common SEO to generate canonical URLs",
         },
         {
           label: "OG image configured",
           pass: Boolean(effectiveOg),
-          warning: !currentPage?.ogImage && Boolean(common.defaultOgImage),
-          message: currentPage?.ogImage
+          warning: !pageWatch.ogImage && Boolean(commonWatch.defaultOgImage),
+          message: pageWatch.ogImage
             ? undefined
-            : common.defaultOgImage
+            : commonWatch.defaultOgImage
             ? "Using global default OG image"
             : "No OG image — upload one or set a global default",
         },
       ]
 
-  // ── Submit
-  const handleSubmit = async (e: React.FormEvent) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    setError(null)
-    setSuccess(false)
-
-    try {
-      if (selectedPage === "common") {
-        if (commonOgFile) {
-          const formData = new FormData()
-          formData.append("siteName", common.siteName)
-          formData.append("siteUrl", common.siteUrl)
-          formData.append("defaultTitle", common.defaultTitle)
-          formData.append("defaultDescription", common.defaultDescription)
-          formData.append("googleVerification", common.googleVerification || "")
-          formData.append("bingVerification", common.bingVerification || "")
-          formData.append("defaultOgImage", commonOgFile)
-          await seoApiService.updateCommon(formData)
-        } else {
-          await seoApiService.updateCommon(common)
-        }
-      } else {
-        const pageFile = pageOgFiles[selectedPage]
-        if (pageFile) {
-          const formData = new FormData()
-          formData.append("title", currentPage?.title ?? "")
-          formData.append("description", currentPage?.description ?? "")
-          formData.append("ogImage", pageFile)
-          await seoApiService.updatePage(selectedPage, formData)
-        } else {
-          await seoApiService.updatePage(
-            selectedPage,
-            currentPage ?? { page: selectedPage, title: "", description: "", ogImage: "" }
-          )
-        }
-      }
-
-      setSuccess(true)
-      toast.success("SEO settings saved successfully")
-      setTimeout(() => setSuccess(false), 4000)
-    } catch (err: unknown) {
-      const msg = getApiErrorMessage(err, "Failed to save SEO settings")
-      setError(msg)
-      toast.error(msg)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // ── Reset
-  const handleReset = () => {
     if (selectedPage === "common") {
-      setCommon(initialCommonSeo)
+      commonForm.handleSubmit(onCommonSubmit)(e)
     } else {
-      setPageSeoMap((prev) => ({
-        ...prev,
-        [selectedPage]: initialPageSeoMap[selectedPage] ?? { page: selectedPage, title: "", description: "", ogImage: "" },
-      }))
+      pageForm.handleSubmit(onPageSubmit)(e)
     }
-    setSuccess(false)
-    setError(null)
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-6" noValidate>
       {/* ── Status banner */}
       {success && (
         <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 px-4 py-3 text-sm text-green-800 dark:text-green-400">
@@ -542,10 +585,10 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
           SEO settings saved successfully.
         </div>
       )}
-      {error && (
+      {apiError && (
         <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           <XCircle className="h-4 w-4 shrink-0" />
-          {error}
+          {apiError}
         </div>
       )}
 
@@ -562,8 +605,6 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 onValueChange={(v) => {
                   if (v) {
                     setSelectedPage(v)
-                    setSuccess(false)
-                    setError(null)
                   }
                 }}
               >
@@ -580,9 +621,9 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 </SelectContent>
               </Select>
             </div>
-            {selectedPage !== "common" && common.siteUrl && (
+            {selectedPage !== "common" && commonWatch.siteUrl && (
               <span className="text-xs text-muted-foreground font-mono">
-                {common.siteUrl.replace(/\/$/, "")}{pageOption?.path}
+                {(commonWatch.siteUrl || "").replace(/\/$/, "")}{pageOption?.path}
               </span>
             )}
           </div>
@@ -614,10 +655,10 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   </Label>
                   <Input
                     id="siteName"
-                    value={common.siteName}
-                    onChange={(e) => setCommonField("siteName", e.target.value)}
-                    required
+                    {...commonForm.register("siteName")}
+                    aria-invalid={!!commonForm.formState.errors.siteName}
                   />
+                  {commonForm.formState.errors.siteName && <p className="text-xs text-destructive">{commonForm.formState.errors.siteName.message}</p>}
                 </div>
 
                 {/* Site URL */}
@@ -628,10 +669,10 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   <Input
                     id="siteUrl"
                     type="url"
-                    value={common.siteUrl}
-                    onChange={(e) => setCommonField("siteUrl", e.target.value)}
-                    required
+                    {...commonForm.register("siteUrl")}
+                    aria-invalid={!!commonForm.formState.errors.siteUrl}
                   />
+                  {commonForm.formState.errors.siteUrl && <p className="text-xs text-destructive">{commonForm.formState.errors.siteUrl.message}</p>}
                 </div>
 
                 {/* Default SEO Title */}
@@ -640,14 +681,14 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                     <Label htmlFor="defaultTitle">
                       Default SEO Title <span className="text-destructive">*</span>
                     </Label>
-                    <CharCounter value={common.defaultTitle} min={50} max={60} />
+                    <CharCounter value={commonWatch.defaultTitle || ""} min={50} max={60} />
                   </div>
                   <Input
                     id="defaultTitle"
-                    value={common.defaultTitle}
-                    onChange={(e) => setCommonField("defaultTitle", e.target.value)}
-                    required
+                    {...commonForm.register("defaultTitle")}
+                    aria-invalid={!!commonForm.formState.errors.defaultTitle}
                   />
+                  {commonForm.formState.errors.defaultTitle && <p className="text-xs text-destructive">{commonForm.formState.errors.defaultTitle.message}</p>}
                   <p className="text-xs text-muted-foreground">Recommended: 50–60 characters.</p>
                 </div>
 
@@ -655,12 +696,11 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 <div className="space-y-1.5 sm:col-span-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="defaultDescription">Default Meta Description</Label>
-                    <CharCounter value={common.defaultDescription} min={150} max={160} />
+                    <CharCounter value={commonWatch.defaultDescription || ""} min={150} max={160} />
                   </div>
                   <Textarea
                     id="defaultDescription"
-                    value={common.defaultDescription}
-                    onChange={(e) => setCommonField("defaultDescription", e.target.value)}
+                    {...commonForm.register("defaultDescription")}
                     rows={3}
                   />
                   <p className="text-xs text-muted-foreground">Recommended: 150–160 characters.</p>
@@ -674,9 +714,10 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   Used as the social sharing image for pages that do not have their own OG image.
                 </p>
                 <OgImageUploader
-                  value={common.defaultOgImage}
-                  onChange={(url) => setCommonField("defaultOgImage", url)}
+                  value={commonWatch.defaultOgImage || ""}
+                  onChange={(url) => commonForm.setValue("defaultOgImage", url, { shouldValidate: true })}
                   onFileSelect={(file) => setCommonOgFile(file)}
+                  isSubmitting={commonForm.formState.isSubmitting}
                 />
               </div>
             </CardContent>
@@ -699,8 +740,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   <Label htmlFor="googleVerification">Google Search Console Verification</Label>
                   <Input
                     id="googleVerification"
-                    value={common.googleVerification}
-                    onChange={(e) => setCommonField("googleVerification", e.target.value)}
+                    {...commonForm.register("googleVerification")}
                   />
                   <p className="text-xs text-muted-foreground">
                     The content value from the Google verification meta tag.
@@ -710,8 +750,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   <Label htmlFor="bingVerification">Bing Webmaster Verification</Label>
                   <Input
                     id="bingVerification"
-                    value={common.bingVerification}
-                    onChange={(e) => setCommonField("bingVerification", e.target.value)}
+                    {...commonForm.register("bingVerification")}
                   />
                   <p className="text-xs text-muted-foreground">
                     The content value from the Bing verification meta tag.
@@ -746,18 +785,17 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="pageTitle">SEO Title</Label>
-                  <CharCounter value={currentPage?.title ?? ""} min={50} max={60} />
+                  <CharCounter value={pageWatch.title || ""} min={50} max={60} />
                 </div>
                 <Input
                   id="pageTitle"
-                  value={currentPage?.title ?? ""}
-                  onChange={(e) => setPageField("title", e.target.value)}
+                  {...pageForm.register("title")}
                 />
                 <p className="text-xs text-muted-foreground">
                   Recommended: 50–60 characters.{" "}
-                  {!currentPage?.title && common.defaultTitle && (
+                  {!pageWatch.title && commonWatch.defaultTitle && (
                     <span className="text-yellow-600 dark:text-yellow-500">
-                      Empty → using global default: &ldquo;{common.defaultTitle}&rdquo;
+                      Empty → using global default: &ldquo;{commonWatch.defaultTitle}&rdquo;
                     </span>
                   )}
                 </p>
@@ -767,17 +805,16 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="pageDescription">Meta Description</Label>
-                  <CharCounter value={currentPage?.description ?? ""} min={150} max={160} />
+                  <CharCounter value={pageWatch.description || ""} min={150} max={160} />
                 </div>
                 <Textarea
                   id="pageDescription"
-                  value={currentPage?.description ?? ""}
-                  onChange={(e) => setPageField("description", e.target.value)}
+                  {...pageForm.register("description")}
                   rows={3}
                 />
                 <p className="text-xs text-muted-foreground">
                   Recommended: 150–160 characters.{" "}
-                  {!currentPage?.description && common.defaultDescription && (
+                  {!pageWatch.description && commonWatch.defaultDescription && (
                     <span className="text-yellow-600 dark:text-yellow-500">
                       Empty → using global default description.
                     </span>
@@ -786,7 +823,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
               </div>
 
               {/* Canonical URL (auto-generated, read-only info) */}
-              {common.siteUrl && (
+              {commonWatch.siteUrl && (
                 <div className="space-y-1.5 rounded-lg bg-muted/30 border border-border/60 p-3">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Auto-Generated Canonical URL
@@ -805,16 +842,17 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 <Label>OG Image</Label>
                 <p className="text-xs text-muted-foreground">
                   Social sharing image for this page.{" "}
-                  {!currentPage?.ogImage && common.defaultOgImage && (
+                  {!pageWatch.ogImage && commonWatch.defaultOgImage && (
                     <span className="text-yellow-600 dark:text-yellow-500">
                       Empty → using global default OG image.
                     </span>
                   )}
                 </p>
                 <OgImageUploader
-                  value={currentPage?.ogImage ?? ""}
-                  onChange={(url) => setPageField("ogImage", url)}
+                  value={pageWatch.ogImage || ""}
+                  onChange={(url) => pageForm.setValue("ogImage", url, { shouldValidate: true })}
                   onFileSelect={(file) => setPageOgFiles((prev) => ({ ...prev, [selectedPage]: file }))}
+                  isSubmitting={pageForm.formState.isSubmitting}
                 />
               </div>
             </CardContent>
@@ -839,15 +877,15 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
           type="button"
           variant="outline"
           onClick={handleReset}
-          disabled={loading}
+          disabled={isSubmitting}
         >
           <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
           Reset
         </Button>
-        <Button type="submit" disabled={loading}>
-          {loading ? (
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (
             <>
-              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+              <Spinner className="mr-1.5 size-3.5" />
               Saving…
             </>
           ) : (

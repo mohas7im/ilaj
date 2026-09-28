@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Upload, X, ImageIcon } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { LoadingState } from "@/components/admin/ui/loading-state"
@@ -10,7 +12,9 @@ import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 import { Textarea } from "@/components/admin/ui/textarea"
+import { Spinner } from "@/components/admin/ui/spinner"
 import type { PatientCase } from "@/domain/patient-case/patient-case.types"
+import { patientCaseSchema, type PatientCaseInput } from "@/domain/patient-case/patient-case.schema"
 import { patientCaseApiService } from "../_services/patient-case.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 
@@ -69,27 +73,34 @@ function PatientCaseFormFields({
   const isEdit = mode === "edit"
   const beforeFileRef = useRef<HTMLInputElement>(null)
   const afterFileRef = useRef<HTMLInputElement>(null)
-  const [submitting, setSubmitting] = useState(false)
+  
+  const [apiError, setApiError] = useState<string | null>(null)
   const [beforeFile, setBeforeFile] = useState<File | null>(null)
   const [afterFile, setAfterFile] = useState<File | null>(null)
   const [beforePreviewUrl, setBeforePreviewUrl] = useState<string>(initialData?.beforeImage ?? "")
   const [afterPreviewUrl, setAfterPreviewUrl] = useState<string>(initialData?.afterImage ?? "")
-  const [error, setError] = useState<string | null>(null)
 
-  const [form, setForm] = useState({
-    heading: initialData?.heading ?? "",
-    description: initialData?.description ?? "",
-    beforeImage: initialData?.beforeImage ?? "",
-    afterImage: initialData?.afterImage ?? "",
-    beforeAlt: initialData?.beforeAlt ?? "",
-    afterAlt: initialData?.afterAlt ?? "",
-    displayOrder: initialData?.displayOrder ?? 1,
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<PatientCaseInput>({
+    resolver: zodResolver(patientCaseSchema) as any,
+    defaultValues: {
+      heading: initialData?.heading ?? "",
+      description: initialData?.description ?? "",
+      beforeImage: initialData?.beforeImage ?? "temp-file",
+      afterImage: initialData?.afterImage ?? "temp-file",
+      beforeAlt: initialData?.beforeAlt ?? "",
+      afterAlt: initialData?.afterAlt ?? "",
+      displayOrder: initialData?.displayOrder ?? 1,
+    },
   })
 
-  const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }))
-    if (error) setError(null)
-  }
+  const currentBeforeImage = watch("beforeImage")
+  const currentAfterImage = watch("afterImage")
 
   const handleImageFile = (
     key: "beforeImage" | "afterImage",
@@ -103,15 +114,17 @@ function PatientCaseFormFields({
       return
     }
 
-    setError(null)
+    setApiError(null)
     const preview = URL.createObjectURL(file)
 
     if (key === "beforeImage") {
       setBeforeFile(file)
       setBeforePreviewUrl(preview)
+      setValue("beforeImage", "new-upload", { shouldValidate: true })
     } else {
       setAfterFile(file)
       setAfterPreviewUrl(preview)
+      setValue("afterImage", "new-upload", { shouldValidate: true })
     }
   }
 
@@ -119,59 +132,49 @@ function PatientCaseFormFields({
     if (key === "beforeImage") {
       setBeforeFile(null)
       setBeforePreviewUrl("")
-      set("beforeImage", "")
+      setValue("beforeImage", "", { shouldValidate: true })
       if (beforeFileRef.current) beforeFileRef.current.value = ""
     } else {
       setAfterFile(null)
       setAfterPreviewUrl("")
-      set("afterImage", "")
+      setValue("afterImage", "", { shouldValidate: true })
       if (afterFileRef.current) afterFileRef.current.value = ""
     }
   }
 
-  const currentBeforeDisplay = beforePreviewUrl || form.beforeImage
-  const currentAfterDisplay = afterPreviewUrl || form.afterImage
+  const currentBeforeDisplay = beforePreviewUrl || (currentBeforeImage !== "new-upload" && currentBeforeImage !== "temp-file" ? currentBeforeImage : "") || initialData?.beforeImage
+  const currentAfterDisplay = afterPreviewUrl || (currentAfterImage !== "new-upload" && currentAfterImage !== "temp-file" ? currentAfterImage : "") || initialData?.afterImage
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!beforeFile && !form.beforeImage) {
-      setError("Please select a Before photo.")
-      return
-    }
-    if (!afterFile && !form.afterImage) {
-      setError("Please select an After photo.")
-      return
-    }
-    if (!form.beforeAlt.trim()) {
-      setError("Please provide an alternative text (alt text) for the Before image.")
-      return
-    }
-    if (!form.afterAlt.trim()) {
-      setError("Please provide an alternative text (alt text) for the After image.")
-      return
-    }
+  const onSubmit = async (data: PatientCaseInput) => {
+    setApiError(null)
 
-    setSubmitting(true)
-    setError(null)
+    if (!beforeFile && (!data.beforeImage || data.beforeImage === "new-upload" || data.beforeImage === "temp-file") && !initialData?.beforeImage) {
+      setApiError("Please select a Before photo.")
+      return
+    }
+    if (!afterFile && (!data.afterImage || data.afterImage === "new-upload" || data.afterImage === "temp-file") && !initialData?.afterImage) {
+      setApiError("Please select an After photo.")
+      return
+    }
 
     try {
       const formData = new FormData()
-      formData.append("heading", form.heading)
-      formData.append("description", form.description)
-      formData.append("beforeAlt", form.beforeAlt)
-      formData.append("afterAlt", form.afterAlt)
-      formData.append("displayOrder", String(form.displayOrder))
+      formData.append("heading", data.heading)
+      formData.append("description", data.description ?? "")
+      formData.append("beforeAlt", data.beforeAlt)
+      formData.append("afterAlt", data.afterAlt)
+      formData.append("displayOrder", String(data.displayOrder))
 
       if (beforeFile) {
         formData.append("beforeImage", beforeFile)
-      } else if (form.beforeImage) {
-        formData.append("existingBeforeImage", form.beforeImage)
+      } else if (initialData?.beforeImage) {
+        formData.append("existingBeforeImage", initialData.beforeImage)
       }
 
       if (afterFile) {
         formData.append("afterImage", afterFile)
-      } else if (form.afterImage) {
-        formData.append("existingAfterImage", form.afterImage)
+      } else if (initialData?.afterImage) {
+        formData.append("existingAfterImage", initialData.afterImage)
       }
 
       if (isEdit && initialData?.id) {
@@ -185,20 +188,18 @@ function PatientCaseFormFields({
       router.refresh()
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to save patient case")
-      setError(msg)
+      setApiError(msg)
       toast.error(msg)
-    } finally {
-      setSubmitting(false)
     }
   }
 
   return (
     <Card>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+          {apiError && (
             <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
-              {error}
+              {apiError}
             </div>
           )}
 
@@ -210,10 +211,10 @@ function PatientCaseFormFields({
               </Label>
               <Input
                 id="heading"
-                value={form.heading}
-                onChange={(e) => set("heading", e.target.value)}
-                required
+                {...register("heading")}
+                aria-invalid={!!errors.heading}
               />
+              {errors.heading && <p className="mt-1 text-xs text-destructive">{errors.heading.message}</p>}
             </div>
 
             {/* Display Order */}
@@ -225,10 +226,10 @@ function PatientCaseFormFields({
                 id="displayOrder"
                 type="number"
                 min={1}
-                value={form.displayOrder}
-                onChange={(e) => set("displayOrder", parseInt(e.target.value) || 1)}
-                required
+                {...register("displayOrder")}
+                aria-invalid={!!errors.displayOrder}
               />
+              {errors.displayOrder && <p className="mt-1 text-xs text-destructive">{errors.displayOrder.message}</p>}
             </div>
           </div>
 
@@ -249,7 +250,7 @@ function PatientCaseFormFields({
                 {currentBeforeDisplay ? (
                   <img
                     src={currentBeforeDisplay}
-                    alt={form.beforeAlt || "Before image preview"}
+                    alt={watch("beforeAlt") || "Before image preview"}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -263,14 +264,14 @@ function PatientCaseFormFields({
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  disabled={submitting}
+                  disabled={isSubmitting}
                   onChange={(e) => handleImageFile("beforeImage", e)}
                 />
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  disabled={submitting}
+                  disabled={isSubmitting}
                   onClick={() => beforeFileRef.current?.click()}
                 >
                   <Upload className="mr-1.5 h-3.5 w-3.5" />
@@ -281,7 +282,7 @@ function PatientCaseFormFields({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    disabled={submitting}
+                    disabled={isSubmitting}
                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={() => handleRemoveImage("beforeImage")}
                   >
@@ -290,6 +291,7 @@ function PatientCaseFormFields({
                   </Button>
                 )}
               </div>
+              {errors.beforeImage && <p className="text-xs text-destructive">{errors.beforeImage.message}</p>}
 
               {/* Before Alt Text */}
               <div className="space-y-1.5 pt-2 border-t border-border/60">
@@ -298,10 +300,10 @@ function PatientCaseFormFields({
                 </Label>
                 <Input
                   id="beforeAlt"
-                  value={form.beforeAlt}
-                  onChange={(e) => set("beforeAlt", e.target.value)}
-                  required
+                  {...register("beforeAlt")}
+                  aria-invalid={!!errors.beforeAlt}
                 />
+                {errors.beforeAlt && <p className="mt-1 text-xs text-destructive">{errors.beforeAlt.message}</p>}
               </div>
             </div>
 
@@ -320,7 +322,7 @@ function PatientCaseFormFields({
                 {currentAfterDisplay ? (
                   <img
                     src={currentAfterDisplay}
-                    alt={form.afterAlt || "After image preview"}
+                    alt={watch("afterAlt") || "After image preview"}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -334,14 +336,14 @@ function PatientCaseFormFields({
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  disabled={submitting}
+                  disabled={isSubmitting}
                   onChange={(e) => handleImageFile("afterImage", e)}
                 />
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  disabled={submitting}
+                  disabled={isSubmitting}
                   onClick={() => afterFileRef.current?.click()}
                 >
                   <Upload className="mr-1.5 h-3.5 w-3.5" />
@@ -352,7 +354,7 @@ function PatientCaseFormFields({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    disabled={submitting}
+                    disabled={isSubmitting}
                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={() => handleRemoveImage("afterImage")}
                   >
@@ -361,6 +363,7 @@ function PatientCaseFormFields({
                   </Button>
                 )}
               </div>
+              {errors.afterImage && <p className="text-xs text-destructive">{errors.afterImage.message}</p>}
 
               {/* After Alt Text */}
               <div className="space-y-1.5 pt-2 border-t border-border/60">
@@ -369,10 +372,10 @@ function PatientCaseFormFields({
                 </Label>
                 <Input
                   id="afterAlt"
-                  value={form.afterAlt}
-                  onChange={(e) => set("afterAlt", e.target.value)}
-                  required
+                  {...register("afterAlt")}
+                  aria-invalid={!!errors.afterAlt}
                 />
+                {errors.afterAlt && <p className="mt-1 text-xs text-destructive">{errors.afterAlt.message}</p>}
               </div>
             </div>
           </div>
@@ -382,10 +385,11 @@ function PatientCaseFormFields({
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              value={form.description}
-              onChange={(e) => set("description", e.target.value)}
+              {...register("description")}
               rows={4}
+              aria-invalid={!!errors.description}
             />
+            {errors.description && <p className="mt-1 text-xs text-destructive">{errors.description.message}</p>}
           </div>
 
           {/* Form Actions */}
@@ -394,12 +398,12 @@ function PatientCaseFormFields({
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/gallery/patient")}
-              disabled={submitting}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting}>
-              {submitting && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Spinner className="mr-1.5 size-3.5" />}
               {isEdit ? "Save Changes" : "Add Case"}
             </Button>
           </div>

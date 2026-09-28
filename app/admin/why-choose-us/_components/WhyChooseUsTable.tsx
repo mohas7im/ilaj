@@ -295,7 +295,8 @@ export function WhyChooseUsTable() {
         onOpenChange={(open) => !open && setDeleteId(null)}
         title="Delete point?"
         description="Are you sure you want to remove this highlight point? This action cannot be undone."
-        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
+        confirmLabel="Delete"
+        isLoading={isDeleting}
         variant="destructive"
         onConfirm={handleDelete}
       />

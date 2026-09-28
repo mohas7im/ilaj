@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, ArrowLeft, Loader2 } from "lucide-react"
+import { Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 
 import { ADMIN_BRANDING } from "@/lib/admin/config"
@@ -16,6 +16,7 @@ import {
   InputGroupInput,
 } from "@/components/admin/ui/input-group"
 import { Label } from "@/components/admin/ui/label"
+import { Spinner } from "@/components/admin/ui/spinner"
 import { Checkbox } from "@/components/admin/ui/checkbox"
 import { authService } from "@/lib/auth/auth.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
@@ -190,7 +191,7 @@ export default function AdminLoginPage() {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Spinner className="mr-2" />
                     Signing in...
                   </>
                 ) : (

@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Star, Loader2 } from "lucide-react"
+import { useForm, Controller, useWatch } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Star } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { LoadingState } from "@/components/admin/ui/loading-state"
@@ -14,7 +16,9 @@ import {
   Select, SelectContent, SelectItem,
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
-import type { Testimonial, TestimonialStatus } from "@/domain/testimonial/testimonial.types"
+import { Spinner } from "@/components/admin/ui/spinner"
+import type { Testimonial } from "@/domain/testimonial/testimonial.types"
+import { testimonialSchema, type TestimonialFormData } from "@/domain/testimonial/testimonial.schema"
 import { testimonialApiService } from "../_services/testimonial.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 
@@ -71,63 +75,53 @@ function TestimonialFormFields({
 }) {
   const router = useRouter()
   const isEdit = mode === "edit"
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [apiError, setApiError] = useState<string | null>(null)
 
-  const [form, setForm] = useState({
-    patientName:  initialData?.patientName  ?? "",
-    treatment:    initialData?.treatment    ?? "",
-    rating:       initialData ? String(initialData.rating) : "5",
-    review:       initialData?.review       ?? "",
-    status:       initialData?.status       ?? ("published" as TestimonialStatus),
-    displayOrder: initialData?.displayOrder ?? 1,
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<TestimonialFormData>({
+    resolver: zodResolver(testimonialSchema) as any,
+    defaultValues: {
+      patientName: initialData?.patientName ?? "",
+      treatment: initialData?.treatment ?? "",
+      rating: initialData?.rating ?? 5,
+      review: initialData?.review ?? "",
+      status: initialData?.status ?? "published",
+      displayOrder: initialData?.displayOrder ?? 1,
+    },
   })
 
-  const set = (key: keyof typeof form, value: string | number) => {
-    setForm((prev) => ({ ...prev, [key]: value }))
-    if (error) setError(null)
-  }
+  // Watch rating to update the visual star indicator live
+  const ratingValue = useWatch({ control, name: "rating" })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitting(true)
-    setError(null)
-
+  const onSubmit = async (data: TestimonialFormData) => {
+    setApiError(null)
     try {
-      const payload = {
-        patientName: form.patientName.trim(),
-        treatment: form.treatment.trim(),
-        rating: parseFloat(String(form.rating)) || 5,
-        review: form.review.trim(),
-        status: form.status,
-        displayOrder: Number(form.displayOrder) || 1,
-      }
-
       if (isEdit && initialData?.id) {
-        await testimonialApiService.update(initialData.id, payload)
+        await testimonialApiService.update(initialData.id, data)
       } else {
-        await testimonialApiService.create(payload)
+        await testimonialApiService.create(data)
       }
-
       toast.success(isEdit ? "Testimonial updated successfully" : "Testimonial added successfully")
       router.push("/admin/testimonials")
       router.refresh()
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to save testimonial")
-      setError(msg)
+      setApiError(msg)
       toast.error(msg)
-    } finally {
-      setSubmitting(false)
     }
   }
 
   return (
     <Card>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {error && (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          {apiError && (
             <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
-              {error}
+              {apiError}
             </div>
           )}
 
@@ -139,10 +133,12 @@ function TestimonialFormFields({
               </Label>
               <Input
                 id="patientName"
-                value={form.patientName}
-                onChange={(e) => set("patientName", e.target.value)}
-                required
+                {...register("patientName")}
+                aria-invalid={!!errors.patientName}
               />
+              {errors.patientName && (
+                <p className="mt-1 text-xs text-destructive">{errors.patientName.message}</p>
+              )}
             </div>
 
             {/* Treatment / Service */}
@@ -152,10 +148,12 @@ function TestimonialFormFields({
               </Label>
               <Input
                 id="treatment"
-                value={form.treatment}
-                onChange={(e) => set("treatment", e.target.value)}
-                required
+                {...register("treatment")}
+                aria-invalid={!!errors.treatment}
               />
+              {errors.treatment && (
+                <p className="mt-1 text-xs text-destructive">{errors.treatment.message}</p>
+              )}
             </div>
 
             {/* Rating */}
@@ -166,7 +164,7 @@ function TestimonialFormFields({
                 </Label>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Star className="h-3.5 w-3.5 fill-red-500 text-red-500" />
-                  <span>{form.rating || "5"}/5</span>
+                  <span>{ratingValue || "5"}/5</span>
                 </div>
               </div>
               <Input
@@ -175,42 +173,55 @@ function TestimonialFormFields({
                 step="0.1"
                 min="1"
                 max="5"
-                value={form.rating}
-                onChange={(e) => set("rating", e.target.value)}
-                required
+                {...register("rating")}
+                aria-invalid={!!errors.rating}
               />
+              {errors.rating && (
+                <p className="mt-1 text-xs text-destructive">{errors.rating.message}</p>
+              )}
             </div>
 
             {/* Display Order */}
             <div className="space-y-1.5">
               <Label htmlFor="displayOrder">
-                Display Order <span className="text-destructive">*</span>
+                Display Order
               </Label>
               <Input
                 id="displayOrder"
                 type="number"
                 min={1}
-                value={form.displayOrder}
-                onChange={(e) => set("displayOrder", parseInt(e.target.value) || 1)}
-                required
+                {...register("displayOrder")}
+                aria-invalid={!!errors.displayOrder}
               />
+              {errors.displayOrder && (
+                <p className="mt-1 text-xs text-destructive">{errors.displayOrder.message}</p>
+              )}
             </div>
 
             {/* Status */}
             <div className="space-y-1.5">
               <Label htmlFor="status">Status</Label>
-              <Select
-                value={form.status}
-                onValueChange={(v) => set("status", (v ?? "published") as TestimonialStatus)}
-              >
-                <SelectTrigger id="status" className="w-full" aria-label="Select status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent alignItemWithTrigger={false} className="min-w-[280px]">
-                  <SelectItem value="published">Published (Visible on website)</SelectItem>
-                  <SelectItem value="draft">Draft (Hidden)</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                control={control}
+                name="status"
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger id="status" className="w-full" aria-label="Select status">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent alignItemWithTrigger={false} className="min-w-[280px]">
+                      <SelectItem value="published">Published (Visible on website)</SelectItem>
+                      <SelectItem value="draft">Draft (Hidden)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.status && (
+                <p className="mt-1 text-xs text-destructive">{errors.status.message}</p>
+              )}
             </div>
 
             {/* Review / Feedback Quote */}
@@ -220,11 +231,13 @@ function TestimonialFormFields({
               </Label>
               <Textarea
                 id="review"
-                value={form.review}
-                onChange={(e) => set("review", e.target.value)}
+                {...register("review")}
                 rows={4}
-                required
+                aria-invalid={!!errors.review}
               />
+              {errors.review && (
+                <p className="mt-1 text-xs text-destructive">{errors.review.message}</p>
+              )}
             </div>
           </div>
 
@@ -234,12 +247,12 @@ function TestimonialFormFields({
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/testimonials")}
-              disabled={submitting}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting}>
-              {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Spinner className="mr-2" />}
               {isEdit ? "Save Changes" : "Add Testimonial"}
             </Button>
           </div>

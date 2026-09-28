@@ -259,7 +259,8 @@ export function InquiryTable({
         onOpenChange={(open) => !open && !isDeleting && setDeleteId(null)}
         title="Delete inquiry?"
         description="This will permanently delete the inquiry and all its submitted data."
-        confirmLabel={isDeleting ? "Deleting..." : "Delete"}
+        confirmLabel="Delete"
+        isLoading={isDeleting}
         variant="destructive"
         onConfirm={handleDelete}
       />

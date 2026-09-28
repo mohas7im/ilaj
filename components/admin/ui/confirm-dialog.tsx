@@ -11,6 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/admin/ui/alert-dialog"
+import { Spinner } from "@/components/admin/ui/spinner"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -19,12 +20,14 @@ type ConfirmDialogProps = {
   onOpenChange: (open: boolean) => void
   title?: string
   description?: string | ReactNode
-  /** Label on the confirm button */
+  /** Label on the confirm button (shown when not loading) */
   confirmLabel?: string
   /** Label on the cancel button */
   cancelLabel?: string
-  /** Variant — destructive shows a red confirm button */
+  /** Variant — destructive shows a solid red confirm button with white text */
   variant?: "default" | "destructive"
+  /** While true the confirm button shows a spinner and is disabled */
+  isLoading?: boolean
   onConfirm: () => void
 }
 
@@ -38,6 +41,7 @@ export function ConfirmDialog({
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
   variant = "destructive",
+  isLoading = false,
   onConfirm,
 }: ConfirmDialogProps) {
   return (
@@ -48,16 +52,24 @@ export function ConfirmDialog({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{cancelLabel}</AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>{cancelLabel}</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
+            disabled={isLoading}
             className={
               variant === "destructive"
-                ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                ? "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500/40 disabled:opacity-70"
                 : undefined
             }
           >
-            {confirmLabel}
+            {isLoading ? (
+              <>
+                <Spinner className="mr-1.5 size-3.5" />
+                {confirmLabel}
+              </>
+            ) : (
+              confirmLabel
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

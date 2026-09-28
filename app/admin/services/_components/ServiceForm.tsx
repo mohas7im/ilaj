@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Upload, X, ImageIcon, Loader2 } from "lucide-react"
+import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Upload, X, ImageIcon } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { LoadingState } from "@/components/admin/ui/loading-state"
@@ -15,9 +17,11 @@ import {
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
 import { Switch } from "@/components/admin/ui/switch"
+import { Spinner } from "@/components/admin/ui/spinner"
 import { RichTextEditor } from "@/components/admin/RichTextEditor"
 import { ServiceFaqFields, toServiceFaqRows, type ServiceFaqRow } from "./ServiceFaqFields"
 import type { Service, ServiceStatus } from "@/domain/service/service.types"
+import { serviceSchema, type ServiceFormData } from "@/domain/service/service.schema"
 import { SERVICE_STATUS_CONFIG } from "./service-status"
 import { serviceApiService } from "../_services/service.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
@@ -77,30 +81,41 @@ function ServiceFormFields({
   const isEdit = mode === "edit"
   const primaryFileInputRef = useRef<HTMLInputElement>(null)
   const secondaryFileInputRef = useRef<HTMLInputElement>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  const [apiError, setApiError] = useState<string | null>(null)
   const [primaryFile, setPrimaryFile] = useState<File | null>(null)
   const [secondaryFile, setSecondaryFile] = useState<File | null>(null)
   const [primaryPreviewUrl, setPrimaryPreviewUrl] = useState<string>(initialData?.image ?? "")
   const [secondaryPreviewUrl, setSecondaryPreviewUrl] = useState<string>(initialData?.secondaryImage ?? "")
-
-  const [form, setForm] = useState({
-    name:              initialData?.name              ?? "",
-    slug:              initialData?.slug              ?? "",
-    description:       initialData?.description       ?? "",
-    details:           initialData?.details           ?? "",
-    status:            (initialData?.status           ?? "active") as ServiceStatus,
-    displayOrder:      initialData?.displayOrder      ?? 1,
-    showInHomePage:    initialData?.showInHomePage    ?? false,
-    image:             initialData?.image             ?? "",
-    imageAlt:          initialData?.imageAlt          ?? "",
-    secondaryImage:    initialData?.secondaryImage    ?? "",
-    secondaryImageAlt: initialData?.secondaryImageAlt ?? "",
-  })
-
   const [faqRows, setFaqRows] = useState<ServiceFaqRow[]>(() => toServiceFaqRows(initialData?.faqs))
 
-  const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) =>
-    setForm((prev) => ({ ...prev, [key]: value }))
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<ServiceFormData>({
+    resolver: zodResolver(serviceSchema) as any,
+    defaultValues: {
+      name: initialData?.name ?? "",
+      slug: initialData?.slug ?? "",
+      description: initialData?.description ?? "",
+      details: initialData?.details ?? "",
+      status: (initialData?.status ?? "active") as "active" | "inactive",
+      displayOrder: initialData?.displayOrder ?? 1,
+      showInHomePage: initialData?.showInHomePage ?? false,
+      image: initialData?.image ?? "",
+      imageAlt: initialData?.imageAlt ?? "",
+      secondaryImage: initialData?.secondaryImage ?? "",
+      secondaryImageAlt: initialData?.secondaryImageAlt ?? "",
+    },
+  })
+
+  // Watch for image removals so preview updates
+  const currentImage = watch("image")
+  const currentSecondaryImage = watch("secondaryImage")
 
   const handleImageChange = (
     key: "image" | "secondaryImage",
@@ -128,23 +143,23 @@ function ServiceFormFields({
     if (key === "image") {
       setPrimaryFile(null)
       setPrimaryPreviewUrl("")
-      set("image", "")
+      setValue("image", "")
       if (primaryFileInputRef.current) primaryFileInputRef.current.value = ""
     } else {
       setSecondaryFile(null)
       setSecondaryPreviewUrl("")
-      set("secondaryImage", "")
+      setValue("secondaryImage", "")
       if (secondaryFileInputRef.current) secondaryFileInputRef.current.value = ""
     }
   }
 
-  const currentPrimaryDisplay = primaryPreviewUrl || form.image
-  const currentSecondaryDisplay = secondaryPreviewUrl || form.secondaryImage
+  const currentPrimaryDisplay = primaryPreviewUrl || currentImage
+  const currentSecondaryDisplay = secondaryPreviewUrl || currentSecondaryImage
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: ServiceFormData) => {
+    setApiError(null)
 
-    // Skip fully empty rows; a half-filled row is a mistake worth flagging
+    // Validate FAQs locally (we don't strictly use RHF array fields here because ServiceFaqFields is custom)
     const faqs = faqRows
       .map((row) => ({ question: row.question.trim(), answer: row.answer.trim() }))
       .filter((faq) => faq.question || faq.answer)
@@ -153,33 +168,29 @@ function ServiceFormFields({
       return
     }
 
-    setIsSubmitting(true)
-
     try {
       const formData = new FormData()
-      formData.append("name", form.name)
-      if (form.slug) formData.append("slug", form.slug)
-      if (form.description) formData.append("description", form.description)
-      // Always sent, so clearing it removes the saved text
-      formData.append("details", form.details)
-      // Always sent: the list replaces the saved FAQs (empty list clears them)
+      formData.append("name", data.name)
+      if (data.slug) formData.append("slug", data.slug)
+      if (data.description) formData.append("description", data.description)
+      formData.append("details", data.details ?? "")
       formData.append("faqs", JSON.stringify(faqs))
-      formData.append("status", form.status)
-      formData.append("displayOrder", String(form.displayOrder))
-      formData.append("showInHomePage", String(form.showInHomePage))
-      if (form.imageAlt) formData.append("imageAlt", form.imageAlt)
-      if (form.secondaryImageAlt) formData.append("secondaryImageAlt", form.secondaryImageAlt)
+      formData.append("status", data.status)
+      formData.append("displayOrder", String(data.displayOrder))
+      formData.append("showInHomePage", String(data.showInHomePage))
+      if (data.imageAlt) formData.append("imageAlt", data.imageAlt)
+      if (data.secondaryImageAlt) formData.append("secondaryImageAlt", data.secondaryImageAlt)
 
       if (primaryFile) {
         formData.append("image", primaryFile)
-      } else if (form.image) {
-        formData.append("existingImage", form.image)
+      } else if (data.image) {
+        formData.append("existingImage", data.image)
       }
 
       if (secondaryFile) {
         formData.append("secondaryImage", secondaryFile)
-      } else if (form.secondaryImage) {
-        formData.append("existingSecondaryImage", form.secondaryImage)
+      } else if (data.secondaryImage) {
+        formData.append("existingSecondaryImage", data.secondaryImage)
       }
 
       if (isEdit && initialData?.id) {
@@ -192,16 +203,22 @@ function ServiceFormFields({
       router.push("/admin/services")
       router.refresh()
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to save service"))
-    } finally {
-      setIsSubmitting(false)
+      const msg = getApiErrorMessage(error, "Failed to save service")
+      setApiError(msg)
+      toast.error(msg)
     }
   }
 
   return (
     <Card>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+          {apiError && (
+            <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
+              {apiError}
+            </div>
+          )}
+
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-1.5 sm:col-span-2">
               <Label htmlFor="name">
@@ -209,30 +226,41 @@ function ServiceFormFields({
               </Label>
               <Input
                 id="name"
-                value={form.name}
-                onChange={(e) => set("name", e.target.value)}
-                required
+                {...register("name")}
+                aria-invalid={!!errors.name}
               />
+              {errors.name && (
+                <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>
+              )}
             </div>
 
             {/* Status */}
             <div className="space-y-1.5 sm:col-span-1">
               <Label htmlFor="status">Status</Label>
-              <Select
-                value={form.status}
-                onValueChange={(v) => set("status", (v ?? "active") as ServiceStatus)}
-              >
-                <SelectTrigger id="status" className="w-full" aria-label="Select status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent alignItemWithTrigger={false}>
-                  {(Object.keys(SERVICE_STATUS_CONFIG) as ServiceStatus[]).map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {SERVICE_STATUS_CONFIG[s].label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                control={control}
+                name="status"
+                render={({ field }) => (
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger id="status" className="w-full" aria-label="Select status">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent alignItemWithTrigger={false}>
+                      {(Object.keys(SERVICE_STATUS_CONFIG) as ServiceStatus[]).map((s) => (
+                        <SelectItem key={s} value={s}>
+                          {SERVICE_STATUS_CONFIG[s].label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.status && (
+                <p className="mt-1 text-xs text-destructive">{errors.status.message}</p>
+              )}
             </div>
 
             {/* Display Order */}
@@ -244,12 +272,12 @@ function ServiceFormFields({
                 id="displayOrder"
                 type="number"
                 min={1}
-                value={form.displayOrder}
-                onChange={(e) =>
-                  set("displayOrder", parseInt(e.target.value, 10) || 1)
-                }
-                required
+                {...register("displayOrder")}
+                aria-invalid={!!errors.displayOrder}
               />
+              {errors.displayOrder && (
+                <p className="mt-1 text-xs text-destructive">{errors.displayOrder.message}</p>
+              )}
             </div>
 
             {/* Show on Home Page */}
@@ -262,10 +290,16 @@ function ServiceFormFields({
                   Display this service as a highlight on the clinic homepage.
                 </p>
               </div>
-              <Switch
-                id="showInHomePage"
-                checked={form.showInHomePage}
-                onCheckedChange={(checked) => set("showInHomePage", checked)}
+              <Controller
+                control={control}
+                name="showInHomePage"
+                render={({ field }) => (
+                  <Switch
+                    id="showInHomePage"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                )}
               />
             </div>
 
@@ -273,19 +307,28 @@ function ServiceFormFields({
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
-                value={form.description}
-                onChange={(e) => set("description", e.target.value)}
+                {...register("description")}
                 rows={3}
+                aria-invalid={!!errors.description}
               />
+              {errors.description && (
+                <p className="mt-1 text-xs text-destructive">{errors.description.message}</p>
+              )}
             </div>
 
             <div className="space-y-1.5 sm:col-span-2">
               <Label id="details-label">Detailed Description</Label>
-              <RichTextEditor
-                id="details"
-                aria-labelledby="details-label"
-                value={form.details}
-                onChange={(html) => set("details", html)}
+              <Controller
+                control={control}
+                name="details"
+                render={({ field }) => (
+                  <RichTextEditor
+                    id="details"
+                    aria-labelledby="details-label"
+                    value={field.value || ""}
+                    onChange={field.onChange}
+                  />
+                )}
               />
               <p className="text-xs text-muted-foreground">
                 Main content of the treatment page on the website.
@@ -312,7 +355,7 @@ function ServiceFormFields({
                   {currentPrimaryDisplay ? (
                     <img
                       src={currentPrimaryDisplay}
-                      alt={form.imageAlt || "Primary service preview"}
+                      alt={watch("imageAlt") || "Primary service preview"}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -361,8 +404,7 @@ function ServiceFormFields({
                   </Label>
                   <Input
                     id="imageAlt"
-                    value={form.imageAlt}
-                    onChange={(e) => set("imageAlt", e.target.value)}
+                    {...register("imageAlt")}
                   />
                 </div>
               </div>
@@ -377,7 +419,7 @@ function ServiceFormFields({
                   {currentSecondaryDisplay ? (
                     <img
                       src={currentSecondaryDisplay}
-                      alt={form.secondaryImageAlt || "Secondary service preview"}
+                      alt={watch("secondaryImageAlt") || "Secondary service preview"}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -426,8 +468,7 @@ function ServiceFormFields({
                   </Label>
                   <Input
                     id="secondaryImageAlt"
-                    value={form.secondaryImageAlt}
-                    onChange={(e) => set("secondaryImageAlt", e.target.value)}
+                    {...register("secondaryImageAlt")}
                   />
                 </div>
               </div>
@@ -444,14 +485,8 @@ function ServiceFormFields({
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {isEdit ? "Saving Changes..." : "Adding Service..."}
-                </>
-              ) : (
-                isEdit ? "Save Changes" : "Add Service"
-              )}
+              {isSubmitting && <Spinner className="mr-2" />}
+              {isEdit ? "Save Changes" : "Add Service"}
             </Button>
           </div>
         </form>

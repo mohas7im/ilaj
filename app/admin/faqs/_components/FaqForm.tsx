@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
+import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { LoadingState } from "@/components/admin/ui/loading-state"
@@ -14,14 +15,16 @@ import {
   Select, SelectContent, SelectItem,
   SelectTrigger, SelectValue,
 } from "@/components/admin/ui/select"
-import type { Faq, FaqStatus } from "@/domain/faq/faq.types"
+import { Spinner } from "@/components/admin/ui/spinner"
+import { faqSchema, type FaqFormData } from "@/domain/faq/faq.schema"
+import type { Faq } from "@/domain/faq/faq.types"
 import { getApiErrorMessage } from "@/lib/api/errors"
 import { faqApiService } from "../_services/faq.api"
 
-const STATUS_ITEMS: Record<FaqStatus, string> = {
+const STATUS_ITEMS = {
   published: "Published (Visible on website)",
   draft: "Draft (Hidden)",
-}
+} as const
 
 const RETURN_TO = "/admin/faqs"
 
@@ -78,59 +81,48 @@ function FaqFormFields({
 }) {
   const router = useRouter()
   const isEdit = mode === "edit"
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [apiError, setApiError] = useState<string | null>(null)
 
-  const [form, setForm] = useState({
-    question:     initialData?.question ?? "",
-    answer:       initialData?.answer ?? "",
-    status:       initialData?.status ?? ("published" as FaqStatus),
-    displayOrder: initialData?.displayOrder ?? 1,
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<FaqFormData>({
+    resolver: zodResolver(faqSchema) as any,
+    defaultValues: {
+      question: initialData?.question ?? "",
+      answer: initialData?.answer ?? "",
+      status: initialData?.status ?? "published",
+      displayOrder: initialData?.displayOrder ?? 1,
+    },
   })
 
-  const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }))
-    if (error) setError(null)
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitting(true)
-    setError(null)
-
+  const onSubmit = async (data: FaqFormData) => {
+    setApiError(null)
     try {
-      const payload = {
-        question: form.question.trim(),
-        answer: form.answer.trim(),
-        status: form.status,
-        displayOrder: Number(form.displayOrder) || 1,
-      }
-
       if (isEdit && initialData?.id) {
-        await faqApiService.update(initialData.id, payload)
+        await faqApiService.update(initialData.id, data)
       } else {
-        await faqApiService.create(payload)
+        await faqApiService.create(data)
       }
-
       toast.success(isEdit ? "FAQ updated successfully" : "FAQ added successfully")
       router.push(RETURN_TO)
       router.refresh()
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to save FAQ")
-      setError(msg)
+      setApiError(msg)
       toast.error(msg)
-    } finally {
-      setSubmitting(false)
     }
   }
 
   return (
     <Card>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {error && (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+          {apiError && (
             <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
-              {error}
+              {apiError}
             </div>
           )}
 
@@ -142,10 +134,12 @@ function FaqFormFields({
               </Label>
               <Input
                 id="question"
-                value={form.question}
-                onChange={(e) => set("question", e.target.value)}
-                required
+                {...register("question")}
+                aria-invalid={!!errors.question}
               />
+              {errors.question && (
+                <p className="mt-1 text-xs text-destructive">{errors.question.message}</p>
+              )}
             </div>
 
             {/* Answer */}
@@ -155,11 +149,13 @@ function FaqFormFields({
               </Label>
               <Textarea
                 id="answer"
-                value={form.answer}
-                onChange={(e) => set("answer", e.target.value)}
+                {...register("answer")}
                 rows={5}
-                required
+                aria-invalid={!!errors.answer}
               />
+              {errors.answer && (
+                <p className="mt-1 text-xs text-destructive">{errors.answer.message}</p>
+              )}
             </div>
 
             {/* Display Order */}
@@ -169,28 +165,39 @@ function FaqFormFields({
                 id="displayOrder"
                 type="number"
                 min={1}
-                value={form.displayOrder}
-                onChange={(e) => set("displayOrder", parseInt(e.target.value) || 1)}
-                required
+                {...register("displayOrder")}
+                aria-invalid={!!errors.displayOrder}
               />
+              {errors.displayOrder && (
+                <p className="mt-1 text-xs text-destructive">{errors.displayOrder.message}</p>
+              )}
             </div>
 
             {/* Status */}
             <div className="space-y-1.5">
               <Label htmlFor="status">Status</Label>
-              <Select
-                items={STATUS_ITEMS}
-                value={form.status}
-                onValueChange={(v) => set("status", (v ?? "published") as FaqStatus)}
-              >
-                <SelectTrigger id="status" aria-label="Select status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent alignItemWithTrigger={false}>
-                  <SelectItem value="published">{STATUS_ITEMS.published}</SelectItem>
-                  <SelectItem value="draft">{STATUS_ITEMS.draft}</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                control={control}
+                name="status"
+                render={({ field }) => (
+                  <Select
+                    items={STATUS_ITEMS}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger id="status" aria-label="Select status">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent alignItemWithTrigger={false}>
+                      <SelectItem value="published">{STATUS_ITEMS.published}</SelectItem>
+                      <SelectItem value="draft">{STATUS_ITEMS.draft}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.status && (
+                <p className="mt-1 text-xs text-destructive">{errors.status.message}</p>
+              )}
             </div>
           </div>
 
@@ -200,12 +207,12 @@ function FaqFormFields({
               type="button"
               variant="outline"
               onClick={() => router.push(RETURN_TO)}
-              disabled={submitting}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting}>
-              {submitting && <Loader2 data-icon="inline-start" className="animate-spin" />}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Spinner className="mr-1.5 size-3.5" />}
               {isEdit ? "Save Changes" : "Add FAQ"}
             </Button>
           </div>
