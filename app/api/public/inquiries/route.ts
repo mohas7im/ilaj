@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createInquiry } from "@/server/services/inquiry.service";
 import { inquirySchema } from "@/domain/inquiry/inquiry.schema";
+import { sendInquiryEmails } from "@/server/lib/send-inquiry-emails";
 
 // Visitors can't choose a status; every new submission starts as "new".
 const publicInquirySchema = inquirySchema.omit({ status: true });
@@ -28,6 +29,17 @@ export async function POST(req: NextRequest) {
       email: parsed.data.email.toLowerCase(),
       status: "new",
     });
+
+    // Fire-and-forget — email failure never blocks saving the record or the form response.
+    void sendInquiryEmails({
+      fullName: inquiry.fullName,
+      email: inquiry.email,
+      phone: inquiry.phone ?? "",
+      treatment: inquiry.treatment,
+      preferredDate: inquiry.preferredDate ?? null,
+      preferredTime: inquiry.preferredTime ?? null,
+      message: inquiry.message,
+    }).catch((err) => console.error("[sendInquiryEmails]", err));
 
     // Return only the id so the visitor's submission isn't echoed back in full.
     return NextResponse.json({ id: inquiry.id }, { status: 201 });
