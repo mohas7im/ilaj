@@ -310,8 +310,6 @@ export function SeoForm() {
 
 function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
   const [selectedPage, setSelectedPage] = useState<string>("common")
-  const [success, setSuccess] = useState(false)
-  const [apiError, setApiError] = useState<string | null>(null)
   
   // Track files
   const [commonOgFile, setCommonOgFile] = useState<File | null>(null)
@@ -347,13 +345,9 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
         ogImage: data.ogImage ?? "",
       })
     }
-    setSuccess(false)
-    setApiError(null)
   }, [selectedPage, currentPageSeoMap, pageForm])
 
   const onCommonSubmit = async (data: CommonSeoFormData) => {
-    setApiError(null)
-    setSuccess(false)
     try {
       if (commonOgFile) {
         const formData = new FormData()
@@ -370,18 +364,14 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
       }
       
       setCurrentCommonInitial(data as CommonSeo)
-      setSuccess(true)
       toast.success("SEO settings saved successfully")
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to save SEO settings")
-      setApiError(msg)
       toast.error(msg)
     }
   }
 
   const onPageSubmit = async (data: PageSeoFormData) => {
-    setApiError(null)
-    setSuccess(false)
     try {
       const pageFile = pageOgFiles[selectedPage]
       if (pageFile) {
@@ -401,11 +391,9 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
         ...prev,
         [selectedPage]: { ...data, page: selectedPage } as PageSeo
       }))
-      setSuccess(true)
       toast.success("SEO settings saved successfully")
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to save SEO settings")
-      setApiError(msg)
       toast.error(msg)
     }
   }
@@ -424,8 +412,6 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
       })
       setPageOgFiles(prev => ({ ...prev, [selectedPage]: null }))
     }
-    setSuccess(false)
-    setApiError(null)
   }
 
   const isSubmitting = selectedPage === "common" ? commonForm.formState.isSubmitting : pageForm.formState.isSubmitting
@@ -579,18 +565,6 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-6" noValidate>
       {/* ── Status banner */}
-      {success && (
-        <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 px-4 py-3 text-sm text-green-800 dark:text-green-400">
-          <CheckCircle2 className="h-4 w-4 shrink-0" />
-          SEO settings saved successfully.
-        </div>
-      )}
-      {apiError && (
-        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          <XCircle className="h-4 w-4 shrink-0" />
-          {apiError}
-        </div>
-      )}
 
       {/* ── Page Selector */}
       <Card>
@@ -651,7 +625,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 {/* Site Name */}
                 <div className="space-y-1.5">
                   <Label htmlFor="siteName">
-                    Site Name <span className="text-destructive">*</span>
+                    Site Name
                   </Label>
                   <Input
                     id="siteName"
@@ -664,7 +638,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 {/* Site URL */}
                 <div className="space-y-1.5">
                   <Label htmlFor="siteUrl">
-                    Site URL <span className="text-destructive">*</span>
+                    Site URL
                   </Label>
                   <Input
                     id="siteUrl"
@@ -679,7 +653,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 <div className="space-y-1.5 sm:col-span-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="defaultTitle">
-                      Default SEO Title <span className="text-destructive">*</span>
+                      Default SEO Title
                     </Label>
                     <CharCounter value={commonWatch.defaultTitle || ""} min={50} max={60} />
                   </div>

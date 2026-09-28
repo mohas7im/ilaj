@@ -72,8 +72,6 @@ function ClinicPhotoFormFields({
   const router = useRouter()
   const isEdit = mode === "edit"
   const fileInputRef = useRef<HTMLInputElement>(null)
-  
-  const [apiError, setApiError] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>(initialData?.image ?? "")
 
@@ -109,8 +107,6 @@ function ClinicPhotoFormFields({
       toast.error("Please select a valid image file")
       return
     }
-
-    setApiError(null)
     setImageFile(file)
     setPreviewUrl(URL.createObjectURL(file))
     setValue("image", "new-upload", { shouldValidate: true })
@@ -128,10 +124,8 @@ function ClinicPhotoFormFields({
   const currentDisplayImage = previewUrl || (currentImage !== "new-upload" && currentImage !== "temp-file" ? currentImage : "") || initialData?.image
 
   const onSubmit = async (data: ClinicPhotoInput) => {
-    setApiError(null)
 
     if (!imageFile && (!data.image || data.image === "new-upload" || data.image === "temp-file") && !initialData?.image) {
-      setApiError("Please select a photo.")
       return
     }
 
@@ -159,7 +153,6 @@ function ClinicPhotoFormFields({
       router.refresh()
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to save clinic photo")
-      setApiError(msg)
       toast.error(msg)
     }
   }
@@ -168,11 +161,6 @@ function ClinicPhotoFormFields({
     <Card>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-          {apiError && (
-            <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
-              {apiError}
-            </div>
-          )}
 
           {/* Heading */}
           <div className="space-y-1.5">

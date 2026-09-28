@@ -75,7 +75,6 @@ function TestimonialFormFields({
 }) {
   const router = useRouter()
   const isEdit = mode === "edit"
-  const [apiError, setApiError] = useState<string | null>(null)
 
   const {
     register,
@@ -98,7 +97,6 @@ function TestimonialFormFields({
   const ratingValue = useWatch({ control, name: "rating" })
 
   const onSubmit = async (data: TestimonialFormData) => {
-    setApiError(null)
     try {
       if (isEdit && initialData?.id) {
         await testimonialApiService.update(initialData.id, data)
@@ -110,7 +108,6 @@ function TestimonialFormFields({
       router.refresh()
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to save testimonial")
-      setApiError(msg)
       toast.error(msg)
     }
   }
@@ -119,11 +116,6 @@ function TestimonialFormFields({
     <Card>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-          {apiError && (
-            <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
-              {apiError}
-            </div>
-          )}
 
           <div className="grid gap-4 sm:grid-cols-2">
             {/* Patient Name */}

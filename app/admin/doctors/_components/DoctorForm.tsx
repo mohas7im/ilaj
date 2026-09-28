@@ -84,7 +84,6 @@ function DoctorFormFields({
   const router = useRouter()
   const isEdit = mode === "edit"
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [apiError, setApiError] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>(initialData?.image ?? "")
 
@@ -135,7 +134,6 @@ function DoctorFormFields({
   }
 
   const onSubmit = async (data: DoctorFormData) => {
-    setApiError(null)
 
     try {
       const formData = new FormData()
@@ -164,7 +162,6 @@ function DoctorFormFields({
       router.refresh()
     } catch (error) {
       const msg = getApiErrorMessage(error, "Failed to save doctor")
-      setApiError(msg)
       toast.error(msg)
     }
   }
@@ -175,11 +172,6 @@ function DoctorFormFields({
     <Card>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-          {apiError && (
-            <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
-              {apiError}
-            </div>
-          )}
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-1.5 sm:col-span-2">

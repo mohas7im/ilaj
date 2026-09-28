@@ -73,8 +73,6 @@ function PatientCaseFormFields({
   const isEdit = mode === "edit"
   const beforeFileRef = useRef<HTMLInputElement>(null)
   const afterFileRef = useRef<HTMLInputElement>(null)
-  
-  const [apiError, setApiError] = useState<string | null>(null)
   const [beforeFile, setBeforeFile] = useState<File | null>(null)
   const [afterFile, setAfterFile] = useState<File | null>(null)
   const [beforePreviewUrl, setBeforePreviewUrl] = useState<string>(initialData?.beforeImage ?? "")
@@ -113,8 +111,6 @@ function PatientCaseFormFields({
       toast.error("Please select a valid image file")
       return
     }
-
-    setApiError(null)
     const preview = URL.createObjectURL(file)
 
     if (key === "beforeImage") {
@@ -146,14 +142,11 @@ function PatientCaseFormFields({
   const currentAfterDisplay = afterPreviewUrl || (currentAfterImage !== "new-upload" && currentAfterImage !== "temp-file" ? currentAfterImage : "") || initialData?.afterImage
 
   const onSubmit = async (data: PatientCaseInput) => {
-    setApiError(null)
 
     if (!beforeFile && (!data.beforeImage || data.beforeImage === "new-upload" || data.beforeImage === "temp-file") && !initialData?.beforeImage) {
-      setApiError("Please select a Before photo.")
       return
     }
     if (!afterFile && (!data.afterImage || data.afterImage === "new-upload" || data.afterImage === "temp-file") && !initialData?.afterImage) {
-      setApiError("Please select an After photo.")
       return
     }
 
@@ -188,7 +181,6 @@ function PatientCaseFormFields({
       router.refresh()
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to save patient case")
-      setApiError(msg)
       toast.error(msg)
     }
   }
@@ -197,11 +189,6 @@ function PatientCaseFormFields({
     <Card>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
-          {apiError && (
-            <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
-              {apiError}
-            </div>
-          )}
 
           <div className="grid gap-5 sm:grid-cols-3">
             {/* Heading */}

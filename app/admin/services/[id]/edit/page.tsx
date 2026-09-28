@@ -14,7 +14,7 @@ export default async function ServiceEditPage({ params }: Props) {
         title="Edit Service"
         description="Update service details, status, and photos."
       />
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <ServiceForm mode="edit" id={id} />
       </div>
     </div>

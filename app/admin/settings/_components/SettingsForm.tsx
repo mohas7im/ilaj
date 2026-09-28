@@ -69,8 +69,6 @@ export function SettingsForm() {
 }
 
 function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettings }) {
-  const [success, setSuccess] = useState(false)
-  const [apiError, setApiError] = useState<string | null>(null)
 
   const {
     register,
@@ -112,13 +110,9 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
       pinterest: initialSettings.pinterest ?? "",
       mapLink: initialSettings.mapLink ?? "",
     })
-    setSuccess(false)
-    setApiError(null)
   }
 
   const onSubmit = async (data: SettingsFormData) => {
-    setApiError(null)
-    setSuccess(false)
 
     try {
       // Create full object mapped back to ClinicSettings types if needed by API
@@ -138,12 +132,10 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
         pinterest: updated.pinterest ?? "",
         mapLink: updated.mapLink ?? "",
       })
-      setSuccess(true)
       toast.success("Settings saved successfully!")
       window.scrollTo({ top: 0, behavior: "smooth" })
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to update settings")
-      setApiError(msg)
       toast.error(msg)
     }
   }
@@ -151,22 +143,8 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-4xl w-full mx-auto" noValidate>
       {/* Top Banner Alert */}
-      {success && (
-        <div className="flex items-center gap-3 rounded-lg border border-emerald-500/20 bg-emerald-50 p-4 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
-          <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-          <div>
-            <p className="text-sm font-semibold">Settings saved successfully!</p>
-            <p className="text-xs opacity-90">All changes have been updated across your clinic profile.</p>
-          </div>
-        </div>
-      )}
 
-      {apiError && (
-        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
-          <AlertCircle className="h-5 w-5 shrink-0" />
-          <span>{apiError}</span>
-        </div>
-      )}
+
 
       {/* ── Section 1: Contact Information ───────────────────────── */}
       <Card>

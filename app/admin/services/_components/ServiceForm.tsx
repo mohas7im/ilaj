@@ -81,8 +81,6 @@ function ServiceFormFields({
   const isEdit = mode === "edit"
   const primaryFileInputRef = useRef<HTMLInputElement>(null)
   const secondaryFileInputRef = useRef<HTMLInputElement>(null)
-  
-  const [apiError, setApiError] = useState<string | null>(null)
   const [primaryFile, setPrimaryFile] = useState<File | null>(null)
   const [secondaryFile, setSecondaryFile] = useState<File | null>(null)
   const [primaryPreviewUrl, setPrimaryPreviewUrl] = useState<string>(initialData?.image ?? "")
@@ -157,7 +155,6 @@ function ServiceFormFields({
   const currentSecondaryDisplay = secondaryPreviewUrl || currentSecondaryImage
 
   const onSubmit = async (data: ServiceFormData) => {
-    setApiError(null)
 
     // Validate FAQs locally (we don't strictly use RHF array fields here because ServiceFaqFields is custom)
     const faqs = faqRows
@@ -204,7 +201,6 @@ function ServiceFormFields({
       router.refresh()
     } catch (error) {
       const msg = getApiErrorMessage(error, "Failed to save service")
-      setApiError(msg)
       toast.error(msg)
     }
   }
@@ -213,11 +209,6 @@ function ServiceFormFields({
     <Card>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
-          {apiError && (
-            <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive font-medium">
-              {apiError}
-            </div>
-          )}
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-1.5 sm:col-span-2">
