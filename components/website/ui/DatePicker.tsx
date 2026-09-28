@@ -12,6 +12,7 @@ export interface DatePickerProps {
   name: string;
   required?: boolean;
   placeholder?: string;
+  error?: string;
   /** Layout only (e.g. grid span) */
   className?: string;
 }
@@ -21,7 +22,7 @@ export interface DatePickerProps {
  * it. Past days and Sundays (clinic closed) can't be picked. Submits
  * "yyyy-MM-dd", like a native date input.
  */
-export function DatePicker({ id, label, name, required, placeholder = "Select a date", className }: DatePickerProps) {
+export function DatePicker({ id, label, name, required, placeholder = "Select a date", className, error }: DatePickerProps) {
   const [date, setDate] = useState<Date | undefined>();
 
   return (
@@ -37,6 +38,7 @@ export function DatePicker({ id, label, name, required, placeholder = "Select a 
       onReset={() => setDate(undefined)}
       panelClassName="p-4"
       className={className}
+      error={error}
     >
       {(close) => (
         <DayPicker

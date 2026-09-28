@@ -1,23 +1,25 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { FieldUnderline, fieldControlClass, fieldLabelClass } from "./Input";
+import { FieldUnderline, fieldControlClass, fieldControlErrorClass, fieldLabelClass, fieldLabelErrorClass } from "./Input";
 
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label: string;
   id: string;
+  error?: string;
 }
 
 /** Labelled underline textarea. `className` is for layout only (e.g. grid span). */
-export function Textarea({ label, id, className, ...props }: TextareaProps) {
+export function Textarea({ label, id, className, error, ...props }: TextareaProps) {
   return (
     <div className={cn("group", className)}>
-      <label htmlFor={id} className={fieldLabelClass}>
+      <label htmlFor={id} className={error ? fieldLabelErrorClass : fieldLabelClass}>
         {label}
       </label>
       <div className="relative">
-        <textarea id={id} className={cn(fieldControlClass, "h-32 resize-none py-2")} {...props} />
-        <FieldUnderline />
+        <textarea id={id} className={cn(error ? fieldControlErrorClass : fieldControlClass, "h-32 resize-none py-2")} {...props} />
+        <FieldUnderline hasError={!!error} />
       </div>
+      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { FieldUnderline, fieldControlClass, fieldLabelClass } from "./Input";
+import { FieldUnderline, fieldControlClass, fieldLabelClass, fieldLabelErrorClass } from "./Input";
 
 export interface PickerFieldProps {
   id: string;
@@ -24,6 +24,7 @@ export interface PickerFieldProps {
   panelClassName?: string;
   /** Layout only (e.g. grid span) */
   className?: string;
+  error?: string;
   /** Panel content; call `close` after a choice is made */
   children: (close: () => void) => React.ReactNode;
 }
@@ -47,6 +48,7 @@ export function PickerField({
   popupRole = "dialog",
   panelClassName,
   className,
+  error,
   children,
 }: PickerFieldProps) {
   const [open, setOpen] = useState(false);
@@ -94,7 +96,7 @@ export function PickerField({
 
   return (
     <div ref={rootRef} className={cn("group relative", className)}>
-      <label htmlFor={id} className={fieldLabelClass}>
+      <label htmlFor={id} className={error ? fieldLabelErrorClass : fieldLabelClass}>
         {label}
       </label>
 
@@ -117,7 +119,7 @@ export function PickerField({
             {icon}
           </span>
         </button>
-        <FieldUnderline />
+        <FieldUnderline hasError={!!error} />
 
         {/* Carries the value into FormData and native required validation */}
         <input
@@ -131,6 +133,7 @@ export function PickerField({
           className="pointer-events-none absolute inset-x-0 bottom-0 h-px opacity-0"
         />
       </div>
+      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
 
       {open && (
         <div

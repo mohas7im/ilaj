@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { z } from "zod";
 import { getApiErrorMessage } from "@/lib/api/errors";
 import Button from "@/components/website/ui/Button";
 import Input from "@/components/website/ui/Input";
@@ -21,59 +22,162 @@ const TREATMENTS = [
   "Other",
 ];
 
+// Client-side validation schema — mirrors the server schema but with
+// user-friendly messages for each field.
+const formSchema = z.object({
+  fullName: z
+    .string()
+    .min(1, "Full name is required")
+    .min(2, "Name must be at least 2 characters")
+    .regex(/^[a-zA-Z\s.'-]+$/, "Name can only contain letters and spaces"),
+  phone: z
+    .string()
+    .min(1, "Phone number is required")
+    .regex(/^[+]?[\d\s\-().]{7,15}$/, "Enter a valid phone number"),
+  email: z
+    .string()
+    .min(1, "Email address is required")
+    .email("Enter a valid email address"),
+  treatment: z.string().min(1, "Please select a treatment"),
+  preferredDate: z.string().min(1, "Please select a preferred date"),
+  preferredTime: z.string().min(1, "Please select a preferred time"),
+  message: z
+    .string()
+    .min(1, "Message is required")
+    .min(10, "Message must be at least 10 characters"),
+});
+
+type FormFields = z.infer<typeof formSchema>;
+type FieldErrors = Partial<Record<keyof FormFields, string>>;
+
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState("");
+  const [apiError, setApiError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formElement = e.currentTarget;
     const fields = new FormData(formElement);
-    const value = (name: string) => String(fields.get(name) ?? "");
+    const value = (name: string) => String(fields.get(name) ?? "").trim();
 
+    const raw = {
+      fullName: value("fullName"),
+      phone: value("phone"),
+      email: value("email"),
+      treatment: value("treatment"),
+      preferredDate: value("date"),
+      preferredTime: value("time"),
+      message: value("message"),
+    };
+
+    // Validate on the client before hitting the API
+    const result = formSchema.safeParse(raw);
+    if (!result.success) {
+      const errors: FieldErrors = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof FormFields;
+        if (!errors[field]) errors[field] = issue.message;
+      }
+      setFieldErrors(errors);
+      return;
+    }
+
+    // Clear previous errors and submit
+    setFieldErrors({});
     setStatus("submitting");
+
     try {
       await submitContactInquiry({
-        fullName: value("fullName"),
-        phone: value("phone"),
-        email: value("email"),
-        treatment: value("treatment"),
-        preferredDate: value("date"),
-        preferredTime: value("time"),
-        message: value("message"),
+        fullName: result.data.fullName,
+        phone: result.data.phone,
+        email: result.data.email,
+        treatment: result.data.treatment,
+        preferredDate: result.data.preferredDate,
+        preferredTime: result.data.preferredTime,
+        message: result.data.message,
       });
       formElement.reset();
       setStatus("success");
     } catch (err) {
-      setError(getApiErrorMessage(err, "Could not send your request. Please try again or call us."));
+      setApiError(getApiErrorMessage(err, "Could not send your request. Please try again or call us."));
       setStatus("error");
     }
   };
 
+  // Clear a single field error as soon as the user starts correcting it
+  const clearError = (field: keyof FieldErrors) => {
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
   return (
-    <form className="mt-3" onSubmit={handleSubmit}>
+    <form className="mt-3" onSubmit={handleSubmit} noValidate>
 
       <div className="grid grid-cols-1 gap-x-3.5 gap-y-4 sm:grid-cols-2">
 
-        <Input id="fullName" name="fullName" type="text" label="Full Name*" placeholder="Enter Your Full Name" required />
+        <Input
+          id="fullName"
+          name="fullName"
+          type="text"
+          label="Full Name"
+          placeholder="Enter Your Full Name"
+          error={fieldErrors.fullName}
+          onChange={() => clearError("fullName")}
+        />
 
-        <Input id="phone" name="phone" type="tel" label="Phone Number*" placeholder="Enter your phone number" required />
+        <Input
+          id="phone"
+          name="phone"
+          type="tel"
+          label="Phone Number"
+          placeholder="Enter your phone number"
+          error={fieldErrors.phone}
+          onChange={() => clearError("phone")}
+        />
 
-        <Input id="email" name="email" type="email" label="Email Address*" placeholder="Enter your email address" required />
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          label="Email Address"
+          placeholder="Enter your email address"
+          error={fieldErrors.email}
+          onChange={() => clearError("email")}
+        />
 
-        <Select id="treatment" name="treatment" label="Select Treatment*" placeholder="Choose a treatment" options={TREATMENTS} required />
+        <Select
+          id="treatment"
+          name="treatment"
+          label="Select Treatment"
+          placeholder="Choose a treatment"
+          options={TREATMENTS}
+          error={fieldErrors.treatment}
+        />
 
-        <DatePicker id="date" name="date" label="Preferred Date*" required />
+        <DatePicker
+          id="date"
+          name="date"
+          label="Preferred Date"
+          error={fieldErrors.preferredDate}
+        />
 
-        <TimePicker id="time" name="time" label="Preferred Time*" required />
+        <TimePicker
+          id="time"
+          name="time"
+          label="Preferred Time"
+          error={fieldErrors.preferredTime}
+        />
 
         <Textarea
           id="message"
           name="message"
-          label="Message*"
+          label="Message"
           placeholder="Enter your message"
-          required
           className="sm:col-span-2"
+          error={fieldErrors.message}
+          onChange={() => clearError("message")}
         />
 
       </div>
@@ -103,7 +207,7 @@ export default function ContactForm() {
 
       {status === "error" && (
         <p role="alert" className="mt-4 text-center text-sm text-red-600">
-          {error}
+          {apiError}
         </p>
       )}
 

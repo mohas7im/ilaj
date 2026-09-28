@@ -18,6 +18,7 @@ export interface TimePickerProps {
   step?: number;
   /** Layout only (e.g. grid span) */
   className?: string;
+  error?: string;
 }
 
 const toMinutes = (time: string) => {
@@ -48,6 +49,7 @@ export function TimePicker({
   to = "19:30",
   step = 30,
   className,
+  error,
 }: TimePickerProps) {
   const [time, setTime] = useState("");
 
@@ -67,6 +69,7 @@ export function TimePicker({
       onReset={() => setTime("")}
       panelClassName="w-[min(22rem,calc(100vw-3rem))] p-3"
       className={className}
+      error={error}
     >
       {(close) => (
         <div role="group" aria-label={label} className="grid grid-cols-3 gap-2 sm:grid-cols-4">

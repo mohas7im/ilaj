@@ -13,6 +13,7 @@ export interface SelectProps {
   options: string[];
   required?: boolean;
   placeholder?: string;
+  error?: string;
   /** Layout only (e.g. grid span) */
   className?: string;
 }
@@ -21,7 +22,7 @@ export interface SelectProps {
  * Custom dropdown in the website field style: click anywhere on the field to
  * open the list. Arrow keys move between options, Enter picks, Escape closes.
  */
-export function Select({ id, label, name, options, required, placeholder = "Choose an option", className }: SelectProps) {
+export function Select({ id, label, name, options, required, placeholder = "Choose an option", className, error }: SelectProps) {
   const [value, setValue] = useState("");
 
   // Arrow-key navigation between the option buttons
@@ -48,6 +49,7 @@ export function Select({ id, label, name, options, required, placeholder = "Choo
       popupRole="listbox"
       panelClassName="w-full p-1.5"
       className={className}
+      error={error}
     >
       {(close) => (
         <div role="listbox" aria-label={label} onKeyDown={onKeyDown} className="max-h-64 overflow-y-auto">
