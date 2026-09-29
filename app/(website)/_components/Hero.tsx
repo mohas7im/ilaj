@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Button from "@/components/website/ui/Button";
-import { getOpeningHours, getSettings } from "@/lib/data/settings";
+import { getOpeningHours, getSettings, toCounter } from "@/lib/data/settings";
 
 const CLIENT_AVATARS = [
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces",
@@ -14,6 +14,7 @@ const HEADLINE = "Your Smile, Our Priority : Expert Dental Care You Trust";
 
 export default async function Hero() {
   const [settings, openingHours] = await Promise.all([getSettings(), getOpeningHours()]);
+  const patients = toCounter(settings.totalPatients);
 
   return (
     <section className="relative w-full min-h-screen flex flex-col justify-between bg-neutral-950 overflow-hidden">
@@ -46,7 +47,7 @@ export default async function Hero() {
           </h1>
 
           {/* Happy Clients Badge */}
-          {settings.totalPatients && (
+          {patients && (
             <div className="hero-fade rounded-xl border border-white/35 bg-white/12 backdrop-blur-md px-5 py-4 w-68 sm:w-72 space-y-4 shadow-xl transition-transform duration-200 hover:scale-102">
               <div className="flex items-center justify-between">
                 <div className="flex -space-x-2.5 items-center">
@@ -60,7 +61,7 @@ export default async function Hero() {
                   ))}
                 </div>
                 <span className="font-bold text-white text-2xl tracking-tight leading-none">
-                  {settings.totalPatients}
+                  {patients}
                 </span>
               </div>
 

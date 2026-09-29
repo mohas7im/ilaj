@@ -8,15 +8,22 @@ import type { Stat } from "@/components/website/common/StatsList";
 // admin edits show up on the very next page load — no manual invalidation.
 export const getSettings = cache(getClinicSettings);
 
+// Admin enters plain numbers ("10", "5000"); the "+" is added here. A "+"
+// typed in admin anyway is dropped so it never shows twice. Empty stays empty.
+export function toCounter(value: string) {
+  const number = value.trim().replace(/\+$/, "").trim();
+  return number ? `${number}+` : "";
+}
+
 /** The three clinic counters from admin settings; empty ones are left out. */
 export async function getClinicStats(): Promise<Stat[]> {
   const settings = await getSettings();
 
   return [
-    { label: "Years of Experience", value: settings.yearsOfExperience, description: "Clinical excellence." },
-    { label: "Patients", value: settings.totalPatients, description: "Happy smiles treated." },
-    { label: "Specialists", value: settings.specialists, description: "Across all dental fields." },
-  ].filter((stat) => stat.value.trim());
+    { label: "Years of Experience", value: toCounter(settings.yearsOfExperience), description: "Clinical excellence." },
+    { label: "Patients", value: toCounter(settings.totalPatients), description: "Happy smiles treated." },
+    { label: "Specialists", value: toCounter(settings.specialists), description: "Across all dental fields." },
+  ].filter((stat) => stat.value);
 }
 
 /** "Mon – Fri: ..." / "Saturday: ..." / "Sunday: ..." lines; blank days are skipped. */
