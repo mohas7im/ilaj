@@ -11,7 +11,7 @@ export default function SmoothScroll() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const lenis = new Lenis({
-      lerp: 0.15,
+      lerp: 0.08,
       wheelMultiplier: 1,
       autoRaf: true,
       anchors: { offset: -80 },
