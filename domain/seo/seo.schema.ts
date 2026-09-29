@@ -12,7 +12,6 @@ export const commonSeoSchema = z.object({
   defaultDescription: z.string().optional().default(""),
   defaultOgImage: z.string().optional().default(""),
   googleVerification: z.string().optional().default(""),
-  bingVerification: z.string().optional().default(""),
 })
 
 export type CommonSeoFormData = z.infer<typeof commonSeoSchema>

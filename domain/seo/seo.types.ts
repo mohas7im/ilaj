@@ -7,7 +7,6 @@ export type CommonSeo = {
   defaultDescription: string
   defaultOgImage: string
   googleVerification: string
-  bingVerification: string
 }
 
 // ─── Page-Specific SEO ────────────────────────────────────────────────────────
@@ -26,6 +25,13 @@ export type PageOption = {
   value: string
   label: string
   path: string
+}
+
+// ─── Batch shape (common + every page in one call) ────────────────────────────
+
+export type AllSeo = {
+  common: CommonSeo
+  pages: Record<string, PageSeo>
 }
 
 export const PAGE_OPTIONS: PageOption[] = [

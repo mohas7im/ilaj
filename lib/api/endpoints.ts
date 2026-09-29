@@ -33,6 +33,7 @@ export const ENDPOINTS = {
     seo: {
       common: "/api/admin/seo",
       page: (slug: string) => `/api/admin/seo/${slug}`,
+      all: "/api/admin/seo/all",
     },
     settings: "/api/admin/settings",
     upload: "/api/admin/upload",

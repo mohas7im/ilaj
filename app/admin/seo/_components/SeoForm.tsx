@@ -282,17 +282,12 @@ export function SeoForm() {
 
   useEffect(() => {
     seoApiService
-      .getCommon()
-      .then(setInitialCommonSeo)
+      .getAll()
+      .then(({ common, pages }) => {
+        setInitialCommonSeo(common)
+        setInitialPageSeoMap(pages)
+      })
       .catch((err) => toast.error(getApiErrorMessage(err, "Failed to load SEO settings")))
-
-    Promise.all(
-      PAGE_OPTIONS.map((opt) =>
-        seoApiService.getPage(opt.value).then((seo) => [opt.value, seo] as const)
-      )
-    )
-      .then((entries) => setInitialPageSeoMap(Object.fromEntries(entries)))
-      .catch((err) => toast.error(getApiErrorMessage(err, "Failed to load page SEO settings")))
   }, [])
 
   if (!initialCommonSeo || !initialPageSeoMap) {
@@ -356,7 +351,6 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
         formData.append("defaultTitle", data.defaultTitle)
         formData.append("defaultDescription", data.defaultDescription ?? "")
         formData.append("googleVerification", data.googleVerification ?? "")
-        formData.append("bingVerification", data.bingVerification ?? "")
         formData.append("defaultOgImage", commonOgFile)
         await seoApiService.updateCommon(formData)
       } else {
@@ -709,27 +703,15 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="googleVerification">Google Search Console Verification</Label>
-                  <Input
-                    id="googleVerification"
-                    {...commonForm.register("googleVerification")}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    The content value from the Google verification meta tag.
-                  </p>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="bingVerification">Bing Webmaster Verification</Label>
-                  <Input
-                    id="bingVerification"
-                    {...commonForm.register("bingVerification")}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    The content value from the Bing verification meta tag.
-                  </p>
-                </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="googleVerification">Google Search Console Verification</Label>
+                <Input
+                  id="googleVerification"
+                  {...commonForm.register("googleVerification")}
+                />
+                <p className="text-xs text-muted-foreground">
+                  The content value from the Google verification meta tag.
+                </p>
               </div>
             </CardContent>
           </Card>

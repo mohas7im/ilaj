@@ -41,7 +41,6 @@ export async function PUT(req: Request) {
         defaultTitle: formData.get("defaultTitle") || "",
         defaultDescription: formData.get("defaultDescription") || "",
         googleVerification: formData.get("googleVerification") || "",
-        bingVerification: formData.get("bingVerification") || "",
         defaultOgImage: ogImageUrl || "",
       }
     } else {

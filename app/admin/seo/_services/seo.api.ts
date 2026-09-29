@@ -1,9 +1,15 @@
 import { apiClient } from "@/lib/api/client"
 import { ENDPOINTS } from "@/lib/api/endpoints"
-import type { CommonSeo, PageSeo } from "@/domain/seo/seo.types"
+import type { AllSeo, CommonSeo, PageSeo } from "@/domain/seo/seo.types"
 
 // Payloads are FormData when an OG image file is attached, JSON otherwise.
 export const seoApiService = {
+  // Common SEO + every page's SEO in one call — use this to load the form.
+  async getAll(): Promise<AllSeo> {
+    const { data } = await apiClient.get<AllSeo>(ENDPOINTS.admin.seo.all)
+    return data
+  },
+
   async getCommon(): Promise<CommonSeo> {
     const { data } = await apiClient.get<CommonSeo>(ENDPOINTS.admin.seo.common)
     return data

@@ -1,9 +1,11 @@
-import type { CommonSeo, PageSeo } from "@/domain/seo/seo.types"
+import { prisma } from "@/lib/prisma"
+import type { AllSeo, CommonSeo, PageSeo } from "@/domain/seo/seo.types"
+import { PAGE_OPTIONS } from "@/domain/seo/seo.types"
 
-// ─── Common / Global SEO ─────────────────────────────────────────────────────
-// In-memory store (not in the database yet) — edits reset when the server restarts.
+const COMMON_SEO_SINGLETON_ID = "common_seo_singleton"
 
-export let COMMON_SEO: CommonSeo = {
+// Shown the first time a fresh DB has no CommonSeo row yet.
+const DEFAULT_COMMON_SEO: Omit<CommonSeo, never> = {
   siteName: "Ilaj Dental Clinic",
   siteUrl: "https://ilajdental.com",
   defaultTitle: "Ilaj Dental Clinic | Expert Dental Care",
@@ -11,37 +13,109 @@ export let COMMON_SEO: CommonSeo = {
     "Ilaj Dental Clinic offers professional dental care including teeth cleaning, whitening, braces, implants and more in Lahore, Pakistan.",
   defaultOgImage: "",
   googleVerification: "",
-  bingVerification: "",
 }
 
-// ─── Page-Specific SEO ────────────────────────────────────────────────────────
-// Map of page slug → PageSeo data.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapToCommonSeo(item: any): CommonSeo {
+  return {
+    siteName: item.siteName ?? "",
+    siteUrl: item.siteUrl ?? "",
+    defaultTitle: item.defaultTitle ?? "",
+    defaultDescription: item.defaultDescription ?? "",
+    defaultOgImage: item.defaultOgImage ?? "",
+    googleVerification: item.googleVerification ?? "",
+  }
+}
 
-export let PAGE_SEO_MAP: Record<string, PageSeo> = {}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapToPageSeo(item: any, page: string): PageSeo {
+  return {
+    page,
+    title: item?.title ?? "",
+    description: item?.description ?? "",
+    ogImage: item?.ogImage ?? "",
+  }
+}
 
 // ─── Common SEO Operations ────────────────────────────────────────────────────
 
 export async function getCommonSeo(): Promise<CommonSeo> {
-  return { ...COMMON_SEO }
+  let seo = await prisma.commonSeo.findFirst()
+  if (!seo) {
+    seo = await prisma.commonSeo.create({
+      data: {
+        id: COMMON_SEO_SINGLETON_ID,
+        ...DEFAULT_COMMON_SEO,
+      },
+    })
+  }
+  return mapToCommonSeo(seo)
 }
 
 export async function updateCommonSeo(data: Partial<CommonSeo>): Promise<CommonSeo> {
-  COMMON_SEO = { ...COMMON_SEO, ...data }
-  return { ...COMMON_SEO }
+  const existing = await prisma.commonSeo.findFirst()
+  const targetId = existing?.id ?? COMMON_SEO_SINGLETON_ID
+
+  const updateData = {
+    ...(data.siteName !== undefined && { siteName: data.siteName }),
+    ...(data.siteUrl !== undefined && { siteUrl: data.siteUrl }),
+    ...(data.defaultTitle !== undefined && { defaultTitle: data.defaultTitle }),
+    ...(data.defaultDescription !== undefined && { defaultDescription: data.defaultDescription }),
+    ...(data.defaultOgImage !== undefined && { defaultOgImage: data.defaultOgImage }),
+    ...(data.googleVerification !== undefined && { googleVerification: data.googleVerification }),
+  }
+
+  const seo = await prisma.commonSeo.upsert({
+    where: { id: targetId },
+    create: { id: targetId, ...DEFAULT_COMMON_SEO, ...updateData },
+    update: updateData,
+  })
+  return mapToCommonSeo(seo)
 }
 
 // ─── Page SEO Operations ──────────────────────────────────────────────────────
 
 export async function getPageSeo(page: string): Promise<PageSeo> {
-  return PAGE_SEO_MAP[page] ?? { page, title: "", description: "", ogImage: "" }
+  const seo = await prisma.pageSeo.findUnique({ where: { page } })
+  return mapToPageSeo(seo, page)
 }
 
 export async function updatePageSeo(page: string, data: Partial<PageSeo>): Promise<PageSeo> {
-  PAGE_SEO_MAP[page] = {
-    page,
-    title:       data.title       ?? PAGE_SEO_MAP[page]?.title       ?? "",
-    description: data.description ?? PAGE_SEO_MAP[page]?.description ?? "",
-    ogImage:     data.ogImage     ?? PAGE_SEO_MAP[page]?.ogImage     ?? "",
+  const updateData = {
+    ...(data.title !== undefined && { title: data.title }),
+    ...(data.description !== undefined && { description: data.description }),
+    ...(data.ogImage !== undefined && { ogImage: data.ogImage }),
   }
-  return { ...PAGE_SEO_MAP[page] }
+
+  const seo = await prisma.pageSeo.upsert({
+    where: { page },
+    create: {
+      page,
+      title: data.title ?? "",
+      description: data.description ?? "",
+      ogImage: data.ogImage ?? "",
+    },
+    update: updateData,
+  })
+  return mapToPageSeo(seo, page)
+}
+
+// ─── Batch Operation ──────────────────────────────────────────────────────────
+// Common + every page's SEO in one round trip — used by the admin SEO screen,
+// which otherwise would fire one request per PAGE_OPTIONS entry.
+
+export async function getAllSeo(): Promise<AllSeo> {
+  const [common, pageRows] = await Promise.all([
+    getCommonSeo(),
+    prisma.pageSeo.findMany({
+      where: { page: { in: PAGE_OPTIONS.map((opt) => opt.value) } },
+    }),
+  ])
+
+  const rowsByPage = Object.fromEntries(pageRows.map((row) => [row.page, row]))
+  const pages = Object.fromEntries(
+    PAGE_OPTIONS.map((opt) => [opt.value, mapToPageSeo(rowsByPage[opt.value], opt.value)])
+  )
+
+  return { common, pages }
 }

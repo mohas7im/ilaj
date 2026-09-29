@@ -211,5 +211,33 @@ model Inquiry {
   @@map("inquiries")
 }
 
+// Global / site-wide SEO defaults — one row (singleton, like ClinicSettings).
+model CommonSeo {
+  id                 String   @id @default(uuid())
+  siteName           String
+  siteUrl            String
+  defaultTitle       String
+  defaultDescription String   @db.Text
+  defaultOgImage     String?
+  googleVerification String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("common_seo")
+}
+
+// Per-page SEO overrides. `page` is the slug from PAGE_OPTIONS (e.g. "home", "about")
+// and doubles as the natural primary key — one row per page, no separate id needed.
+model PageSeo {
+  page        String   @id
+  title       String
+  description String   @db.Text
+  ogImage     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("page_seo")
+}
+
 
 
