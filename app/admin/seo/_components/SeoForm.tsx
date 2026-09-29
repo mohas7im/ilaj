@@ -640,7 +640,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   <Input
                     id="siteUrl"
                     type="url"
-                    placeholder="https://ilajdental.com"
+                    placeholder="https://example.com"
                     {...commonForm.register("siteUrl")}
                     aria-invalid={!!commonForm.formState.errors.siteUrl}
                   />
@@ -663,7 +663,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   />
                   {commonForm.formState.errors.defaultTitle && <p className="text-xs text-destructive">{commonForm.formState.errors.defaultTitle.message}</p>}
                   <p className="text-xs text-muted-foreground">
-                    The Home page title (unless the Home page sets its own). Write it in full, including the clinic name, e.g. &ldquo;Ilaj Dental Care | Best Dentist in Lahore&rdquo;. Recommended: 30–60 characters.
+                    The Home page title (unless the Home page sets its own). Write it in full, including the clinic name, e.g. &ldquo;Clinic Name | Best Dentist in City&rdquo;. Recommended: 30–60 characters.
                   </p>
                 </div>
 

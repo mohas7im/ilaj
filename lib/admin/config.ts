@@ -19,9 +19,10 @@ import {
 // ============================================================
 //
 //  HOW TO REBRAND FOR A NEW CLIENT:
-//  1. Change ADMIN_BRANDING below (name, logo, description)
-//  2. Change brand colors in styles/admin/theme.css
-//  3. Replace public/admin/logo.svg + logo-mark.svg
+//  1. Set the clinic name in Admin → Settings (shown in the sidebar and login)
+//  2. Change ADMIN_BRANDING below (description, logo)
+//  3. Change brand colors in styles/admin/theme.css
+//  4. Replace public/admin/logo.svg + logo-mark.svg
 //
 //  Do NOT edit AdminSidebar or any other
 //  layout/dashboard component just to change client branding.
@@ -32,10 +33,6 @@ import {
 // Logo images: place SVG files in public/admin/ and update paths below.
 
 export const ADMIN_BRANDING = {
-  /** Full clinic / practice name */
-  name: "Ilaj Dental Care",
-  /** Short abbreviation used when the sidebar is collapsed */
-  shortName: "ID",
   /** Practice category shown under the name in the sidebar header */
   description: "Dental Practice Management",
   /** Path to full logo image — shown when sidebar is expanded */
@@ -160,11 +157,3 @@ export type AdminUser = {
   email: string
   avatar?: string
 }
-
-// ─── Legacy alias (kept for backward compat with existing imports) ─────────────
-/** @deprecated Use ADMIN_BRANDING instead */
-export const APP_CONFIG = {
-  name: ADMIN_BRANDING.name,
-  shortName: ADMIN_BRANDING.shortName,
-  description: ADMIN_BRANDING.description,
-} as const

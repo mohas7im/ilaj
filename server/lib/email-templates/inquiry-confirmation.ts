@@ -5,7 +5,8 @@ type Inquiry = {
   preferredTime: string | null;
 };
 
-export function buildConfirmationEmail(inquiry: Inquiry): string {
+// clinicName comes from Admin → Settings; "" leaves it out.
+export function buildConfirmationEmail(inquiry: Inquiry, clinicName: string): string {
   return `
     <!DOCTYPE html>
     <html>
@@ -14,7 +15,7 @@ export function buildConfirmationEmail(inquiry: Inquiry): string {
         <h2 style="color: #0f766e;">Thank you, ${inquiry.fullName}! 🦷</h2>
 
         <p style="font-size: 16px; line-height: 1.6;">
-          We have received your inquiry at <strong>Ilaj Dental Care</strong>.
+          We have received your inquiry${clinicName ? ` at <strong>${clinicName}</strong>` : ""}.
           Our team will contact you within <strong>24 hours</strong> to confirm your appointment.
         </p>
 
@@ -36,7 +37,7 @@ export function buildConfirmationEmail(inquiry: Inquiry): string {
 
         <p style="margin-top: 28px; color: #555; font-size: 14px;">
           If you have any urgent questions, feel free to call us directly.<br/>
-          <strong>Ilaj Dental Care Team</strong>
+          <strong>${clinicName ? `${clinicName} Team` : "Our Team"}</strong>
         </p>
 
       </body>

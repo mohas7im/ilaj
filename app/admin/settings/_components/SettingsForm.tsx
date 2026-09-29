@@ -17,6 +17,7 @@ import {
   MessageCircle,
 } from "lucide-react"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/admin/ui/card"
 import { Input } from "@/components/admin/ui/input"
 import { Textarea } from "@/components/admin/ui/textarea"
@@ -69,6 +70,7 @@ export function SettingsForm() {
 }
 
 function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettings }) {
+  const router = useRouter()
 
   const {
     register,
@@ -133,6 +135,8 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
         mapLink: updated.mapLink ?? "",
       })
       toast.success("Settings saved successfully!")
+      // Re-render the admin layout so the sidebar shows the new clinic name
+      router.refresh()
       window.scrollTo({ top: 0, behavior: "smooth" })
     } catch (err: unknown) {
       const msg = getApiErrorMessage(err, "Failed to update settings")

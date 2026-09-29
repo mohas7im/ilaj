@@ -6,13 +6,15 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { ShieldCheck, ArrowLeft, Loader2 } from "lucide-react"
 
 import { ADMIN_BRANDING } from "@/lib/admin/config"
+import { useAdminBranding } from "@/components/admin/layout/AdminBranding"
 import { Button } from "@/components/admin/ui/button"
 import { Label } from "@/components/admin/ui/label"
 
 function TwoFactorContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const emailParam = searchParams.get("email") || "admin@ilaj.com"
+  const emailParam = searchParams.get("email") ?? ""
+  const branding = useAdminBranding()
 
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""])
   const [loading, setLoading] = useState(false)
@@ -107,7 +109,7 @@ function TwoFactorContent() {
           {/* Background Photo */}
           <img
             src="/admin/login-showcase.jpg"
-            alt="Ilaj Dental Care"
+            alt=""
             className="absolute inset-0 h-full w-full object-cover brightness-90"
           />
 
@@ -117,11 +119,11 @@ function TwoFactorContent() {
           {/* Top Clinic Branding */}
           <div className="relative z-10 flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-bold shadow-xs">
-              {ADMIN_BRANDING.shortName}
+              {branding.shortName}
             </div>
             <div>
               <span className="text-sm font-semibold tracking-tight text-white block">
-                {ADMIN_BRANDING.name}
+                {branding.name}
               </span>
               <span className="text-xs text-white/70 block">
                 {ADMIN_BRANDING.description}
@@ -136,7 +138,7 @@ function TwoFactorContent() {
               <span className="font-normal">protecting your patient health records.</span>
             </h2>
             <p className="text-xs text-white/80 font-medium tracking-wide uppercase">
-              {ADMIN_BRANDING.name} — Protected Administration
+              {[branding.name, "Protected Administration"].filter(Boolean).join(" — ")}
             </p>
           </div>
         </div>
@@ -175,8 +177,12 @@ function TwoFactorContent() {
               Two-Factor Authentication
             </h1>
             <p className="text-sm text-muted-foreground">
-              Enter the 6-digit verification code from your authenticator app for{" "}
-              <span className="font-medium text-foreground">{emailParam}</span>
+              Enter the 6-digit verification code from your authenticator app
+              {emailParam && (
+                <>
+                  {" "}for <span className="font-medium text-foreground">{emailParam}</span>
+                </>
+              )}
             </p>
           </div>
 
@@ -239,7 +245,7 @@ function TwoFactorContent() {
         {/* Footer */}
         <div className="w-full max-w-sm mx-auto text-center">
           <p className="text-xs text-muted-foreground">
-            {ADMIN_BRANDING.name} • Clinic Administration
+            {[branding.name, "Clinic Administration"].filter(Boolean).join(" • ")}
           </p>
         </div>
       </div>

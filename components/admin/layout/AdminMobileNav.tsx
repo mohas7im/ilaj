@@ -5,7 +5,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, ChevronDown } from "lucide-react"
 
-import { NAV_GROUPS, ADMIN_BRANDING, type NavItem } from "@/lib/admin/config"
+import { NAV_GROUPS, type NavItem } from "@/lib/admin/config"
+import { useAdminBranding } from "./AdminBranding"
 import { Button } from "@/components/admin/ui/button"
 import {
   Sheet,
@@ -112,6 +113,7 @@ function MobileNavItem({
 
 export function AdminMobileNav() {
   const [open, setOpen] = useState(false)
+  const branding = useAdminBranding()
 
   return (
     <>
@@ -130,9 +132,9 @@ export function AdminMobileNav() {
           <SheetHeader className="border-b px-4 py-3">
             <SheetTitle className="flex items-center gap-2 text-base">
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-bold select-none">
-                {ADMIN_BRANDING.shortName}
+                {branding.shortName}
               </div>
-              {ADMIN_BRANDING.name}
+              {branding.name}
             </SheetTitle>
           </SheetHeader>
 

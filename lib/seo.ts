@@ -13,7 +13,7 @@ import { PAGE_OPTIONS, type CommonSeo } from "@/domain/seo/seo.types"
 type SiteSeo = {
   common: CommonSeo
   siteName: string
-  /** e.g. "https://ilajdental.com" (no trailing slash), "" when not configured */
+  /** e.g. "https://example.com" (no trailing slash), "" when not configured */
   baseUrl: string
 }
 

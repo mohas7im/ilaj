@@ -1,6 +1,6 @@
 export type ClinicSettings = {
   id?: string
-  clinicName?: string
+  clinicName: string
   tagline?: string
 
   // Contact Information

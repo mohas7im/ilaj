@@ -7,6 +7,7 @@ import { Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 
 import { ADMIN_BRANDING } from "@/lib/admin/config"
+import { useAdminBranding } from "@/components/admin/layout/AdminBranding"
 import { Button } from "@/components/admin/ui/button"
 import { Input } from "@/components/admin/ui/input"
 import {
@@ -23,9 +24,10 @@ import { getApiErrorMessage } from "@/lib/api/errors"
 
 export default function AdminLoginPage() {
   const router = useRouter()
+  const branding = useAdminBranding()
   const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState("admin@ilaj.com")
-  const [password, setPassword] = useState("AdminPassword123!")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -58,7 +60,7 @@ export default function AdminLoginPage() {
           {/* Background Photo */}
           <img
             src="/admin/login-showcase.jpg"
-            alt="Ilaj Dental Care"
+            alt=""
             className="absolute inset-0 h-full w-full object-cover brightness-90"
           />
 
@@ -68,11 +70,11 @@ export default function AdminLoginPage() {
           {/* Top Clinic Branding */}
           <div className="relative z-10 flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-bold shadow-xs">
-              {ADMIN_BRANDING.shortName}
+              {branding.shortName}
             </div>
             <div>
               <span className="text-sm font-semibold tracking-tight text-white block">
-                {ADMIN_BRANDING.name}
+                {branding.name}
               </span>
               <span className="text-xs text-white/70 block">
                 {ADMIN_BRANDING.description}
@@ -87,7 +89,7 @@ export default function AdminLoginPage() {
               <span className="font-normal">with gentle dental excellence.</span>
             </h2>
             <p className="text-xs text-white/80 font-medium tracking-wide uppercase">
-              {ADMIN_BRANDING.name} — Modern Dental Clinic
+              {[branding.name, "Modern Dental Clinic"].filter(Boolean).join(" — ")}
             </p>
           </div>
         </div>
@@ -99,9 +101,9 @@ export default function AdminLoginPage() {
         <div className="flex items-center justify-between w-full max-w-sm mx-auto">
           <div className="lg:hidden flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold">
-              {ADMIN_BRANDING.shortName}
+              {branding.shortName}
             </div>
-            <span className="text-sm font-semibold">{ADMIN_BRANDING.name}</span>
+            <span className="text-sm font-semibold">{branding.name}</span>
           </div>
 
           <Link
@@ -205,7 +207,7 @@ export default function AdminLoginPage() {
         {/* Footer */}
         <div className="w-full max-w-sm mx-auto text-center">
           <p className="text-xs text-muted-foreground">
-            {ADMIN_BRANDING.name} • Clinic Administration
+            {[branding.name, "Clinic Administration"].filter(Boolean).join(" • ")}
           </p>
         </div>
       </div>

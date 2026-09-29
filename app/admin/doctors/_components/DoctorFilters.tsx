@@ -22,21 +22,14 @@ export type DoctorFilterState = {
 type DoctorFiltersProps = {
   filters: DoctorFilterState
   onFiltersChange: (filters: DoctorFilterState) => void
-  specializations?: string[]
+  /** Distinct specializations of the saved doctors */
+  specializations: string[]
 }
 
 export function DoctorFilters({
   filters,
   onFiltersChange,
-  specializations = [
-    "Orthodontics",
-    "Periodontics",
-    "Endodontics",
-    "Prosthodontics",
-    "Oral & Maxillofacial Surgery",
-    "Cosmetic Dentistry",
-    "Pediatric Dentistry",
-  ],
+  specializations,
 }: DoctorFiltersProps) {
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

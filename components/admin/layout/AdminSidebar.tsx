@@ -19,6 +19,7 @@ import { ChangePasswordDialog } from "./ChangePasswordDialog"
 
 import { cn } from "@/lib/utils"
 import { ADMIN_BRANDING, NAV_GROUPS, type NavItem } from "@/lib/admin/config"
+import { useAdminBranding } from "./AdminBranding"
 import {
   Sidebar,
   SidebarContent,
@@ -180,6 +181,7 @@ function NavMenuItem({ item }: { item: NavItem }) {
 
 export function AdminSidebar() {
   const router = useRouter()
+  const branding = useAdminBranding()
   const { state } = useSidebar()
   const isCollapsed = state === "collapsed"
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null)
@@ -226,7 +228,7 @@ export function AdminSidebar() {
             >
               {/* Logo mark — always visible */}
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold select-none">
-                {ADMIN_BRANDING.shortName}
+                {branding.shortName}
               </div>
 
               {/* Brand name + toggle — only when expanded */}
@@ -234,7 +236,7 @@ export function AdminSidebar() {
                 <>
                   <div className="flex flex-col leading-tight overflow-hidden flex-1 min-w-0">
                     <span className="truncate text-sm font-semibold">
-                      {ADMIN_BRANDING.name}
+                      {branding.name}
                     </span>
                     <span className="truncate text-xs text-muted-foreground">
                       {ADMIN_BRANDING.description}

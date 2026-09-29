@@ -20,7 +20,7 @@ export const commonSeoSchema = z.object({
     .optional()
     .default("")
     .refine((value) => !value || /^https?:\/\/[^\s/]+$/.test(value.replace(/\/$/, "")), {
-      message: "Enter the full domain only, e.g. https://ilajdental.com",
+      message: "Enter the full domain only, e.g. https://example.com",
     }),
   defaultTitle: z.string().trim().optional().default(""),
   defaultDescription: z.string().trim().optional().default(""),
