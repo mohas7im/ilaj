@@ -6,11 +6,11 @@ const COMMON_SEO_SINGLETON_ID = "common_seo_singleton"
 
 // Shown the first time a fresh DB has no CommonSeo row yet.
 const DEFAULT_COMMON_SEO: Omit<CommonSeo, never> = {
-  siteName: "Ilaj Dental Clinic",
+  siteName: "Ilaj Dental Care",
   siteUrl: "https://ilajdental.com",
-  defaultTitle: "Ilaj Dental Clinic | Expert Dental Care",
+  defaultTitle: "Ilaj Dental Care | Expert Dental Care",
   defaultDescription:
-    "Ilaj Dental Clinic offers professional dental care including teeth cleaning, whitening, braces, implants and more in Lahore, Pakistan.",
+    "Ilaj Dental Care offers professional dental care including teeth cleaning, whitening, braces, implants and more in Lahore, Pakistan.",
   defaultOgImage: "",
   googleVerification: "",
 }

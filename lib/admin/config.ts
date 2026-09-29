@@ -33,7 +33,7 @@ import {
 
 export const ADMIN_BRANDING = {
   /** Full clinic / practice name */
-  name: "Ilaj Dental Clinic",
+  name: "Ilaj Dental Care",
   /** Short abbreviation used when the sidebar is collapsed */
   shortName: "ID",
   /** Practice category shown under the name in the sidebar header */

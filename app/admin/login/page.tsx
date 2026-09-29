@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
           {/* Background Photo */}
           <img
             src="/admin/login-showcase.jpg"
-            alt="Ilaj Dental Clinic"
+            alt="Ilaj Dental Care"
             className="absolute inset-0 h-full w-full object-cover brightness-90"
           />
 
