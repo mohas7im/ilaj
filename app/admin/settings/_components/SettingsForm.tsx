@@ -283,17 +283,17 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
               {errors.totalPatients && <p className="text-xs text-destructive">{errors.totalPatients.message}</p>}
             </div>
 
-            {/* Satisfaction */}
+            {/* Specialists */}
             <div className="space-y-2">
-              <Label htmlFor="satisfactionRate">
-                Patient Satisfaction <span className="text-destructive">*</span>
+              <Label htmlFor="specialists">
+                Specialists <span className="text-destructive">*</span>
               </Label>
               <Input
-                id="satisfactionRate"
-                {...register("satisfactionRate")}
-                aria-invalid={!!errors.satisfactionRate}
+                id="specialists"
+                {...register("specialists")}
+                aria-invalid={!!errors.specialists}
               />
-              {errors.satisfactionRate && <p className="text-xs text-destructive">{errors.satisfactionRate.message}</p>}
+              {errors.specialists && <p className="text-xs text-destructive">{errors.specialists.message}</p>}
             </div>
           </div>
         </CardContent>

@@ -10,7 +10,7 @@ export const settingsSchema = z.object({
 
   yearsOfExperience: z.string().min(1, "Years of experience is required"),
   totalPatients: z.string().min(1, "Total patients count is required"),
-  satisfactionRate: z.string().min(1, "Satisfaction rate is required"),
+  specialists: z.string().min(1, "Specialists count is required"),
 
   workingHoursWeekday: z.string().min(1, "Weekday working hours are required"),
   workingHoursSaturday: z.string().min(1, "Saturday working hours are required"),

@@ -14,7 +14,7 @@ export type ClinicSettings = {
   // Clinic Statistics / Highlights
   yearsOfExperience: string
   totalPatients: string
-  satisfactionRate: string
+  specialists: string
 
   // Working Hours & Schedule
   workingHoursWeekday: string

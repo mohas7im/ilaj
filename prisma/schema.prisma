@@ -173,7 +173,7 @@ model ClinicSettings {
   address              String   @db.Text
   yearsOfExperience    String
   totalPatients        String
-  satisfactionRate     String
+  specialists          String
   workingHoursWeekday  String
   workingHoursSaturday String
   sundayOpen           Boolean
