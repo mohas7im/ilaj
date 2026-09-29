@@ -3,11 +3,12 @@ import { z } from "zod"
 export const inquirySchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   phone: z.string().min(1, "Phone number is required"),
-  email: z.string().email("Valid email address is required"),
-  treatment: z.string().min(1, "Please select a treatment"),
-  preferredDate: z.string().min(1, "Preferred date is required"),
-  preferredTime: z.string().min(1, "Preferred time is required"),
-  message: z.string().min(1, "Message is required"),
+  // Optional fields: an empty string means "not provided".
+  email: z.union([z.literal(""), z.string().email("Enter a valid email address")]).optional().default(""),
+  treatment: z.string().optional().default(""),
+  preferredDate: z.string().optional().default(""),
+  preferredTime: z.string().optional().default(""),
+  message: z.string().optional().default(""),
   status: z.string().optional(),
 })
 

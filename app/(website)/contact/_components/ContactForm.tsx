@@ -34,17 +34,12 @@ const formSchema = z.object({
     .string()
     .min(1, "Phone number is required")
     .regex(/^[+]?[\d\s\-().]{7,15}$/, "Enter a valid phone number"),
-  email: z
-    .string()
-    .min(1, "Email address is required")
-    .email("Enter a valid email address"),
-  treatment: z.string().min(1, "Please select a treatment"),
-  preferredDate: z.string().min(1, "Please select a preferred date"),
-  preferredTime: z.string().min(1, "Please select a preferred time"),
-  message: z
-    .string()
-    .min(1, "Message is required")
-    .min(10, "Message must be at least 10 characters"),
+  // Everything below is optional — only name and phone are required.
+  email: z.union([z.literal(""), z.string().email("Enter a valid email address")]),
+  treatment: z.string(),
+  preferredDate: z.string(),
+  preferredTime: z.string(),
+  message: z.string(),
 });
 
 type FormFields = z.infer<typeof formSchema>;
