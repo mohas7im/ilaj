@@ -6,29 +6,45 @@ import SectionTitle, { Highlight } from "@/components/website/common/SectionTitl
 import SectionDescription from "@/components/website/common/SectionDescription";
 import CardTitle from "@/components/website/common/CardTitle";
 import CardText from "@/components/website/common/CardText";
+import { getOpeningHours, getSettings, toTelLink } from "@/lib/data/settings";
 
-const CONTACT_INFO = [
-  {
-    title: "Email",
-    lines: ["contact@ilajdentalcare.com"],
-    href: "mailto:contact@ilajdentalcare.com",
-  },
-  {
-    title: "Phone",
-    lines: ["+91 97265 37777"],
-    href: "tel:+919726537777",
-  },
-  {
-    title: "Location",
-    lines: ["Ilaj Dental Care", "Edarikode-Panthakkal Kund Rd,", "Kottakkal, Kerala", "India"],
-  },
-  {
-    title: "Opening Hours",
-    lines: ["Mon – Sat: 9:00 AM – 8:00 PM", "Sunday: Closed"],
-  },
-];
+// Contact details come from admin settings; refresh at most every 5 minutes.
+export const revalidate = 300;
 
-export default function ContactPage() {
+type ContactLine = { text: string; href?: string };
+
+export default async function ContactPage() {
+  const [settings, openingHours] = await Promise.all([getSettings(), getOpeningHours()]);
+
+  const contactInfo: { title: string; lines: ContactLine[] }[] = [
+    {
+      title: "Email",
+      lines: [settings.primaryEmail, settings.secondaryEmail]
+        .filter(Boolean)
+        .map((email) => ({ text: email, href: `mailto:${email}` })),
+    },
+    {
+      title: "Phone",
+      lines: [settings.phone1, settings.phone2]
+        .filter(Boolean)
+        .map((phone) => ({ text: phone, href: toTelLink(phone) })),
+    },
+    {
+      title: "Location",
+      lines: settings.address.split("\n").filter((line) => line.trim()).map((text) => ({ text })),
+    },
+    {
+      title: "Opening Hours",
+      lines: openingHours.map((text) => ({ text })),
+    },
+  ].filter((item) => item.lines.length > 0);
+
+  // Admin pastes the Google Maps "Embed a map" src; anything else (a share link,
+  // or a non-Google URL we must not iframe) falls back to a search on the address.
+  const mapSrc = settings.mapLink.startsWith("https://www.google.com/maps/embed")
+    ? settings.mapLink
+    : `https://www.google.com/maps?q=${encodeURIComponent(settings.address.replace(/\n/g, ", "))}&output=embed`;
+
   return (
     <main className="w-full bg-white pt-20 text-zinc-950">
 
@@ -81,25 +97,25 @@ export default function ContactPage() {
 
               {/* Contact Information */}
               <div className="space-y-6 lg:col-span-3">
-                {CONTACT_INFO.map((item) => (
+                {contactInfo.map((item) => (
                   <div key={item.title}>
                     <CardTitle as="h2" size="sm">
                       {item.title}
                     </CardTitle>
 
                     <CardText className="mt-1">
-                      {item.href ? (
-                        <a href={item.href} className="hover:text-brand">
-                          {item.lines[0]}
-                        </a>
-                      ) : (
-                        item.lines.map((line, i) => (
-                          <span key={line}>
-                            {i > 0 && <br />}
-                            {line}
-                          </span>
-                        ))
-                      )}
+                      {item.lines.map((line, i) => (
+                        <span key={i}>
+                          {i > 0 && <br />}
+                          {line.href ? (
+                            <a href={line.href} className="hover:text-brand">
+                              {line.text}
+                            </a>
+                          ) : (
+                            line.text
+                          )}
+                        </span>
+                      ))}
                     </CardText>
                   </div>
                 ))}
@@ -120,8 +136,8 @@ export default function ContactPage() {
             {/* Google Map */}
             <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200">
               <iframe
-                title="Ilaj Dental Care Location"
-                src="https://www.google.com/maps?q=Ilaj%20Dental%20Care%20Kottakkal%20Kerala&output=embed"
+                title={`${settings.clinicName || "Clinic"} Location`}
+                src={mapSrc}
                 className="h-80 w-full border-0 sm:h-96 lg:h-104"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

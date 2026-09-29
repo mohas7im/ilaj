@@ -9,26 +9,11 @@ import SectionDescription from "@/components/website/common/SectionDescription";
 import StatsList from "@/components/website/common/StatsList";
 import CardTitle from "@/components/website/common/CardTitle";
 import CardText from "@/components/website/common/CardText";
+import { getClinicStats } from "@/lib/data/settings";
 
-const STATS = [
-  {
-    label: "Years of Experience",
-    value: "10+",
-    description: "Clinical excellence.",
-  },
-  {
-    label: "Patients",
-    value: "5000+",
-    description: "Happy smiles treated.",
-  },
-  {
-    label: "Specialists",
-    value: "15",
-    description: "Across all dental fields.",
-  },
-];
+export default async function OurStorySection() {
+  const stats = await getClinicStats();
 
-export default function OurStorySection() {
   return (
     <Section>
 
@@ -91,7 +76,7 @@ export default function OurStorySection() {
         ====================================================== */}
         <div className="mt-14 flex flex-col gap-10 lg:mt-16 lg:flex-row lg:items-end lg:justify-between">
 
-          <StatsList stats={STATS} className="lg:w-2/3" />
+          <StatsList stats={stats} className="lg:w-2/3" />
 
           <Link href="/treatments" className="shrink-0">
             <Button variant="primary">

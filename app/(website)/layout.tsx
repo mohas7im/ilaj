@@ -5,6 +5,8 @@ import Navbar from "@/components/website/layout/Navbar";
 import Footer from "@/components/website/layout/Footer";
 import SmoothScroll from "@/components/website/layout/SmoothScroll";
 import PageTransition from "@/components/website/layout/PageTransition";
+import WhatsAppButton from "@/components/website/layout/WhatsAppButton";
+import { getSettings } from "@/lib/data/settings";
 import "@/styles/website/theme.css";
 
 // Website root layout — owns <html>/<body>, fonts and the website stylesheet.
@@ -29,11 +31,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return generateRootMetadata();
 }
 
-export default function WebsiteRootLayout({
+export default async function WebsiteRootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSettings();
+
   return (
     <html
       lang="en"
@@ -42,9 +46,10 @@ export default function WebsiteRootLayout({
     >
       <body className="min-h-full flex flex-col relative">
         <SmoothScroll />
-        <Navbar />
+        <Navbar clinicName={settings.clinicName || "Ilaj"} />
         <PageTransition>{children}</PageTransition>
         <Footer />
+        <WhatsAppButton />
       </body>
     </html>
   );

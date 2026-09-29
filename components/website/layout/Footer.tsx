@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { getSettings } from "@/lib/data/settings";
+import { getSettings, toTelLink, toWhatsAppLink } from "@/lib/data/settings";
 import MetaText from "@/components/website/common/MetaText";
 import BackToTopButton from "./BackToTopButton";
 
@@ -60,16 +60,6 @@ const SOCIAL_LINKS = (settings: Awaited<ReturnType<typeof getSettings>>) =>
   ].filter((link): link is typeof link & { href: string } => Boolean(link.href));
 
 const linkClass = "text-white/80 transition-colors duration-200 hover:text-white";
-
-// Digits-only, so a number stored as "+91 90485 81112" still forms a valid wa.me link.
-function toWhatsAppLink(number: string) {
-  return `https://wa.me/${number.replace(/[^\d]/g, "")}`;
-}
-
-// tel: links reject spaces in some dialers; keep the leading "+" but strip the rest.
-function toTelLink(number: string) {
-  return `tel:${number.replace(/[^\d+]/g, "")}`;
-}
 
 /**
  * Site footer: a hairline-divided social list, three link columns

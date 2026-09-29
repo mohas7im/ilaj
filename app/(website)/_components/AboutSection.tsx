@@ -6,26 +6,11 @@ import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
 import SectionDescription from "@/components/website/common/SectionDescription";
 import StatsList from "@/components/website/common/StatsList";
+import { getClinicStats } from "@/lib/data/settings";
 
-const STATS = [
-  {
-    label: "Years of Experience",
-    value: "10+",
-    description: "Clinical excellence.",
-  },
-  {
-    label: "Patients",
-    value: "5000+",
-    description: "Happy smiles treated.",
-  },
-  {
-    label: "Specialists",
-    value: "15",
-    description: "Across all dental fields.",
-  },
-];
+export default async function AboutSection() {
+  const stats = await getClinicStats();
 
-export default function AboutSection() {
   return (
     <Section>
 
@@ -82,7 +67,7 @@ export default function AboutSection() {
 
           {/* Stats */}
           <div className="lg:col-span-5">
-            <StatsList stats={STATS} />
+            <StatsList stats={stats} />
           </div>
 
         </div>

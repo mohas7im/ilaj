@@ -16,7 +16,7 @@ const NAV_LINKS = [
   { name: "Contact", href: "/contact" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ clinicName }: { clinicName: string }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -47,7 +47,7 @@ export default function Navbar() {
           <Link
             href="/"
             className="flex items-center gap-3 shrink-0"
-            aria-label="Ilaj — Home"
+            aria-label={`${clinicName} — Home`}
           >
             <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-brand text-white font-bold text-lg leading-none shadow-sm">
               C
@@ -58,7 +58,7 @@ export default function Navbar() {
                 solid ? "text-zinc-950" : "text-white"
               )}
             >
-              Ilaj
+              {clinicName}
             </span>
           </Link>
 
