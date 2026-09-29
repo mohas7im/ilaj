@@ -43,6 +43,9 @@ model Service {
   imageAlt          String?
   secondaryImage    String?  @db.Text
   secondaryImageAlt String?
+  // Optional SEO overrides for the treatment page; empty → name / description
+  metaTitle         String?
+  metaDescription   String?  @db.Text
   status            String   @default("active")
   displayOrder      Int      @default(1)
   showInHomePage    Boolean  @default(false)

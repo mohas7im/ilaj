@@ -72,6 +72,8 @@ export async function PUT(req: NextRequest, { params }: Props) {
         ...(formData.has("imageAlt") && { imageAlt: formData.get("imageAlt") || null }),
         ...(secondaryImageUrl !== undefined && { secondaryImage: secondaryImageUrl }),
         ...(formData.has("secondaryImageAlt") && { secondaryImageAlt: formData.get("secondaryImageAlt") || null }),
+        ...(formData.has("metaTitle") && { metaTitle: formData.get("metaTitle") || null }),
+        ...(formData.has("metaDescription") && { metaDescription: formData.get("metaDescription") || null }),
         ...(formData.has("faqs") && { faqs: parseJsonField(formData.get("faqs")) }),
       }
     } else {

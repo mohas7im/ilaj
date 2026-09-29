@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getCommonSeo, updateCommonSeo } from "@/server/services/seo.service"
 import { commonSeoSchema } from "@/domain/seo/seo.schema"
 import { saveUploadedFile } from "@/server/lib/storage"
+import { OG_IMAGE_TYPES } from "@/domain/seo/seo.types"
 import { requireAdmin } from "@/lib/auth/require-admin"
 
 // GET /api/admin/seo — return global / common SEO configuration
@@ -28,6 +29,12 @@ export async function PUT(req: Request) {
 
       let ogImageUrl: string | null = null
       if (ogImageFile && typeof ogImageFile === "object" && "arrayBuffer" in ogImageFile && (ogImageFile as File).size > 0) {
+        if (!OG_IMAGE_TYPES.includes((ogImageFile as File).type)) {
+          return NextResponse.json(
+            { error: "Share images must be JPG, PNG or WebP" },
+            { status: 400 }
+          )
+        }
         ogImageUrl = await saveUploadedFile(ogImageFile as File, "seo")
       } else if (typeof ogImageFile === "string" && ogImageFile.trim()) {
         ogImageUrl = ogImageFile

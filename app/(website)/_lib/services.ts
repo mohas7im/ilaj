@@ -16,6 +16,9 @@ export type WebsiteService = {
   /** Empty until uploaded in admin */
   secondaryImage: string;
   secondaryImageAlt: string;
+  /** Optional SEO overrides; empty → title / description */
+  metaTitle: string;
+  metaDescription: string;
 };
 
 function toWebsiteService(service: Service, index: number): WebsiteService {
@@ -30,6 +33,8 @@ function toWebsiteService(service: Service, index: number): WebsiteService {
     imageAlt: service.imageAlt || service.name,
     secondaryImage: service.secondaryImage ?? "",
     secondaryImageAlt: service.secondaryImageAlt || service.name,
+    metaTitle: service.metaTitle ?? "",
+    metaDescription: service.metaDescription ?? "",
   };
 }
 

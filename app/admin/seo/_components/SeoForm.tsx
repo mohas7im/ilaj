@@ -35,7 +35,7 @@ import {
   SelectValue,
 } from "@/components/admin/ui/select"
 import type { CommonSeo, PageSeo } from "@/domain/seo/seo.types"
-import { PAGE_OPTIONS } from "@/domain/seo/seo.types"
+import { PAGE_OPTIONS, OG_IMAGE_TYPES } from "@/domain/seo/seo.types"
 import { commonSeoSchema, pageSeoSchema, type CommonSeoFormData, type PageSeoFormData } from "@/domain/seo/seo.schema"
 import { seoApiService } from "../_services/seo.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
@@ -95,8 +95,9 @@ function OgImageUploader({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select a valid image file")
+    // Facebook / WhatsApp / X don't show SVG or GIF share images
+    if (!OG_IMAGE_TYPES.includes(file.type)) {
+      toast.error("Please choose a JPG, PNG or WebP image")
       return
     }
     onFileSelect?.(file)
@@ -125,7 +126,7 @@ function OgImageUploader({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept={OG_IMAGE_TYPES.join(",")}
           className="hidden"
           onChange={handleFileChange}
           disabled={isSubmitting}
@@ -414,9 +415,15 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
   const commonWatch = commonForm.watch()
   const pageWatch = pageForm.watch()
 
-  const effectiveTitle = selectedPage === "common"
-    ? commonWatch.defaultTitle || ""
-    : pageWatch.title || commonWatch.defaultTitle || ""
+  const pageOption = PAGE_OPTIONS.find((p) => p.value === selectedPage)
+  const isHomePage = pageOption?.path === "/"
+  const siteName = commonWatch.siteName || ""
+
+  // The title Google shows, built the same way as lib/seo.ts: the home page
+  // uses its title as-is, other pages get " | <Site Name>" appended.
+  const effectiveTitle = selectedPage === "common" || isHomePage
+    ? (isHomePage && pageWatch.title) || commonWatch.defaultTitle || siteName
+    : [pageWatch.title || pageOption?.label || "", siteName].filter(Boolean).join(" | ")
   const effectiveDesc = selectedPage === "common"
     ? commonWatch.defaultDescription || ""
     : pageWatch.description || commonWatch.defaultDescription || ""
@@ -424,7 +431,6 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
     ? commonWatch.defaultOgImage || ""
     : pageWatch.ogImage || commonWatch.defaultOgImage || ""
 
-  const pageOption = PAGE_OPTIONS.find((p) => p.value === selectedPage)
   const canonicalUrl =
     selectedPage === "common"
       ? commonWatch.siteUrl || ""
@@ -450,12 +456,12 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
         },
         {
           label: "Default SEO title length",
-          pass: (commonWatch.defaultTitle?.length || 0) >= 50 && (commonWatch.defaultTitle?.length || 0) <= 60,
-          warning: (commonWatch.defaultTitle?.length || 0) > 0 && ((commonWatch.defaultTitle?.length || 0) < 50 || (commonWatch.defaultTitle?.length || 0) > 60),
+          pass: (commonWatch.defaultTitle?.length || 0) >= 30 && (commonWatch.defaultTitle?.length || 0) <= 60,
+          warning: (commonWatch.defaultTitle?.length || 0) > 0 && ((commonWatch.defaultTitle?.length || 0) < 30 || (commonWatch.defaultTitle?.length || 0) > 60),
           message: !commonWatch.defaultTitle
             ? "No title entered"
-            : commonWatch.defaultTitle.length < 50
-            ? "Too short — aim for 50–60 characters"
+            : commonWatch.defaultTitle.length < 30
+            ? "Too short — aim for 30–60 characters"
             : commonWatch.defaultTitle.length > 60
             ? "Too long — trim to 60 characters"
             : undefined,
@@ -468,12 +474,12 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
         },
         {
           label: "Default meta description length",
-          pass: (commonWatch.defaultDescription?.length || 0) >= 150 && (commonWatch.defaultDescription?.length || 0) <= 160,
-          warning: (commonWatch.defaultDescription?.length || 0) > 0 && ((commonWatch.defaultDescription?.length || 0) < 150 || (commonWatch.defaultDescription?.length || 0) > 160),
+          pass: (commonWatch.defaultDescription?.length || 0) >= 120 && (commonWatch.defaultDescription?.length || 0) <= 160,
+          warning: (commonWatch.defaultDescription?.length || 0) > 0 && ((commonWatch.defaultDescription?.length || 0) < 120 || (commonWatch.defaultDescription?.length || 0) > 160),
           message: !commonWatch.defaultDescription
             ? "No description entered"
-            : commonWatch.defaultDescription.length < 150
-            ? "Too short — aim for 150–160 characters"
+            : commonWatch.defaultDescription.length < 120
+            ? "Too short — aim for 120–160 characters"
             : commonWatch.defaultDescription.length > 160
             ? "Too long — trim to 160 characters"
             : undefined,
@@ -485,63 +491,59 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
           message: commonWatch.defaultOgImage ? undefined : "Upload a default social sharing image",
         },
       ]
+    // Every page field is optional: empty falls back to the defaults, so it
+    // only gets advice (never a warning) when something has been typed.
     : [
         {
-          label: "SEO title configured",
-          pass: Boolean(effectiveTitle),
-          warning: !pageWatch.title && Boolean(commonWatch.defaultTitle),
+          label: "SEO title",
+          pass: true,
           message: pageWatch.title
             ? undefined
-            : commonWatch.defaultTitle
-            ? "Using global default title"
-            : "No title — enter a page title or configure a global default",
+            : isHomePage
+            ? "Optional — using the default SEO title"
+            : `Optional — using the page name “${pageOption?.label ?? ""}”`,
+        },
+        ...(pageWatch.title
+          ? [{
+              label: "Full title length",
+              pass: effectiveTitle.length >= 30 && effectiveTitle.length <= 60,
+              warning: effectiveTitle.length < 30 || effectiveTitle.length > 60,
+              message: effectiveTitle.length < 30
+                ? "A bit short — 30–60 characters works best"
+                : effectiveTitle.length > 60
+                ? "Google may cut it off after 60 characters"
+                : undefined,
+            }]
+          : []),
+        {
+          label: "Meta description",
+          pass: true,
+          message: pageWatch.description ? undefined : "Optional — using the default description",
+        },
+        ...(pageWatch.description
+          ? [{
+              label: "Meta description length",
+              pass: effectiveDesc.length >= 120 && effectiveDesc.length <= 160,
+              warning: effectiveDesc.length < 120 || effectiveDesc.length > 160,
+              message: effectiveDesc.length < 120
+                ? "A bit short — 120–160 characters works best"
+                : effectiveDesc.length > 160
+                ? "Google may cut it off after 160 characters"
+                : undefined,
+            }]
+          : []),
+        {
+          label: "OG image",
+          pass: true,
+          message: pageWatch.ogImage ? undefined : "Optional — using the default share image",
         },
         {
-          label: "SEO title length",
-          pass: effectiveTitle.length >= 50 && effectiveTitle.length <= 60,
-          warning: effectiveTitle.length > 0 && (effectiveTitle.length < 50 || effectiveTitle.length > 60),
-          message: effectiveTitle.length < 50
-            ? "Too short — aim for 50–60 characters"
-            : effectiveTitle.length > 60
-            ? "Too long — trim to 60 characters"
-            : undefined,
-        },
-        {
-          label: "Meta description configured",
-          pass: Boolean(effectiveDesc),
-          warning: !pageWatch.description && Boolean(commonWatch.defaultDescription),
-          message: pageWatch.description
-            ? undefined
-            : commonWatch.defaultDescription
-            ? "Using global default description"
-            : "No description — enter a page description or configure a global default",
-        },
-        {
-          label: "Meta description length",
-          pass: effectiveDesc.length >= 150 && effectiveDesc.length <= 160,
-          warning: effectiveDesc.length > 0 && (effectiveDesc.length < 150 || effectiveDesc.length > 160),
-          message: effectiveDesc.length < 150
-            ? "Too short — aim for 150–160 characters"
-            : effectiveDesc.length > 160
-            ? "Too long — trim to 160 characters"
-            : undefined,
-        },
-        {
-          label: "Canonical URL generated",
+          label: "Canonical URL",
           pass: Boolean(commonWatch.siteUrl),
+          warning: !commonWatch.siteUrl,
           message: commonWatch.siteUrl
             ? canonicalUrl
-            : "Configure the Site URL in Common SEO to generate canonical URLs",
-        },
-        {
-          label: "OG image configured",
-          pass: Boolean(effectiveOg),
-          warning: !pageWatch.ogImage && Boolean(commonWatch.defaultOgImage),
-          message: pageWatch.ogImage
-            ? undefined
-            : commonWatch.defaultOgImage
-            ? "Using global default OG image"
-            : "No OG image — upload one or set a global default",
+            : "Set the Site URL in Common SEO",
         },
       ]
 
@@ -627,6 +629,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                     aria-invalid={!!commonForm.formState.errors.siteName}
                   />
                   {commonForm.formState.errors.siteName && <p className="text-xs text-destructive">{commonForm.formState.errors.siteName.message}</p>}
+                  <p className="text-xs text-muted-foreground">Added to the end of every page title, e.g. &ldquo;About | {commonWatch.siteName || "Clinic Name"}&rdquo;.</p>
                 </div>
 
                 {/* Site URL */}
@@ -637,10 +640,12 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   <Input
                     id="siteUrl"
                     type="url"
+                    placeholder="https://ilajdental.com"
                     {...commonForm.register("siteUrl")}
                     aria-invalid={!!commonForm.formState.errors.siteUrl}
                   />
                   {commonForm.formState.errors.siteUrl && <p className="text-xs text-destructive">{commonForm.formState.errors.siteUrl.message}</p>}
+                  <p className="text-xs text-muted-foreground">The live domain, starting with https://. Used for canonical URLs, share links and the sitemap.</p>
                 </div>
 
                 {/* Default SEO Title */}
@@ -649,7 +654,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                     <Label htmlFor="defaultTitle">
                       Default SEO Title
                     </Label>
-                    <CharCounter value={commonWatch.defaultTitle || ""} min={50} max={60} />
+                    <CharCounter value={commonWatch.defaultTitle || ""} min={30} max={60} />
                   </div>
                   <Input
                     id="defaultTitle"
@@ -657,21 +662,23 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                     aria-invalid={!!commonForm.formState.errors.defaultTitle}
                   />
                   {commonForm.formState.errors.defaultTitle && <p className="text-xs text-destructive">{commonForm.formState.errors.defaultTitle.message}</p>}
-                  <p className="text-xs text-muted-foreground">Recommended: 50–60 characters.</p>
+                  <p className="text-xs text-muted-foreground">
+                    The Home page title (unless the Home page sets its own). Write it in full, including the clinic name, e.g. &ldquo;Ilaj Dental Care | Best Dentist in Lahore&rdquo;. Recommended: 30–60 characters.
+                  </p>
                 </div>
 
                 {/* Default Meta Description */}
                 <div className="space-y-1.5 sm:col-span-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="defaultDescription">Default Meta Description</Label>
-                    <CharCounter value={commonWatch.defaultDescription || ""} min={150} max={160} />
+                    <CharCounter value={commonWatch.defaultDescription || ""} min={120} max={160} />
                   </div>
                   <Textarea
                     id="defaultDescription"
                     {...commonForm.register("defaultDescription")}
                     rows={3}
                   />
-                  <p className="text-xs text-muted-foreground">Recommended: 150–160 characters.</p>
+                  <p className="text-xs text-muted-foreground">Used by any page without its own description. Recommended: 120–160 characters.</p>
                 </div>
               </div>
 
@@ -710,7 +717,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   {...commonForm.register("googleVerification")}
                 />
                 <p className="text-xs text-muted-foreground">
-                  The content value from the Google verification meta tag.
+                  In Search Console choose the &ldquo;HTML tag&rdquo; method, then paste the whole tag or just its code. Leave empty if you verified another way (e.g. DNS).
                 </p>
               </div>
             </CardContent>
@@ -741,19 +748,19 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="pageTitle">SEO Title</Label>
-                  <CharCounter value={pageWatch.title || ""} min={50} max={60} />
+                  <CharCounter value={pageWatch.title ? effectiveTitle : ""} min={30} max={60} />
                 </div>
                 <Input
                   id="pageTitle"
+                  placeholder={isHomePage ? commonWatch.defaultTitle : pageOption?.label}
                   {...pageForm.register("title")}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Recommended: 50–60 characters.{" "}
-                  {!pageWatch.title && commonWatch.defaultTitle && (
-                    <span className="text-yellow-600 dark:text-yellow-500">
-                      Empty → using global default: &ldquo;{commonWatch.defaultTitle}&rdquo;
-                    </span>
-                  )}
+                  {isHomePage
+                    ? "Shown exactly as written — include the clinic name. "
+                    : "Don’t include the clinic name — it’s added automatically. "}
+                  Google shows: <span className="text-foreground">&ldquo;{effectiveTitle}&rdquo;</span>{" "}
+                  (30–60 characters in total).
                 </p>
               </div>
 
@@ -761,7 +768,7 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="pageDescription">Meta Description</Label>
-                  <CharCounter value={pageWatch.description || ""} min={150} max={160} />
+                  <CharCounter value={pageWatch.description || ""} min={120} max={160} />
                 </div>
                 <Textarea
                   id="pageDescription"
@@ -769,10 +776,10 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                   rows={3}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Recommended: 150–160 characters.{" "}
+                  Recommended: 120–160 characters.{" "}
                   {!pageWatch.description && commonWatch.defaultDescription && (
-                    <span className="text-yellow-600 dark:text-yellow-500">
-                      Empty → using global default description.
+                    <span>
+                      Optional — empty uses the default description.
                     </span>
                   )}
                 </p>
@@ -799,8 +806,8 @@ function SeoFormFields({ initialCommonSeo, initialPageSeoMap }: SeoFormProps) {
                 <p className="text-xs text-muted-foreground">
                   Social sharing image for this page.{" "}
                   {!pageWatch.ogImage && commonWatch.defaultOgImage && (
-                    <span className="text-yellow-600 dark:text-yellow-500">
-                      Empty → using global default OG image.
+                    <span>
+                      Optional — empty uses the default OG image.
                     </span>
                   )}
                 </p>

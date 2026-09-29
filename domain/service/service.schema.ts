@@ -17,6 +17,9 @@ export const serviceSchema = z.object({
   imageAlt: z.string().optional().nullable(),
   secondaryImage: z.string().optional().nullable(),
   secondaryImageAlt: z.string().optional().nullable(),
+  // Optional SEO overrides; empty falls back to name / description
+  metaTitle: z.string().trim().optional().nullable(),
+  metaDescription: z.string().trim().optional().nullable(),
   // The full list in display order; replaces the saved FAQs. Omit to keep them.
   faqs: z.array(serviceFaqSchema).max(50, "Too many FAQs").optional(),
 })

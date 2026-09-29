@@ -27,6 +27,11 @@ export type PageOption = {
   path: string
 }
 
+// ─── Share image formats ────────────────────────────────────────────────────────
+// Social apps (Facebook, WhatsApp, X) don't show SVG or GIF share images.
+
+export const OG_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"]
+
 // ─── Batch shape (common + every page in one call) ────────────────────────────
 
 export type AllSeo = {
@@ -34,13 +39,16 @@ export type AllSeo = {
   pages: Record<string, PageSeo>
 }
 
+// Public pages with their own admin-editable SEO. `value` is the database key
+// (the treatments list keeps its old "services" key so saved data survives).
+// Treatment detail pages are edited in each Service's form instead.
 export const PAGE_OPTIONS: PageOption[] = [
-  { value: "home",         label: "Home",           path: "/" },
-  { value: "about",        label: "About",           path: "/about" },
-  { value: "services",     label: "Services",        path: "/services" },
-  { value: "doctors",      label: "Doctors",         path: "/doctors" },
-  { value: "gallery",      label: "Gallery",         path: "/gallery" },
-  { value: "testimonials", label: "Testimonials",    path: "/testimonials" },
-  { value: "why-choose-us",label: "Why Choose Us",   path: "/why-choose-us" },
-  { value: "contact",      label: "Contact",         path: "/contact" },
+  { value: "home",          label: "Home",          path: "/" },
+  { value: "about",         label: "About",         path: "/about" },
+  { value: "services",      label: "Treatments",    path: "/treatments" },
+  { value: "doctors",       label: "Doctors",       path: "/doctors" },
+  { value: "gallery",       label: "Clinic Gallery", path: "/gallery" },
+  { value: "smile-gallery", label: "Smile Gallery", path: "/smile-gallery" },
+  { value: "testimonials",  label: "Testimonials",  path: "/testimonials" },
+  { value: "contact",       label: "Contact",       path: "/contact" },
 ]

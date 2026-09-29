@@ -108,6 +108,8 @@ function ServiceFormFields({
       imageAlt: initialData?.imageAlt ?? "",
       secondaryImage: initialData?.secondaryImage ?? "",
       secondaryImageAlt: initialData?.secondaryImageAlt ?? "",
+      metaTitle: initialData?.metaTitle ?? "",
+      metaDescription: initialData?.metaDescription ?? "",
     },
   })
 
@@ -177,6 +179,9 @@ function ServiceFormFields({
       formData.append("showInHomePage", String(data.showInHomePage))
       if (data.imageAlt) formData.append("imageAlt", data.imageAlt)
       if (data.secondaryImageAlt) formData.append("secondaryImageAlt", data.secondaryImageAlt)
+      // Always sent, so clearing a field falls back to the name / description again
+      formData.append("metaTitle", data.metaTitle ?? "")
+      formData.append("metaDescription", data.metaDescription ?? "")
 
       if (primaryFile) {
         formData.append("image", primaryFile)
@@ -462,6 +467,60 @@ function ServiceFormFields({
                     {...register("secondaryImageAlt")}
                   />
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Search Engine (SEO) */}
+          <div className="space-y-3 pt-2">
+            <div>
+              <Label className="text-sm font-semibold">Search Engine (SEO)</Label>
+              <p className="text-xs text-muted-foreground">
+                Optional. Leave empty to use the service name and description.
+              </p>
+            </div>
+
+            <div className="grid gap-4">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor="metaTitle">SEO Title</Label>
+                  <span className="text-xs tabular-nums text-muted-foreground">
+                    {(watch("metaTitle") || "").length} / 40 chars
+                  </span>
+                </div>
+                <Input
+                  id="metaTitle"
+                  placeholder={watch("name") ? `e.g. ${watch("name")} in Lahore` : undefined}
+                  {...register("metaTitle")}
+                  aria-invalid={!!errors.metaTitle}
+                />
+                <p className="text-xs text-muted-foreground">
+                  The clinic name is added automatically at the end — don&apos;t include it.
+                </p>
+                {errors.metaTitle && (
+                  <p className="mt-1 text-xs text-destructive">{errors.metaTitle.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor="metaDescription">Meta Description</Label>
+                  <span className="text-xs tabular-nums text-muted-foreground">
+                    {(watch("metaDescription") || "").length} / 160 chars
+                  </span>
+                </div>
+                <Textarea
+                  id="metaDescription"
+                  rows={2}
+                  {...register("metaDescription")}
+                  aria-invalid={!!errors.metaDescription}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Shown under the title in Google results. Aim for 120–160 characters.
+                </p>
+                {errors.metaDescription && (
+                  <p className="mt-1 text-xs text-destructive">{errors.metaDescription.message}</p>
+                )}
               </div>
             </div>
           </div>

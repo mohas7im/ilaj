@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import AppointmentCTA from "../../_components/AppointmentCTA";
 import { getWebsiteService, getWebsiteServices } from "../../_lib/services";
 import { getTreatmentFaqs } from "../../_lib/faqs";
+import { generateTreatmentMetadata } from "@/lib/seo";
 import ServiceDetails from "../_components/ServiceDetails";
 
 // Rebuilt in the background at most every 5 minutes, so admin edits show up
@@ -23,10 +24,7 @@ export async function generateMetadata({ params }: ServiceDetailPageProps): Prom
   const result = await getWebsiteService(slug);
   if (!result) return {};
 
-  return {
-    title: result.service.title,
-    description: result.service.description,
-  };
+  return generateTreatmentMetadata(result.service);
 }
 
 export default async function ServiceDetailPage({

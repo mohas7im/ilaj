@@ -7,9 +7,15 @@ import DoctorsSection from "./_components/DoctorsSection";
 import GallerySection from "./_components/GallerySection";
 import TestimonialsSection from "./_components/TestimonialsSection";
 import FaqSection from "./_components/FaqSection";
+import { generatePageMetadata } from "@/lib/seo";
 
 // Services, FAQs and testimonials come from the admin database; refresh at most every 5 minutes.
 export const revalidate = 300;
+
+// Title, description and share image come from admin → SEO.
+export async function generateMetadata() {
+  return generatePageMetadata("home");
+}
 
 export default function HomePage() {
   return (

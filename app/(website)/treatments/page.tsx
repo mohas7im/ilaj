@@ -4,9 +4,15 @@ import SectionTitle, { Highlight } from "@/components/website/common/SectionTitl
 import ServiceList from "../_components/ServiceList";
 import AppointmentCTA from "../_components/AppointmentCTA";
 import { getWebsiteServices } from "../_lib/services";
+import { generatePageMetadata } from "@/lib/seo";
 
 // Services come from the admin database; refresh at most every 5 minutes.
 export const revalidate = 300;
+
+// Title, description and share image come from admin → SEO.
+export async function generateMetadata() {
+  return generatePageMetadata("services");
+}
 
 // Services page: a white rounded panel on a gray page, centered header,
 // boxed service rows, then the "Get Started" banner.

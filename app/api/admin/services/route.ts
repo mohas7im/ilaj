@@ -61,6 +61,8 @@ export async function POST(req: NextRequest) {
         imageAlt: formData.get("imageAlt") || null,
         secondaryImage: secondaryImageUrl,
         secondaryImageAlt: formData.get("secondaryImageAlt") || null,
+        metaTitle: formData.get("metaTitle") || null,
+        metaDescription: formData.get("metaDescription") || null,
         faqs: parseJsonField(formData.get("faqs")),
       }
     } else {

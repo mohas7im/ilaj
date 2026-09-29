@@ -5,9 +5,15 @@ import SectionDescription from "@/components/website/common/SectionDescription";
 import { getWebsitePatientCases } from "../_lib/gallery";
 import AppointmentCTA from "../_components/AppointmentCTA";
 import PatientCaseGrid from "./_components/PatientCaseGrid";
+import { generatePageMetadata } from "@/lib/seo";
 
 // Patient cases come from admin (Patient Cases); refresh at most every 5 minutes.
 export const revalidate = 300;
+
+// Title, description and share image come from admin → SEO.
+export async function generateMetadata() {
+  return generatePageMetadata("smile-gallery");
+}
 
 // Smile Gallery: patients' before & after transformations, in the same white
 // rounded panel on a gray page as the Services page, then the "Get Started" banner.

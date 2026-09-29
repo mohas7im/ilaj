@@ -93,6 +93,8 @@ export async function createService(data: ServiceFormData): Promise<Service> {
       imageAlt: data.imageAlt || null,
       secondaryImage: data.secondaryImage || null,
       secondaryImageAlt: data.secondaryImageAlt || null,
+      metaTitle: data.metaTitle || null,
+      metaDescription: data.metaDescription || null,
       ...(data.faqs?.length && { faqs: { create: toFaqRows(data.faqs) } }),
     },
     include: { faqs: faqsInOrder },
@@ -129,6 +131,8 @@ export async function updateService(
       ...(data.imageAlt !== undefined && { imageAlt: data.imageAlt || null }),
       ...(data.secondaryImage !== undefined && { secondaryImage: data.secondaryImage || null }),
       ...(data.secondaryImageAlt !== undefined && { secondaryImageAlt: data.secondaryImageAlt || null }),
+      ...(data.metaTitle !== undefined && { metaTitle: data.metaTitle || null }),
+      ...(data.metaDescription !== undefined && { metaDescription: data.metaDescription || null }),
       // Replace the whole list; runs in the same transaction as the update
       ...(data.faqs !== undefined && {
         faqs: { deleteMany: {}, create: toFaqRows(data.faqs) },

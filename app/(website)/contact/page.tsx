@@ -7,9 +7,15 @@ import SectionDescription from "@/components/website/common/SectionDescription";
 import CardTitle from "@/components/website/common/CardTitle";
 import CardText from "@/components/website/common/CardText";
 import { getOpeningHours, getSettings, toTelLink } from "@/lib/data/settings";
+import { generatePageMetadata } from "@/lib/seo";
 
 // Contact details come from admin settings; refresh at most every 5 minutes.
 export const revalidate = 300;
+
+// Title, description and share image come from admin → SEO.
+export async function generateMetadata() {
+  return generatePageMetadata("contact");
+}
 
 type ContactLine = { text: string; href?: string };
 

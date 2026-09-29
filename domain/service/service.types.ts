@@ -18,6 +18,8 @@ export interface Service {
   imageAlt?: string | null
   secondaryImage?: string | null
   secondaryImageAlt?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
   status: ServiceStatus
   displayOrder?: number
   showInHomePage?: boolean

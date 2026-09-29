@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Poppins, Geist } from "next/font/google"
-import { generateRootMetadata } from "@/lib/seo"
+import { generateAdminRootMetadata } from "@/lib/seo"
 import { AdminShell } from "@/components/admin/layout/AdminShell"
 import "@/styles/admin/theme.css"
 
@@ -21,7 +21,7 @@ const geist = Geist({
 })
 
 export async function generateMetadata(): Promise<Metadata> {
-  return generateRootMetadata()
+  return generateAdminRootMetadata()
 }
 
 export default function AdminRootLayout({
