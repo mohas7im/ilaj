@@ -7,8 +7,7 @@ import CardTitle from "@/components/website/common/CardTitle";
 import MetaText from "@/components/website/common/MetaText";
 import ArrowButton from "@/components/website/ui/ArrowButton";
 import { stepTrack, useSnapCarousel } from "@/components/website/common/useSnapCarousel";
-
-export type Doctor = { name: string; qualification: string; image: string };
+import type { WebsiteDoctor } from "../_lib/doctors";
 
 const AUTOPLAY_MS = 3500;
 
@@ -23,7 +22,7 @@ export default function DoctorsCarousel({
   doctors,
 }: {
   heading: React.ReactNode;
-  doctors: Doctor[];
+  doctors: WebsiteDoctor[];
 }) {
   const { trackRef, canPrev, canNext, scrollByCard: step } = useSnapCarousel();
 
@@ -90,7 +89,7 @@ export default function DoctorsCarousel({
       >
         {doctors.map((doctor) => (
           <article
-            key={doctor.name}
+            key={doctor.id}
             className={cn(
               "group flex shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white",
               "basis-[85%] sm:basis-[calc((100%-1rem)/2.2)] lg:basis-[calc((100%-3rem)/4)]"
@@ -106,7 +105,7 @@ export default function DoctorsCarousel({
             <div className="relative mt-auto aspect-9/10 w-full overflow-hidden">
               <Image
                 src={doctor.image}
-                alt={doctor.name}
+                alt={doctor.imageAlt}
                 fill
                 className="object-cover transition-[scale] duration-700 ease-out group-hover:scale-105"
                 sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 25vw"
