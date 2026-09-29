@@ -4,16 +4,14 @@ import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle, { Highlight } from "@/components/website/common/SectionTitle";
 import SectionDescription from "@/components/website/common/SectionDescription";
 import CardTitle from "@/components/website/common/CardTitle";
+import CardText from "@/components/website/common/CardText";
+import { getWebsiteWhyChooseUsItems } from "../_lib/why-choose-us";
 
-const FEATURES = [
-  "Experienced & Qualified Doctors",
-  "Advanced Equipment",
-  "Pain-Free Treatments",
-  "Affordable Pricing",
-  "Friendly Environment",
-];
+// Admin "Why Choose Us" items. Hidden until there is one.
+export default async function WhyChooseUsSection() {
+  const items = await getWebsiteWhyChooseUsItems();
+  if (items.length === 0) return null;
 
-export default function WhyChooseUsSection() {
   return (
     <Section>
 
@@ -42,9 +40,9 @@ export default function WhyChooseUsSection() {
             {/* Feature List — spaced out so it scrolls past the pinned image */}
             <div className="mt-16 border-b border-zinc-200 lg:mt-20">
 
-              {FEATURES.map((feature, index) => (
+              {items.map((item, index) => (
                 <div
-                  key={feature}
+                  key={item.id}
                   className="flex items-baseline gap-4 border-t border-zinc-200 py-8 lg:py-12"
                 >
 
@@ -58,8 +56,13 @@ export default function WhyChooseUsSection() {
                     {String(index + 1).padStart(2, "0")}
                   </CardTitle>
 
-                  {/* Feature */}
-                  <CardTitle>{feature}</CardTitle>
+                  {/* Feature — description only when filled in admin */}
+                  <div>
+                    <CardTitle>{item.title}</CardTitle>
+                    {item.description && (
+                      <CardText className="mt-2 max-w-md">{item.description}</CardText>
+                    )}
+                  </div>
 
                 </div>
               ))}
