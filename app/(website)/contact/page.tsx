@@ -39,11 +39,9 @@ export default async function ContactPage() {
     },
   ].filter((item) => item.lines.length > 0);
 
-  // Admin pastes the Google Maps "Embed a map" src; anything else (a share link,
-  // or a non-Google URL we must not iframe) falls back to a search on the address.
-  const mapSrc = settings.mapLink.startsWith("https://www.google.com/maps/embed")
-    ? settings.mapLink
-    : `https://www.google.com/maps?q=${encodeURIComponent(settings.address.replace(/\n/g, ", "))}&output=embed`;
+  // Admin pastes the Google Maps "Embed a map" src. Anything else (empty, a share
+  // link, or a non-Google URL we must not iframe) hides the map.
+  const mapSrc = settings.mapLink.startsWith("https://www.google.com/maps/embed") ? settings.mapLink : "";
 
   return (
     <main className="w-full bg-white pt-20 text-zinc-950">
@@ -134,15 +132,17 @@ export default async function ContactPage() {
             </div>
 
             {/* Google Map */}
-            <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200">
-              <iframe
-                title={`${settings.clinicName || "Clinic"} Location`}
-                src={mapSrc}
-                className="h-80 w-full border-0 sm:h-96 lg:h-104"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
+            {mapSrc && (
+              <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200">
+                <iframe
+                  title="Clinic location map"
+                  src={mapSrc}
+                  className="h-80 w-full border-0 sm:h-96 lg:h-104"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            )}
 
           </div>
         </div>

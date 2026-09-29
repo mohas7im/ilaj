@@ -47,7 +47,7 @@ export default function Navbar({ clinicName }: { clinicName: string }) {
           <Link
             href="/"
             className="flex items-center gap-3 shrink-0"
-            aria-label={`${clinicName} — Home`}
+            aria-label={clinicName ? `${clinicName} — Home` : "Home"}
           >
             <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-brand text-white font-bold text-lg leading-none shadow-sm">
               C

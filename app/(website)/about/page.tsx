@@ -15,7 +15,7 @@ export default async function AboutPage() {
     <main className="pt-20">
       <AboutIntroSection />
       <OurStorySection />
-      <ClinicGallerySection photos={photos} />
+      {photos.length > 0 && <ClinicGallerySection photos={photos} />}
       <DoctorsSection />
       <AppointmentCTA />
     </main>

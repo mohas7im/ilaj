@@ -10,7 +10,6 @@ import Faq, { type FaqItem } from "@/components/website/common/Faq";
 import Button from "@/components/website/ui/Button";
 import type { WebsiteService } from "../../_lib/services";
 import { toRichTextHtml } from "@/lib/rich-text";
-import { PLACEHOLDER_CONTENT } from "../_data/placeholder";
 import ServiceCard from "./ServiceCard";
 
 // Service detail: full-width image banner with the title on it (morph target),
@@ -33,14 +32,16 @@ export default function ServiceDetails({
       <section className="relative w-full overflow-hidden bg-neutral-950">
         <ViewTransition name={`service-image-${service.slug}`} share="morph" default="none">
           <div className="absolute inset-0">
-            <Image
-              src={service.image}
-              alt={service.imageAlt}
-              fill
-              priority
-              className="object-cover"
-              sizes="100vw"
-            />
+            {service.image && (
+              <Image
+                src={service.image}
+                alt={service.imageAlt}
+                fill
+                priority
+                className="object-cover"
+                sizes="100vw"
+              />
+            )}
           </div>
         </ViewTransition>
         <div className="absolute inset-0 bg-black/55" />
@@ -71,14 +72,17 @@ export default function ServiceDetails({
       <div className="pb-16 lg:pb-24">
 
         {/* =====================================================
-            CONTENT — admin "Detailed Description" (rich text), styled by .rich-text
+            CONTENT — admin "Detailed Description" (rich text), styled by .rich-text.
+            Admin content is sanitized when saved (server/lib/sanitize.ts).
         ====================================================== */}
-        <Container className="mt-16 lg:mt-24">
-          <article
-            className="rich-text mx-auto max-w-3xl"
-            dangerouslySetInnerHTML={{ __html: toHtml(service.details, service.title) }}
-          />
-        </Container>
+        {service.details.trim() && (
+          <Container className="mt-16 lg:mt-24">
+            <article
+              className="rich-text mx-auto max-w-3xl"
+              dangerouslySetInnerHTML={{ __html: toRichTextHtml(service.details) }}
+            />
+          </Container>
+        )}
 
         {/* =====================================================
             FAQ — native <details>, one open at a time (same name), no JS
@@ -124,11 +128,4 @@ export default function ServiceDetails({
       </div>
     </>
   );
-}
-
-// Admin content is rich-text HTML, sanitized when saved (server/lib/sanitize.ts);
-// older entries may still be plain text. Empty → placeholder until filled in.
-function toHtml(details: string, serviceName: string): string {
-  if (!details.trim()) return PLACEHOLDER_CONTENT.replaceAll("{service}", serviceName);
-  return toRichTextHtml(details);
 }

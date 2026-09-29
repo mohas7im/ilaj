@@ -46,7 +46,7 @@ export default async function WebsiteRootLayout({
     >
       <body className="min-h-full flex flex-col relative">
         <SmoothScroll />
-        <Navbar clinicName={settings.clinicName || "Ilaj"} />
+        <Navbar clinicName={settings.clinicName ?? ""} />
         <PageTransition>{children}</PageTransition>
         <Footer />
         <WhatsAppButton />

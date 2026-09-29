@@ -10,23 +10,15 @@ export type WebsiteService = {
   description: string;
   /** Long text for "About this treatment"; empty until filled in admin */
   details: string;
+  /** Empty until uploaded in admin */
   image: string;
   imageAlt: string;
+  /** Empty until uploaded in admin */
   secondaryImage: string;
   secondaryImageAlt: string;
 };
 
-// Shown until a service has images uploaded in admin.
-const FALLBACK_IMAGES = [
-  ["/images/services/teeth-cleaning-1.jpg", "/images/services/teeth-cleaning-2.jpg"],
-  ["/images/services/teeth-whitening-1.jpg", "/images/services/teeth-whitening-2.jpg"],
-  ["/images/services/dental-implants-1.jpg", "/images/services/dental-implants-2.jpg"],
-  ["/images/services/orthodontics-1.jpg", "/images/services/orthodontics-2.jpg"],
-];
-
 function toWebsiteService(service: Service, index: number): WebsiteService {
-  const [fallback, fallbackSecondary] = FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
-
   return {
     id: service.id,
     slug: service.slug ?? "",
@@ -34,9 +26,9 @@ function toWebsiteService(service: Service, index: number): WebsiteService {
     title: service.name,
     description: service.description ?? "",
     details: service.details ?? "",
-    image: service.image || fallback,
+    image: service.image ?? "",
     imageAlt: service.imageAlt || service.name,
-    secondaryImage: service.secondaryImage || fallbackSecondary,
+    secondaryImage: service.secondaryImage ?? "",
     secondaryImageAlt: service.secondaryImageAlt || service.name,
   };
 }

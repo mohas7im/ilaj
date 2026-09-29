@@ -101,16 +101,19 @@ function ServiceRow({ service }: { service: WebsiteService }) {
   );
 }
 
+// Empty gray square until the image is uploaded in admin, so rows stay even.
 function ServiceImage({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="reveal-image relative aspect-square w-full overflow-hidden rounded-xl">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-cover transition-[scale] duration-500 hover:scale-105"
-        sizes="(max-width: 1024px) 45vw, 220px"
-      />
+    <div className="reveal-image relative aspect-square w-full overflow-hidden rounded-xl bg-zinc-100">
+      {src && (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover transition-[scale] duration-500 hover:scale-105"
+          sizes="(max-width: 1024px) 45vw, 220px"
+        />
+      )}
     </div>
   );
 }

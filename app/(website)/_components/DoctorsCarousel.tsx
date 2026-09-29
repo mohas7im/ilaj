@@ -102,14 +102,17 @@ export default function DoctorsCarousel({
             </div>
 
             {/* Doctor Image */}
-            <div className="relative mt-auto aspect-9/10 w-full overflow-hidden">
-              <Image
-                src={doctor.image}
-                alt={doctor.imageAlt}
-                fill
-                className="object-cover transition-[scale] duration-700 ease-out group-hover:scale-105"
-                sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 25vw"
-              />
+            {/* Empty gray box until a photo is uploaded in admin, so cards stay even */}
+            <div className="relative mt-auto aspect-9/10 w-full overflow-hidden bg-zinc-100">
+              {doctor.image && (
+                <Image
+                  src={doctor.image}
+                  alt={doctor.imageAlt}
+                  fill
+                  className="object-cover transition-[scale] duration-700 ease-out group-hover:scale-105"
+                  sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 25vw"
+                />
+              )}
             </div>
           </article>
         ))}

@@ -18,13 +18,15 @@ export default function ServiceCard({ service, index = 0 }: { service: WebsiteSe
     >
       <ViewTransition name={`service-image-${service.slug}`} share="morph" default="none">
         <div className="absolute inset-0 -z-10">
-          <Image
-            src={service.image}
-            alt={service.imageAlt}
-            fill
-            className="object-cover transition-[scale] duration-700 ease-out group-hover:scale-105"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-          />
+          {service.image && (
+            <Image
+              src={service.image}
+              alt={service.imageAlt}
+              fill
+              className="object-cover transition-[scale] duration-700 ease-out group-hover:scale-105"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          )}
         </div>
       </ViewTransition>
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/30 to-black/5" />

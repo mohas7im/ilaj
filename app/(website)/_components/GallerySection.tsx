@@ -5,9 +5,10 @@ import SectionDescription from "@/components/website/common/SectionDescription";
 import GalleryCarousel from "./GalleryCarousel";
 import { getWebsitePatientCases } from "../_lib/gallery";
 
-// Home page Smile Gallery: admin Patient Cases (placeholders until there are some).
+// Home page Smile Gallery: admin Patient Cases. Hidden until there is one.
 export default async function GallerySection() {
   const cases = await getWebsitePatientCases();
+  if (cases.length === 0) return null;
 
   return (
     <Section>
