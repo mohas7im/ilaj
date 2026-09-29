@@ -12,9 +12,11 @@ export type WebsiteService = {
   details: string;
   /** Empty until uploaded in admin */
   image: string;
+  /** Empty until set in admin */
   imageAlt: string;
   /** Empty until uploaded in admin */
   secondaryImage: string;
+  /** Empty until set in admin */
   secondaryImageAlt: string;
   /** Optional SEO overrides; empty → title / description */
   metaTitle: string;
@@ -24,15 +26,15 @@ export type WebsiteService = {
 function toWebsiteService(service: Service, index: number): WebsiteService {
   return {
     id: service.id,
-    slug: service.slug ?? "",
+    slug: service.slug,
     number: `${String(index + 1).padStart(2, "0")}//`,
     title: service.name,
     description: service.description ?? "",
     details: service.details ?? "",
     image: service.image ?? "",
-    imageAlt: service.imageAlt || service.name,
+    imageAlt: service.imageAlt ?? "",
     secondaryImage: service.secondaryImage ?? "",
-    secondaryImageAlt: service.secondaryImageAlt || service.name,
+    secondaryImageAlt: service.secondaryImageAlt ?? "",
     metaTitle: service.metaTitle ?? "",
     metaDescription: service.metaDescription ?? "",
   };
@@ -43,10 +45,10 @@ export async function getWebsiteServices(): Promise<(WebsiteService & { showInHo
   const services = await getServices();
 
   return services
-    .filter((service) => service.status === "active" && service.slug)
+    .filter((service) => service.status === "active")
     .map((service, index) => ({
       ...toWebsiteService(service, index),
-      showInHomePage: service.showInHomePage ?? false,
+      showInHomePage: service.showInHomePage,
     }));
 }
 

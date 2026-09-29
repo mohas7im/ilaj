@@ -46,7 +46,7 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
       }
       return true
     })
-    .sort((a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999))
+    .sort((a, b) => a.displayOrder - b.displayOrder)
 
   const handleDelete = async () => {
     if (!deleteId) return
@@ -89,7 +89,7 @@ export function ServiceTable({ services: initialServices, filters }: ServiceTabl
                 return (
                   <TableRow key={svc.id} className="[&>td]:py-4">
                     <TableCell className="text-sm font-medium text-foreground text-center select-none">
-                      {svc.displayOrder ?? 1}
+                      {svc.displayOrder}
                     </TableCell>
                     <TableCell className="whitespace-normal">
                       <div className="flex flex-col">

@@ -91,10 +91,7 @@ function DetailRow({
 
 function ServiceDetailsView({ service }: ServiceDetailsViewProps) {
   const faqs = service.faqs ?? []
-  const { label, variant } = SERVICE_STATUS_CONFIG[service.status] ?? {
-    label: service.status,
-    variant: "outline",
-  }
+  const { label, variant } = SERVICE_STATUS_CONFIG[service.status]
 
   const formattedCreated = service.createdAt
     ? format(new Date(service.createdAt), "PPP p")
@@ -140,11 +137,11 @@ function ServiceDetailsView({ service }: ServiceDetailsViewProps) {
             </DetailRow>
             <DetailRow icon={Link2} label="Slug">
               <span className="font-mono text-xs bg-muted px-2 py-0.5 rounded">
-                {service.slug || "—"}
+                {service.slug}
               </span>
             </DetailRow>
             <DetailRow icon={Hash} label="Display Order">
-              <span>{service.displayOrder ?? 1}</span>
+              <span>{service.displayOrder}</span>
             </DetailRow>
             <DetailRow icon={Sparkles} label="Featured on Home">
               <span>{service.showInHomePage ? "Yes" : "No"}</span>
@@ -192,7 +189,7 @@ function ServiceDetailsView({ service }: ServiceDetailsViewProps) {
               dangerouslySetInnerHTML={{ __html: toRichTextHtml(service.details) }}
             />
           ) : (
-            <p className="text-sm text-muted-foreground italic">No detailed description yet. The website shows placeholder text.</p>
+            <p className="text-sm text-muted-foreground italic">No detailed description yet. This section is hidden on the treatment page until you add one.</p>
           )}
         </CardContent>
       </Card>
@@ -255,7 +252,7 @@ function ServiceDetailsView({ service }: ServiceDetailsViewProps) {
                 {service.image ? (
                   <img
                     src={service.image}
-                    alt={service.imageAlt || service.name}
+                    alt={service.imageAlt ?? ""}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -281,7 +278,7 @@ function ServiceDetailsView({ service }: ServiceDetailsViewProps) {
                 {service.secondaryImage ? (
                   <img
                     src={service.secondaryImage}
-                    alt={service.secondaryImageAlt || `${service.name} secondary`}
+                    alt={service.secondaryImageAlt ?? ""}
                     className="h-full w-full object-cover"
                   />
                 ) : (

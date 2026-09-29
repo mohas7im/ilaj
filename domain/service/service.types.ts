@@ -11,7 +11,7 @@ export interface ServiceFaq {
 export interface Service {
   id: string
   name: string
-  slug?: string
+  slug: string
   description?: string | null
   details?: string | null
   image?: string | null
@@ -21,8 +21,8 @@ export interface Service {
   metaTitle?: string | null
   metaDescription?: string | null
   status: ServiceStatus
-  displayOrder?: number
-  showInHomePage?: boolean
+  displayOrder: number
+  showInHomePage: boolean
   /** Only loaded for a single service (getServiceById) */
   faqs?: ServiceFaq[]
   isActive?: boolean

@@ -351,7 +351,7 @@ function ServiceFormFields({
                   {currentPrimaryDisplay ? (
                     <img
                       src={currentPrimaryDisplay}
-                      alt={watch("imageAlt") || "Primary service preview"}
+                      alt={watch("imageAlt") ?? ""}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -415,7 +415,7 @@ function ServiceFormFields({
                   {currentSecondaryDisplay ? (
                     <img
                       src={currentSecondaryDisplay}
-                      alt={watch("secondaryImageAlt") || "Secondary service preview"}
+                      alt={watch("secondaryImageAlt") ?? ""}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -490,7 +490,6 @@ function ServiceFormFields({
                 </div>
                 <Input
                   id="metaTitle"
-                  placeholder={watch("name") ? `e.g. ${watch("name")} in Lahore` : undefined}
                   {...register("metaTitle")}
                   aria-invalid={!!errors.metaTitle}
                 />
