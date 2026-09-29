@@ -1,3 +1,5 @@
+import { buttons, details, esc, eyebrow, formatDate, formatTime, heading, layout, paragraph, quote } from "./layout";
+
 type Inquiry = {
   fullName: string;
   email: string;
@@ -8,66 +10,54 @@ type Inquiry = {
   message: string;
 };
 
-export function buildAdminEmail(inquiry: Inquiry): string {
-  const whatsappNumber = process.env.CLINIC_WHATSAPP ?? "";
+export function buildAdminEmail(inquiry: Inquiry, clinicName: string): string {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
-
-  const whatsappText = encodeURIComponent(
-    `Hi ${inquiry.fullName}, we received your inquiry for ${inquiry.treatment}. We will contact you shortly.`
-  );
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappText}`;
   const dashboardUrl = `${baseUrl}/admin/inquiries`;
 
-  return `
-    <!DOCTYPE html>
-    <html>
-      <body style="font-family: Arial, sans-serif; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 24px;">
+  // WhatsApp reply goes to the patient's own number.
+  const patientDigits = inquiry.phone.replace(/\D/g, "");
+  const whatsappText = encodeURIComponent(
+    inquiry.treatment
+      ? `Hi ${inquiry.fullName}, we received your inquiry for ${inquiry.treatment}. We will contact you shortly.`
+      : `Hi ${inquiry.fullName}, we received your inquiry. We will contact you shortly.`
+  );
+  const whatsappUrl = patientDigits ? `https://wa.me/${patientDigits}?text=${whatsappText}` : "";
 
-        <h2 style="color: #0f766e;">📋 New Inquiry — ${inquiry.fullName}</h2>
+  const linkStyle = "color:#18181b;text-decoration:none;";
+  const phoneLink = inquiry.phone
+    ? `<a href="tel:${esc(inquiry.phone.replace(/[^\d+]/g, ""))}" style="${linkStyle}">${esc(inquiry.phone)}</a>`
+    : "";
+  const emailLink = inquiry.email
+    ? `<a href="mailto:${esc(inquiry.email)}" style="${linkStyle}">${esc(inquiry.email)}</a>`
+    : "";
 
-        <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
-          <tr style="background: #f4f4f5;">
-            <td style="padding: 10px 14px; font-weight: bold; width: 40%;">Name</td>
-            <td style="padding: 10px 14px;">${inquiry.fullName}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px 14px; font-weight: bold;">Phone</td>
-            <td style="padding: 10px 14px;">${inquiry.phone}</td>
-          </tr>
-          <tr style="background: #f4f4f5;">
-            <td style="padding: 10px 14px; font-weight: bold;">Email</td>
-            <td style="padding: 10px 14px;">${inquiry.email}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px 14px; font-weight: bold;">Treatment</td>
-            <td style="padding: 10px 14px;">${inquiry.treatment}</td>
-          </tr>
-          <tr style="background: #f4f4f5;">
-            <td style="padding: 10px 14px; font-weight: bold;">Preferred Date</td>
-            <td style="padding: 10px 14px;">${inquiry.preferredDate ?? "—"}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px 14px; font-weight: bold;">Preferred Time</td>
-            <td style="padding: 10px 14px;">${inquiry.preferredTime ?? "—"}</td>
-          </tr>
-          <tr style="background: #f4f4f5;">
-            <td style="padding: 10px 14px; font-weight: bold;">Message</td>
-            <td style="padding: 10px 14px;">${inquiry.message}</td>
-          </tr>
-        </table>
+  const content = [
+    eyebrow("New inquiry"),
+    heading(esc(inquiry.fullName)),
+    paragraph(
+      inquiry.treatment
+        ? `Wants to book <strong style="color:#18181b;">${esc(inquiry.treatment)}</strong>. Reach out to confirm a slot.`
+        : "Submitted the contact form. Reach out to confirm a slot."
+    ),
+    details([
+      ["Phone", phoneLink],
+      ["Email", emailLink],
+      ["Treatment", esc(inquiry.treatment)],
+      ["Preferred date", esc(formatDate(inquiry.preferredDate))],
+      ["Preferred time", esc(formatTime(inquiry.preferredTime))],
+    ]),
+    quote("Message", esc(inquiry.message)),
+    buttons([
+      { label: "Open in dashboard", href: dashboardUrl },
+      { label: "Reply on WhatsApp", href: whatsappUrl, variant: "secondary" },
+    ]),
+  ].join("");
 
-        <div style="margin-top: 28px;">
-          <a href="${dashboardUrl}"
-            style="background: #0f766e; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-right: 12px;">
-            View in Admin Dashboard →
-          </a>
-          <a href="${whatsappUrl}"
-            style="background: #25D366; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-            💬 Reply on WhatsApp
-          </a>
-        </div>
-
-      </body>
-    </html>
-  `;
+  return layout({
+    title: `New inquiry from ${esc(inquiry.fullName)}`,
+    preheader: `${esc(inquiry.fullName)}${inquiry.treatment ? ` · ${esc(inquiry.treatment)}` : ""}${inquiry.phone ? ` · ${esc(inquiry.phone)}` : ""}`,
+    brandName: esc(clinicName),
+    content,
+    footer: "Sent automatically from the contact form on your website.",
+  });
 }

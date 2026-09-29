@@ -1,3 +1,6 @@
+import type { ClinicSettings } from "@/domain/settings/settings.types";
+import { buttons, details, esc, eyebrow, formatDate, formatTime, heading, layout, paragraph } from "./layout";
+
 type Inquiry = {
   fullName: string;
   treatment: string;
@@ -5,42 +8,45 @@ type Inquiry = {
   preferredTime: string | null;
 };
 
-// clinicName comes from Admin → Settings; "" leaves it out.
-export function buildConfirmationEmail(inquiry: Inquiry, clinicName: string): string {
-  return `
-    <!DOCTYPE html>
-    <html>
-      <body style="font-family: Arial, sans-serif; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 24px;">
+// Clinic name, phone, WhatsApp and address come from Admin → Settings;
+// anything left empty there is simply left out of the email.
+export function buildConfirmationEmail(inquiry: Inquiry, settings: ClinicSettings): string {
+  const clinicName = esc(settings.clinicName);
+  const firstName = esc(inquiry.fullName.split(/\s+/)[0] || inquiry.fullName);
+  const phone = settings.phone1?.trim() ?? "";
+  const whatsapp = settings.whatsappNumber?.replace(/\D/g, "") ?? "";
 
-        <h2 style="color: #0f766e;">Thank you, ${inquiry.fullName}! 🦷</h2>
+  const content = [
+    eyebrow("Request received"),
+    heading(`Thanks, ${firstName}. We&rsquo;ll be in touch soon.`),
+    paragraph(
+      `We&rsquo;ve received your appointment request${clinicName ? ` at <strong style="color:#18181b;">${clinicName}</strong>` : ""}. ` +
+        `Our team will call you within <strong style="color:#18181b;">24 hours</strong> to confirm a time that works for you.`
+    ),
+    details([
+      ["Treatment", esc(inquiry.treatment)],
+      ["Preferred date", esc(formatDate(inquiry.preferredDate))],
+      ["Preferred time", esc(formatTime(inquiry.preferredTime))],
+    ]),
+    buttons([
+      { label: "Call us", href: phone ? `tel:${phone.replace(/[^\d+]/g, "")}` : "" },
+      { label: "Chat on WhatsApp", href: whatsapp ? `https://wa.me/${whatsapp}` : "", variant: "secondary" },
+    ]),
+  ].join("");
 
-        <p style="font-size: 16px; line-height: 1.6;">
-          We have received your inquiry${clinicName ? ` at <strong>${clinicName}</strong>` : ""}.
-          Our team will contact you within <strong>24 hours</strong> to confirm your appointment.
-        </p>
+  const footer = [
+    clinicName,
+    esc(settings.address),
+    settings.mapLink ? `<a href="${esc(settings.mapLink)}" style="color:#71717a;">Get directions</a>` : "",
+  ]
+    .filter(Boolean)
+    .join("<br />");
 
-        <h3 style="margin-top: 24px;">Your Request Details</h3>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr style="background: #f4f4f5;">
-            <td style="padding: 10px 14px; font-weight: bold; width: 40%;">Treatment</td>
-            <td style="padding: 10px 14px;">${inquiry.treatment}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px 14px; font-weight: bold;">Preferred Date</td>
-            <td style="padding: 10px 14px;">${inquiry.preferredDate ?? "—"}</td>
-          </tr>
-          <tr style="background: #f4f4f5;">
-            <td style="padding: 10px 14px; font-weight: bold;">Preferred Time</td>
-            <td style="padding: 10px 14px;">${inquiry.preferredTime ?? "—"}</td>
-          </tr>
-        </table>
-
-        <p style="margin-top: 28px; color: #555; font-size: 14px;">
-          If you have any urgent questions, feel free to call us directly.<br/>
-          <strong>${clinicName ? `${clinicName} Team` : "Our Team"}</strong>
-        </p>
-
-      </body>
-    </html>
-  `;
+  return layout({
+    title: "We received your request",
+    preheader: "Thanks for reaching out. Our team will call you within 24 hours to confirm your appointment.",
+    brandName: clinicName,
+    content,
+    footer: footer + `<br /><br />You&rsquo;re receiving this because you submitted a request on our website.`,
+  });
 }

@@ -16,7 +16,8 @@ type InquiryEmailPayload = {
 export async function sendInquiryEmails(inquiry: InquiryEmailPayload) {
   const from = process.env.RESEND_FROM_EMAIL!;
   const toClinic = process.env.RESEND_TO_EMAIL!;
-  const { clinicName } = await getClinicSettings();
+  const settings = await getClinicSettings();
+  const { clinicName } = settings;
 
   // Send both emails concurrently — allSettled so one failure never blocks the other
   await Promise.allSettled([
@@ -25,17 +26,21 @@ export async function sendInquiryEmails(inquiry: InquiryEmailPayload) {
     resend.emails.send({
       from,
       to: toClinic,
-      subject: `📋 New Inquiry — ${inquiry.fullName}`,
-      html: buildAdminEmail(inquiry),
+      subject: inquiry.treatment
+        ? `New inquiry: ${inquiry.fullName} · ${inquiry.treatment}`
+        : `New inquiry: ${inquiry.fullName}`,
+      html: buildAdminEmail(inquiry, clinicName),
     }),
 
-    // 2 → Confirm to patient
-    resend.emails.send({
-      from,
-      to: inquiry.email,
-      subject: clinicName ? `We received your request — ${clinicName}` : "We received your request",
-      html: buildConfirmationEmail(inquiry, clinicName),
-    }),
+    // 2 → Confirm to patient (email is optional, so only when one was given)
+    inquiry.email
+      ? resend.emails.send({
+          from,
+          to: inquiry.email,
+          subject: clinicName ? `We received your request — ${clinicName}` : "We received your request",
+          html: buildConfirmationEmail(inquiry, settings),
+        })
+      : Promise.resolve(),
 
   ]);
 }
