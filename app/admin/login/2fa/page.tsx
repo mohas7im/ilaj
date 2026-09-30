@@ -117,18 +117,15 @@ function TwoFactorContent() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
 
           {/* Top Clinic Branding */}
-          <div className="relative z-10 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-bold shadow-xs">
-              {branding.shortName}
-            </div>
-            <div>
-              <span className="text-sm font-semibold tracking-tight text-white block">
-                {branding.name}
-              </span>
-              <span className="text-xs text-white/70 block">
-                {ADMIN_BRANDING.description}
-              </span>
-            </div>
+          <div className="relative z-10 flex flex-col items-start gap-2">
+            <img
+              src={ADMIN_BRANDING.logoLight}
+              alt={branding.name}
+              className="h-14 w-auto"
+            />
+            <span className="text-xs text-white/70 block">
+              {ADMIN_BRANDING.description}
+            </span>
           </div>
 
           {/* Bottom Quote */}

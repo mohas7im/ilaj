@@ -59,4 +59,4 @@ fills the `--font-sans` / `--font-heading` slots.
 3. Update `app/global-not-found.tsx` (the 404 for unknown URLs) if the new site's
    fonts differ.
 4. Rebrand the admin: `lib/admin/config.ts`, colors in `styles/admin/theme.css`,
-   and the logos in `public/admin/`.
+   and the logos in `public/brand/` (see `lib/brand.ts`).

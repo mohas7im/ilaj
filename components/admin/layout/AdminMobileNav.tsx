@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, ChevronDown } from "lucide-react"
 
-import { NAV_GROUPS, type NavItem } from "@/lib/admin/config"
+import { ADMIN_BRANDING, NAV_GROUPS, type NavItem } from "@/lib/admin/config"
 import { useAdminBranding } from "./AdminBranding"
 import { Button } from "@/components/admin/ui/button"
 import {
@@ -130,11 +130,12 @@ export function AdminMobileNav() {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-72 p-0">
           <SheetHeader className="border-b px-4 py-3">
-            <SheetTitle className="flex items-center gap-2 text-base">
-              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-bold select-none">
-                {branding.shortName}
-              </div>
-              {branding.name}
+            <SheetTitle className="flex items-center">
+              <img
+                src={ADMIN_BRANDING.logo}
+                alt={branding.name}
+                className="h-9 w-auto select-none"
+              />
             </SheetTitle>
           </SheetHeader>
 

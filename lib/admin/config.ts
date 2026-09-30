@@ -13,6 +13,7 @@ import {
   MessageCircleQuestionMark,
   type LucideIcon,
 } from "lucide-react"
+import { BRAND_LOGO } from "@/lib/brand"
 
 // ============================================================
 //  ADMIN CONFIG  —  lib/admin/config.ts
@@ -22,7 +23,7 @@ import {
 //  1. Set the clinic name in Admin → Settings (shown in the sidebar and login)
 //  2. Change ADMIN_BRANDING below (description, logo)
 //  3. Change brand colors in styles/admin/theme.css
-//  4. Replace public/admin/logo.svg + logo-mark.svg
+//  4. Replace the logo files in public/brand/ (see lib/brand.ts)
 //
 //  Do NOT edit AdminSidebar or any other
 //  layout/dashboard component just to change client branding.
@@ -30,15 +31,17 @@ import {
 
 // ─── Branding Configuration ───────────────────────────────────────────────────
 // Edit this block to rebrand the admin panel for a new clinic / doctor.
-// Logo images: place SVG files in public/admin/ and update paths below.
+// Logo images live in public/brand/ (see lib/brand.ts), shared with the website.
 
 export const ADMIN_BRANDING = {
-  /** Practice category shown under the name in the sidebar header */
+  /** Practice category shown under the logo on the login pages */
   description: "Dental Practice Management",
-  /** Path to full logo image — shown when sidebar is expanded */
-  logo: "/admin/logo.svg",
-  /** Path to compact logo mark — shown when sidebar is collapsed */
-  logoMark: "/admin/logo-mark.svg",
+  /** Full logo — shown when sidebar is expanded and in the mobile menu */
+  logo: BRAND_LOGO.full,
+  /** Full logo with white text — shown over the login photo */
+  logoLight: BRAND_LOGO.light,
+  /** Compact logo mark — shown when sidebar is collapsed */
+  logoMark: BRAND_LOGO.mark,
   /** Favicon path */
   favicon: "/admin/favicon.ico",
 }

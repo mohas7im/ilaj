@@ -226,21 +226,24 @@ export function AdminSidebar() {
                 isCollapsed && "justify-center"
               )}
             >
-              {/* Logo mark — always visible */}
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold select-none">
-                {branding.shortName}
-              </div>
+              {/* Logo mark — only when collapsed */}
+              {isCollapsed && (
+                <img
+                  src={ADMIN_BRANDING.logoMark}
+                  alt={branding.name}
+                  className="h-8 w-8 shrink-0 rounded-lg select-none"
+                />
+              )}
 
-              {/* Brand name + toggle — only when expanded */}
+              {/* Full logo + toggle — only when expanded */}
               {!isCollapsed && (
                 <>
-                  <div className="flex flex-col leading-tight overflow-hidden flex-1 min-w-0">
-                    <span className="truncate text-sm font-semibold">
-                      {branding.name}
-                    </span>
-                    <span className="truncate text-xs text-muted-foreground">
-                      {ADMIN_BRANDING.description}
-                    </span>
+                  <div className="flex-1 min-w-0">
+                    <img
+                      src={ADMIN_BRANDING.logo}
+                      alt={branding.name}
+                      className="h-10 w-auto select-none"
+                    />
                   </div>
                   {/* Collapse button — inside sidebar header */}
                   <SidebarTrigger

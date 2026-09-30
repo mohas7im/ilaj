@@ -6,7 +6,7 @@
  *  HOW TO REBRAND FOR A NEW CLIENT:
  *  1. Change --admin-brand-* variables below (primary color)
  *  2. Update lib/admin/config.ts (name, logo, description)
- *  3. Replace public/admin/logo.svg + logo-mark.svg
+ *  3. Replace the logo files in public/brand/ (see lib/brand.ts)
  *
  *  Everything else (shadcn components, layout components,
  *  dashboard widgets) remains untouched.

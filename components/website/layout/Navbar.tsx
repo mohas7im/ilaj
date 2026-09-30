@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import Button from "@/components/website/ui/Button";
+import { BRAND_LOGO } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -49,17 +51,14 @@ export default function Navbar({ clinicName }: { clinicName: string }) {
             className="flex items-center gap-3 shrink-0"
             aria-label={clinicName ? `${clinicName} — Home` : "Home"}
           >
-            <span className="flex items-center justify-center w-10 h-10 rounded-lg bg-brand text-white font-bold text-lg leading-none shadow-sm">
-              C
-            </span>
-            <span
-              className={cn(
-                "font-bold text-2xl tracking-tight transition-colors duration-200",
-                solid ? "text-zinc-950" : "text-white"
-              )}
-            >
-              {clinicName}
-            </span>
+            <Image
+              src={solid ? BRAND_LOGO.full : BRAND_LOGO.light}
+              alt={clinicName}
+              width={BRAND_LOGO.width}
+              height={BRAND_LOGO.height}
+              preload
+              className="h-12 w-auto"
+            />
           </Link>
 
           {/* Desktop Nav Links - Truly Centered */}

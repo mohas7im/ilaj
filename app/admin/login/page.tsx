@@ -68,18 +68,15 @@ export default function AdminLoginPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
 
           {/* Top Clinic Branding */}
-          <div className="relative z-10 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-bold shadow-xs">
-              {branding.shortName}
-            </div>
-            <div>
-              <span className="text-sm font-semibold tracking-tight text-white block">
-                {branding.name}
-              </span>
-              <span className="text-xs text-white/70 block">
-                {ADMIN_BRANDING.description}
-              </span>
-            </div>
+          <div className="relative z-10 flex flex-col items-start gap-2">
+            <img
+              src={ADMIN_BRANDING.logoLight}
+              alt={branding.name}
+              className="h-14 w-auto"
+            />
+            <span className="text-xs text-white/70 block">
+              {ADMIN_BRANDING.description}
+            </span>
           </div>
 
           {/* Bottom Inspirational Quote */}
@@ -99,12 +96,11 @@ export default function AdminLoginPage() {
       <div className="flex flex-1 flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-16 min-h-screen">
         {/* Top Header */}
         <div className="flex items-center justify-between w-full max-w-sm mx-auto">
-          <div className="lg:hidden flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold">
-              {branding.shortName}
-            </div>
-            <span className="text-sm font-semibold">{branding.name}</span>
-          </div>
+          <img
+            src={ADMIN_BRANDING.logo}
+            alt={branding.name}
+            className="lg:hidden h-10 w-auto"
+          />
 
           <Link
             href="/"
