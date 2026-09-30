@@ -242,6 +242,58 @@ html[data-website-theme]::-webkit-scrollbar-thumb:hover {
 }
 
 
+/* ─── Clinic tour (ClinicCameraTour / ClinicPhotoList) ───────
+   The tour is hidden for prefers-reduced-motion (ClinicPhotoList shows
+   instead), so only the list's door reveal needs a motion guard.
+   .tour-text[data-active] — the room currently shown:
+     .tour-line > span  rises out of a mask
+     .tour-fade         fades up just after */
+.tour-line {
+  display: block;
+  overflow: clip;
+  padding-bottom: 0.08em;
+}
+.tour-line > span {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 0.6s cubic-bezier(0.55, 0, 0.75, 0.2);
+}
+.tour-fade {
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.tour-text[data-active="true"] .tour-line > span {
+  transform: none;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tour-text[data-active="true"] .tour-fade {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.6s ease 0.2s, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+}
+
+/* Photo opens from a centre slit, like a door, as it scrolls in */
+@keyframes reveal-door {
+  from { clip-path: inset(0 50% 0 50%); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal-door {
+      animation: reveal-door linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 45%;
+    }
+    .reveal-door > img {
+      animation: reveal-zoom linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 55%;
+    }
+  }
+}
+
+
 /* ─── Page transitions (React <ViewTransition>) ─────────────── */
 ::view-transition {
   pointer-events: none;

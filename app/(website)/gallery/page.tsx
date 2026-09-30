@@ -11,7 +11,7 @@ export async function generateMetadata() {
   return generatePageMetadata("gallery");
 }
 
-// Gallery page: all clinic photos in the sticky text + scrolling photos layout
+// Gallery page: all clinic photos in the scroll tour
 // (the same section as the About page, without its photo limit), then the
 // "Get Started" banner. Before & after cases live on /smile-gallery.
 export default async function GalleryPage() {
