@@ -25,7 +25,7 @@ export function Button({
       type={type}
       className={cn(
         "group inline-flex items-center justify-center gap-3 rounded-full font-semibold text-sm transition-all duration-200 cursor-pointer select-none whitespace-nowrap active:scale-98 disabled:pointer-events-none disabled:opacity-50",
-        showIcon ? "pl-2 pr-6 py-2" : "px-7 py-3",
+        showIcon ? "pl-1.5 pr-4 py-1.5" : "px-7 py-3",
         isPrimary
           ? "bg-brand text-white hover:bg-brand-hover shadow-md"
           : "bg-white text-zinc-900 hover:bg-zinc-100 border border-zinc-200 shadow-md",
