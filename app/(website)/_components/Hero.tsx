@@ -10,7 +10,7 @@ const CLIENT_AVATARS = [
   "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop&crop=faces",
 ];
 
-const HEADLINE = "Your Smile, Our Priority : Expert Dental Care You Trust";
+const HEADLINE = "Your Smile, Our Priority — Expert Dental Care You Trust";
 
 export default async function Hero() {
   const [settings, openingHours] = await Promise.all([getSettings(), getOpeningHours()]);
@@ -55,7 +55,7 @@ export default async function Hero() {
                     <img
                       key={i}
                       src={src}
-                      alt="Happy Client"
+                      alt="Smiling dental patient"
                       className="size-9 rounded-full object-cover border border-white/60 shadow-xs"
                     />
                   ))}
@@ -67,7 +67,7 @@ export default async function Hero() {
 
               <div className="flex items-end justify-between pt-1">
                 <span className="text-xs sm:text-sm font-medium text-white/95 leading-tight">
-                  Happy Trusted<br />Client In the World
+                  Happy Patients,<br />Trusted Care
                 </span>
                 <ArrowRight className="w-6 h-6 text-white/95 stroke-2 shrink-0 mb-0.5" />
               </div>
@@ -105,7 +105,7 @@ export default async function Hero() {
           {/* Right: Description & Action Buttons */}
           <div className="flex flex-col items-start gap-4">
             <p className="text-base text-white leading-relaxed max-w-md font-normal">
-              Ilaj Dental Care offers advanced, painless, affordable treatments with modern technology and expert care for a confident smile.
+              Ilaj Dental Care combines modern technology with gentle, affordable treatment — from routine checkups to advanced procedures.
             </p>
 
             <div className="flex flex-wrap items-center gap-3.5">

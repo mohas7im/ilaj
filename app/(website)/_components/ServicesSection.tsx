@@ -21,16 +21,16 @@ export default async function ServicesSection() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-10 lg:gap-14">
           <div className="lg:col-span-6">
             <SectionTitle>
-              We Provide A Wide Range
+              Treatments Designed
               <br />
-              Of <Highlight>Dental Treatments</Highlight>
+              Around <Highlight>Your Smile</Highlight>
             </SectionTitle>
           </div>
 
           <div className="flex items-end lg:col-span-4 lg:justify-end">
             <SectionDescription className="max-w-sm">
-              We offer a wide range of treatments to keep your
-              smile healthy and beautiful.
+              From preventive care to advanced procedures, explore the
+              treatments we offer to help you smile with confidence.
             </SectionDescription>
           </div>
         </div>

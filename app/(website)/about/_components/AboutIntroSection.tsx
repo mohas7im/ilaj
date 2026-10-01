@@ -28,17 +28,18 @@ export default function AboutIntroSection() {
 
             <SectionDescription className="mt-2.5">
               At Ilaj Dental Care, we believe a great dental experience is
-              about more than treating teeth. It’s about understanding people,
-              earning trust, and making every visit feel comfortable. With
-              modern dentistry and a patient-first approach, we’re here to make
-              quality dental care simpler, gentler, and more personal.
+              about more than treating teeth. It’s about understanding
+              people, earning trust, and making every visit feel
+              comfortable. With modern dentistry and a patient-first
+              approach, we’re here to make quality dental care simpler,
+              gentler, and more personal.
             </SectionDescription>
 
             {/* CTA — bottom-aligned with the images */}
             <div className="mt-10 lg:mt-auto lg:pt-12">
               <Link href="/contact">
                 <Button variant="primary">
-                  Contact Ilaj team
+                  Contact Ilaj Team
                 </Button>
               </Link>
             </div>

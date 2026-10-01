@@ -23,7 +23,7 @@ export default async function AboutSection() {
           {/* Heading */}
           <div className="lg:col-span-3">
             <SectionTitle>
-              <Highlight>Ilaj Dental Care -</Highlight>{" "}
+              <Highlight>Ilaj Dental Care —</Highlight>{" "}
               The Story Behind Every Smile
             </SectionTitle>
           </div>
@@ -33,9 +33,9 @@ export default async function AboutSection() {
             <SectionDescription className="max-w-4xl">
               At Ilaj Dental Care, we take pride in delivering exceptional
               dental care with a focus on quality, comfort, and trust. Backed
-              by years of experience, our expert team has helped thousands of
-              patients achieve healthy and confident smiles through advanced,
-              safe, and personalized treatments.
+              by years of experience, our team has helped patients achieve
+              healthy, confident smiles through advanced, safe, and
+              personalized treatment plans.
             </SectionDescription>
 
             <div className="mt-20 flex justify-start">

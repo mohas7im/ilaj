@@ -58,7 +58,7 @@ export default async function ContactPage() {
       <section className="px-5 pt-12 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
         <div className="mx-auto max-w-7xl text-center">
 
-          <SectionLabel>OUR DENTAL TREATMENTS</SectionLabel>
+          <SectionLabel>GET IN TOUCH</SectionLabel>
 
           <SectionTitle as="h1" className="mx-auto max-w-3xl">
             We’re Here To <Highlight>Help You</Highlight>

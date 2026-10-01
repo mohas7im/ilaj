@@ -23,18 +23,18 @@ export default async function OurStorySection() {
         <SectionLabel>OUR STORY</SectionLabel>
 
         <SectionTitle>
-          Built Around One Simple Belief :{" "}
+          Built Around One Simple Belief —{" "}
           <Highlight>Every Smile Matters</Highlight>
         </SectionTitle>
 
         <SectionDescription className="mt-5">
-          Ilaj Dental Care Was Created With A Simple Goal: To Make
-          Professional Dental Care Feel More Comfortable, Accessible, And
-          Reassuring. From Routine Checkups To Advanced Treatments, We Focus
-          On Understanding Each Patient’s Needs And Creating A Treatment
-          Experience That Feels Clear And Stress-Free. We Combine Clinical
-          Expertise, Modern Technology, And Genuine Attention To Detail To
-          Help Our Patients Maintain Healthier Smiles And Greater Confidence.
+          Ilaj Dental Care was created with a simple goal: to make
+          professional dental care feel more comfortable, accessible, and
+          reassuring. From routine checkups to advanced treatments, we focus
+          on understanding each patient’s needs and creating a treatment
+          experience that feels clear and stress-free. We combine clinical
+          expertise, modern technology, and genuine attention to detail to
+          help our patients maintain healthier smiles and greater confidence.
         </SectionDescription>
 
         {/* =====================================================

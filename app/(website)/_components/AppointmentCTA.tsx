@@ -25,7 +25,7 @@ export default function AppointmentCTA() {
         <SectionLabel tone="light">GET STARTED</SectionLabel>
 
         <SectionTitle tone="light" className="max-w-md">
-          Ready to take a Beautiful Smile with us!
+          Ready for a Beautiful, Confident Smile?
         </SectionTitle>
 
         {/* mt-4 matches the label's mb-4, so the heading has equal space above and below */}
