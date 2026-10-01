@@ -365,8 +365,8 @@ html[data-website-theme]::-webkit-scrollbar-thumb:hover {
 
 /* ─── Expanding panels ("Other services" on the service page) ───
    Desktop: panels share one row; the first starts wide, and the hovered or
-   keyboard-focused panel widens while the rest narrow. Its extra text fades in.
-   Below lg the panels are plain stacked cards with everything visible. */
+   keyboard-focused panel widens while the rest narrow.
+   Below lg the panels are plain stacked cards. */
 @media (min-width: 64rem) {
   .panels {
     display: flex;
@@ -387,30 +387,10 @@ html[data-website-theme]::-webkit-scrollbar-thumb:hover {
   .panels:has(.panel:is(:hover, :focus-visible)) .panel:is(:hover, :focus-visible) {
     flex-grow: 2.4;
   }
-
-  /* Fixed width so the text doesn't reflow while the panel resizes */
-  .panel-extra {
-    width: 24rem;
-    opacity: 0;
-    transform: translateY(0.5rem);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  .panel:first-child .panel-extra,
-  .panels:has(.panel:is(:hover, :focus-visible)) .panel:is(:hover, :focus-visible) .panel-extra {
-    opacity: 1;
-    transform: none;
-    transition-delay: 0.2s;
-  }
-  .panels:has(.panel:is(:hover, :focus-visible)) .panel:not(:hover, :focus-visible) .panel-extra {
-    opacity: 0;
-    transform: translateY(0.5rem);
-    transition-delay: 0s;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .panel,
-  .panel-extra {
+  .panel {
     transition: none;
   }
 }

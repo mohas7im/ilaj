@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import CardTitle from "@/components/website/common/CardTitle";
-import CardText from "@/components/website/common/CardText";
 import type { WebsiteService } from "../../_lib/services";
 
 // One "Other services" panel on the detail page. Place inside a `.panels` row:
@@ -38,23 +37,10 @@ export default function ServiceCard({ service, index = 0 }: { service: WebsiteSe
         <ArrowUpRight className="size-5" strokeWidth={2.25} />
       </span>
 
-      <CardTitle as="span" size="sm" tone="light">
-        {service.number}
-      </CardTitle>
-      <CardTitle tone="light" className="mt-2">
+      {/* line-clamp keeps every title to one line, so it stays aligned across panels. */}
+      <CardTitle tone="light" className="mb-4 line-clamp-1">
         {service.title}
       </CardTitle>
-
-      {/* Shown when the panel is wide (always on phones) */}
-      <div className="panel-extra">
-        <CardText tone="light" className="mt-2 line-clamp-3">
-          {service.description}
-        </CardText>
-        <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white">
-          View Details
-          <ArrowUpRight aria-hidden="true" className="size-4" />
-        </span>
-      </div>
     </Link>
   );
 }
