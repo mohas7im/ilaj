@@ -11,11 +11,13 @@ export default function AppointmentCTA() {
 
       {/* Background Image */}
       <Image
-        src="/images/contact-dental.jpg"
-        alt=""
+        src="/images/dental-hero.webp"
+        alt="Professional dental treatment at Ilaj Dental Clinic"
         fill
-        className="object-cover"
+        className="object-cover object-center"
         sizes="100vw"
+        priority
+        quality={100}
       />
       <div className="absolute inset-0 bg-black/60" />
 

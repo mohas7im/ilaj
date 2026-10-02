@@ -89,12 +89,13 @@ export default async function WhyChooseUsSection() {
             "
           >
             <Image
-              src="/images/why-ilaj.jpg"
-              alt="Patient smiling and looking at their teeth"
+              src="/images/why-ilaj.webp"
+              alt="Dental specialists reviewing X-ray with patient at Ilaj Dental Care"
               fill
               priority
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 40vw"
+              quality={100}
             />
           </div>
 

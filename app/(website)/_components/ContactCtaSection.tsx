@@ -10,12 +10,13 @@ export default function ContactCtaSection() {
 
       {/* Background Image */}
       <Image
-        src="/images/contact-dental.jpg"
-        alt="Dental care at Ilaj Dental Care"
+        src="/images/contact/contact-cta-bg.webp"
+        alt="Patient relaxing during a dental checkup in a modern, comfortable dental clinic at Ilaj Dental Care"
         fill
         priority
-        className="object-cover"
+        className="object-cover object-center"
         sizes="100vw"
+        quality={100}
       />
 
       {/* Dark Overlay */}

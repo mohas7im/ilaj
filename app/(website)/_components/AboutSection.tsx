@@ -55,8 +55,8 @@ export default async function AboutSection() {
           <div className="lg:col-span-3">
             <div className="reveal-image relative aspect-3/2 w-full overflow-hidden rounded-3xl shadow-sm">
               <Image
-                src="/images/about-dental.jpg"
-                alt="Dentist consulting patient with teeth model"
+                src="/images/about-dental.webp"
+                alt="Dentist performing a dental procedure under operatory light at Ilaj Dental Care"
                 fill
                 priority
                 className="object-cover"

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Clover, Target, type LucideIcon } from "lucide-react";
+import { Target } from "lucide-react";
 import Button from "@/components/website/ui/Button";
 import Section from "@/components/website/common/Section";
 import SectionLabel from "@/components/website/common/SectionLabel";
@@ -43,7 +43,18 @@ export default async function OurStorySection() {
         {/* Shared rows (icon / space / title / text) so Mission and Vision titles line up */}
         <div className="mt-14 grid grid-cols-1 gap-4 md:min-h-96 md:grid-cols-3 md:grid-rows-[auto_1fr_auto_auto] md:gap-y-0 lg:mt-16 lg:min-h-128">
 
-          <ValueCard icon={Clover} title="Mission">
+          <ValueCard
+            icon={
+              <Image
+                src="/images/about/mission-icon.webp"
+                alt="Mission icon"
+                width={40}
+                height={40}
+                className="size-10 object-contain"
+              />
+            }
+            title="Mission"
+          >
             Our mission is to deliver high-quality dental care in an
             environment where patients feel heard, respected, and
             comfortable. We strive to make modern dentistry accessible
@@ -61,7 +72,7 @@ export default async function OurStorySection() {
             />
           </div>
 
-          <ValueCard icon={Target} title="Vision">
+          <ValueCard icon={<Target className="size-10 text-zinc-950" strokeWidth={2.25} aria-hidden="true" />} title="Vision">
             Our vision is to redefine dental care by fostering a
             community where every patient feels valued and empowered. We
             aim to innovate dental practices, ensuring that our services
@@ -91,18 +102,23 @@ export default async function OurStorySection() {
 }
 
 function ValueCard({
-  icon: Icon,
+  logo,
+  icon,
   title,
   children,
 }: {
-  icon: LucideIcon;
+  logo?: React.ReactNode;
+  icon: React.ReactNode;
   title: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="reveal flex min-h-96 flex-col rounded-2xl border border-zinc-200 bg-zinc-50 p-8 md:row-span-4 md:grid md:min-h-0 md:grid-rows-subgrid lg:py-10 lg:pl-10 lg:pr-6">
 
-      <Icon className="size-10 text-zinc-950 md:row-start-1" strokeWidth={2.25} aria-hidden="true" />
+      <div className="flex flex-col gap-4 md:row-start-1">
+        {logo && <div>{logo}</div>}
+        <div>{icon}</div>
+      </div>
 
       <CardTitle tone="brand" className="mt-auto pt-12 md:row-start-3 md:mt-0">
         {title}
