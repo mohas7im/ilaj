@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { z } from "zod";
+import { LoaderCircle } from "lucide-react";
 import { getApiErrorMessage } from "@/lib/api/errors";
 import Button from "@/components/website/ui/Button";
+import SectionTitle from "@/components/website/common/SectionTitle";
+import SectionDescription from "@/components/website/common/SectionDescription";
 import Input from "@/components/website/ui/Input";
 import Select from "@/components/website/ui/Select";
 import Textarea from "@/components/website/ui/Textarea";
@@ -11,7 +14,8 @@ import DatePicker from "@/components/website/ui/DatePicker";
 import TimePicker from "@/components/website/ui/TimePicker";
 import { submitContactInquiry } from "../_api/contactApi";
 
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "submitting" | "error";
+type Sent = { firstName: string; treatment: string };
 
 const TREATMENTS = [
   "Teeth Cleaning",
@@ -49,6 +53,30 @@ export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [apiError, setApiError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [sent, setSent] = useState<Sent | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // The submit button grows into the confirmation panel: the panel is clipped
+  // to the button's exact box and pill shape, then opens out to fill the card.
+  useLayoutEffect(() => {
+    const panel = panelRef.current;
+    const button = buttonRef.current;
+    if (!sent || !panel || !button) return;
+    headingRef.current?.focus({ preventScroll: true });
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const p = panel.getBoundingClientRect();
+    const b = button.getBoundingClientRect();
+    panel.animate(
+      [
+        { clipPath: `inset(${b.top - p.top}px ${p.right - b.right}px ${p.bottom - b.bottom}px ${b.left - p.left}px round 999px)` },
+        { clipPath: "inset(0 round 1rem)" },
+      ],
+      { duration: 800, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+    );
+  }, [sent]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -93,7 +121,12 @@ export default function ContactForm() {
         message: result.data.message,
       });
       formElement.reset();
-      setStatus("success");
+      const firstName = result.data.fullName.split(/\s+/)[0];
+      setSent({
+        firstName: firstName.charAt(0).toUpperCase() + firstName.slice(1),
+        treatment: result.data.treatment === "Other" ? "" : result.data.treatment,
+      });
+      setStatus("idle");
     } catch (err) {
       setApiError(getApiErrorMessage(err, "Could not send your request. Please try again or call us."));
       setStatus("error");
@@ -108,7 +141,8 @@ export default function ContactForm() {
   };
 
   return (
-    <form className="mt-3" onSubmit={handleSubmit} noValidate>
+    <>
+    <form className="mt-3" onSubmit={handleSubmit} noValidate inert={sent !== null}>
 
       <div className="grid grid-cols-1 gap-x-3.5 gap-y-4 sm:grid-cols-2">
 
@@ -178,27 +212,25 @@ export default function ContactForm() {
       </div>
 
       <Button
+        ref={buttonRef}
         type="submit"
         variant="primary"
         showIcon={false}
         disabled={status === "submitting"}
+        aria-busy={status === "submitting"}
         className="mt-8 w-full"
       >
-        {status === "submitting" ? "Sending..." : "Book Appointment"}
+        {/* While sending, the label stays in place (invisible) so the button keeps its size */}
+        <span className="relative inline-flex items-center justify-center">
+          <span className={status === "submitting" ? "invisible" : undefined}>Book Appointment</span>
+          {status === "submitting" && (
+            <>
+              <LoaderCircle aria-hidden="true" className="absolute size-5 animate-spin" />
+              <span className="sr-only">Sending…</span>
+            </>
+          )}
+        </span>
       </Button>
-
-      {status === "success" && (
-        <div role="status" className="mt-6 flex flex-col items-center gap-3 text-center">
-          {/* Circle and tick draw themselves in (.draw-check) */}
-          <svg viewBox="0 0 52 52" className="size-14 text-brand" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="26" cy="26" r="23" pathLength={1} className="draw-check" />
-            <path d="M16 27l7 7 13-15" pathLength={1} className="draw-check" style={{ "--delay": "0.6s" } as React.CSSProperties} />
-          </svg>
-          <p className="text-sm text-zinc-700">
-            Thank you! We have received your request and will contact you soon.
-          </p>
-        </div>
-      )}
 
       {status === "error" && (
         <p role="alert" className="mt-4 text-center text-sm text-red-600">
@@ -207,5 +239,37 @@ export default function ContactForm() {
       )}
 
     </form>
+
+    {/* Confirmation — covers the whole card (the card is position: relative) */}
+    {sent && (
+      <div
+        ref={panelRef}
+        className="absolute -inset-px z-10 flex flex-col items-start justify-end rounded-2xl bg-brand p-6 sm:p-10"
+      >
+        <div className="hero-fade" style={{ "--delay": "0.45s" } as React.CSSProperties}>
+          <SectionTitle as="h3" tone="light">
+            <span ref={headingRef} tabIndex={-1} className="outline-none">
+              Thanks, {sent.firstName}.
+            </span>
+          </SectionTitle>
+          <SectionDescription tone="light" className="mt-3 max-w-md">
+            {sent.treatment
+              ? `Your request for ${sent.treatment} is with our team. We'll call you shortly to confirm a time.`
+              : "Your request is with our team. We'll call you shortly to confirm a time."}
+          </SectionDescription>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setSent(null);
+              requestAnimationFrame(() => document.getElementById("fullName")?.focus());
+            }}
+            className="mt-8"
+          >
+            Send another request
+          </Button>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

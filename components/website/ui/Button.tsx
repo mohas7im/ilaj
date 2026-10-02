@@ -2,8 +2,7 @@ import * as React from "react";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ComponentProps<"button"> {
   variant?: "primary" | "secondary" | "outline";
   showIcon?: boolean;
   icon?: React.ReactNode;

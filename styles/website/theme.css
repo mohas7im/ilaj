@@ -168,10 +168,6 @@ html[data-website-theme]::-webkit-scrollbar-thumb:hover {
   to { translate: 0 25%; }
 }
 
-@keyframes draw-stroke {
-  to { stroke-dashoffset: 0; }
-}
-
 @media (prefers-reduced-motion: no-preference) {
 
   /* Hero: words rise out of a mask, background slowly settles.
@@ -193,13 +189,6 @@ html[data-website-theme]::-webkit-scrollbar-thumb:hover {
   .hero-fade {
     animation: fade-up-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--delay, 0.6s);
-  }
-
-  /* Checkmark that draws itself (form success) */
-  .draw-check {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: draw-stroke 0.6s cubic-bezier(0.65, 0, 0.35, 1) var(--delay, 0.15s) forwards;
   }
 
   @supports (animation-timeline: view()) {

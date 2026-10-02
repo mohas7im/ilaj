@@ -86,11 +86,12 @@ export default async function ContactPage() {
           className="pointer-events-none absolute left-0 top-36 hidden aspect-square w-1/2 lg:block"
         >
           <Image
-            src="/images/contact/contact-panel-bg.png"
+            src="/images/contact/contact-panel-bg.webp"
             alt=""
             fill
             className="object-cover saturate-50"
             sizes="50vw"
+            quality={90}
           />
         </div>
 
@@ -128,7 +129,7 @@ export default async function ContactPage() {
               {/* Appointment Form */}
               <div
                 id="book-appointment"
-                className="scroll-mt-28 rounded-2xl lg:col-span-5 border border-zinc-200 bg-white p-3.5"
+                className="relative scroll-mt-28 rounded-2xl lg:col-span-5 border border-zinc-200 bg-white p-3.5"
               >
                 <CardTitle as="h2">Book Your Appointment</CardTitle>
 

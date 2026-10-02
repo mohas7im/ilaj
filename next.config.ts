@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
   // Admin uploads (service images etc.) are stored on Cloudinary
   images: {
     remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
+    // 75 is the default; 90 is for photos where quality matters more than bytes
+    qualities: [75, 90],
   },
   // The website's "Services" pages were renamed to "Treatments"; keep old links working
   async redirects() {
