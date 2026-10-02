@@ -31,7 +31,8 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Protect /admin/* routes: redirect to login if no tokens exist at all
+  // 2. Protect /admin/* routes: redirect to login if no tokens exist at all.
+  //    (Admin images live in public/images/admin, outside this path.)
   if (pathname.startsWith("/admin")) {
     if (!hasValidSession) {
       const loginUrl = new URL("/admin/login", req.url);

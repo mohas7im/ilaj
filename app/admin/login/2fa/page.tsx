@@ -108,9 +108,9 @@ function TwoFactorContent() {
         <div className="relative w-full h-full min-h-[calc(100vh-2rem)] rounded-3xl border border-border/60 overflow-hidden flex flex-col justify-between p-10 xl:p-12 shadow-md">
           {/* Background Photo */}
           <img
-            src="/admin/login-showcase.jpg"
+            src="/images/admin/login-showcase.webp"
             alt=""
-            className="absolute inset-0 h-full w-full object-cover brightness-90"
+            className="absolute inset-0 h-full w-full object-cover object-left brightness-90"
           />
 
           {/* Moody cinematic gradient vignette */}
@@ -123,9 +123,11 @@ function TwoFactorContent() {
               alt={branding.name}
               className="h-14 w-auto"
             />
-            <span className="text-xs text-white/70 block">
-              {ADMIN_BRANDING.description}
-            </span>
+            {ADMIN_BRANDING.description && (
+              <span className="text-xs text-white/70 block">
+                {ADMIN_BRANDING.description}
+              </span>
+            )}
           </div>
 
           {/* Bottom Quote */}

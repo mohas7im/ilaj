@@ -34,8 +34,8 @@ import { BRAND_LOGO } from "@/lib/brand"
 // Logo images live in public/brand/ (see lib/brand.ts), shared with the website.
 
 export const ADMIN_BRANDING = {
-  /** Practice category shown under the logo on the login pages */
-  description: "Dental Practice Management",
+  /** Optional line shown under the logo on the login pages ("" hides it) */
+  description: "",
   /** Full logo — shown when sidebar is expanded and in the mobile menu */
   logo: BRAND_LOGO.full,
   /** Full logo with white text — shown over the login photo */
@@ -43,7 +43,7 @@ export const ADMIN_BRANDING = {
   /** Compact logo mark — shown when sidebar is collapsed */
   logoMark: BRAND_LOGO.mark,
   /** Favicon path */
-  favicon: "/admin/favicon.ico",
+  favicon: "/favicon.ico",
 }
 
 // ─── Navigation ───────────────────────────────────────────────────────────────

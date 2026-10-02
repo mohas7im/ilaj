@@ -59,9 +59,9 @@ export default function AdminLoginPage() {
         <div className="relative w-full h-full min-h-[calc(100vh-2rem)] rounded-3xl border border-border/60 overflow-hidden flex flex-col justify-between p-10 xl:p-12 shadow-md">
           {/* Background Photo */}
           <img
-            src="/admin/login-showcase.jpg"
+            src="/images/admin/login-showcase.webp"
             alt=""
-            className="absolute inset-0 h-full w-full object-cover brightness-90"
+            className="absolute inset-0 h-full w-full object-cover object-left brightness-90"
           />
 
           {/* Moody cinematic gradient vignette matching reference */}
@@ -74,16 +74,18 @@ export default function AdminLoginPage() {
               alt={branding.name}
               className="h-14 w-auto"
             />
-            <span className="text-xs text-white/70 block">
-              {ADMIN_BRANDING.description}
-            </span>
+            {ADMIN_BRANDING.description && (
+              <span className="text-xs text-white/70 block">
+                {ADMIN_BRANDING.description}
+              </span>
+            )}
           </div>
 
           {/* Bottom Inspirational Quote */}
-          <div className="relative z-10 space-y-3 max-w-md">
+          <div className="relative z-10 space-y-3">
             <h2 className="text-2xl xl:text-3xl font-light tracking-tight text-white leading-snug">
-              Crafting healthy, confident smiles <br />
-              <span className="font-normal">with gentle dental excellence.</span>
+              Crafting healthy, confident smiles with gentle dental excellence.
+
             </h2>
             <p className="text-xs text-white/80 font-medium tracking-wide uppercase">
               {[branding.name, "Modern Dental Clinic"].filter(Boolean).join(" — ")}

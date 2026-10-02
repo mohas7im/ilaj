@@ -254,8 +254,8 @@ export default function ContactForm() {
           </SectionTitle>
           <SectionDescription tone="light" className="mt-3 max-w-md">
             {sent.treatment
-              ? `Your request for ${sent.treatment} is with our team. We'll call you shortly to confirm a time.`
-              : "Your request is with our team. We'll call you shortly to confirm a time."}
+              ? `Request submitted! Thank you for choosing us.`
+              : "Request submitted! Thank you for choosing us."}
           </SectionDescription>
           <Button
             variant="secondary"
