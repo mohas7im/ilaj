@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getImageProps } from "next/image";
 import { ArrowRight } from "lucide-react";
 import Button from "@/components/website/ui/Button";
 import { getOpeningHours, getSettings, toCounter } from "@/lib/data/settings";
@@ -10,6 +11,16 @@ const CLIENT_AVATARS = [
   "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop&crop=faces",
 ];
 
+// Optimised (resized WebP) by next/image for the phone <source>
+const { props: { srcSet: mobileSrcSet } } = getImageProps({
+  src: "/images/hero/hero-mobile-smile.webp",
+  alt: "",
+  width: 1534,
+  height: 1025,
+  sizes: "100vw",
+  quality: 90,
+});
+
 const HEADLINE = "Your Smile, Our Priority — Expert Dental Care You Trust";
 
 export default async function Hero() {
@@ -20,17 +31,20 @@ export default async function Hero() {
     <section className="relative w-full min-h-screen flex flex-col justify-between bg-neutral-950 overflow-hidden">
       {/* Background Image — wrapper drifts on scroll (parallax), image settles in (hero-image) */}
       <div className="parallax absolute inset-0">
-        <img
-          src="/images/hero-bg.png"
-          alt="Hero background"
-          className="hero-image w-full h-full object-cover"
-        />
+        {/* Phones get their own photo, cropped around the face; desktop keeps the original */}
+        <picture className="block w-full h-full">
+          <source media="(max-width: 767px)" srcSet={mobileSrcSet} sizes="100vw" />
+          <img
+            src="/images/hero-bg.png"
+            alt="Hero background"
+            className="hero-image w-full h-full object-cover max-md:object-[68%_center]"
+          />
+        </picture>
       </div>
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
-      {/* Glossy & Subtle Vignette Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/60 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/4 to-white/12 pointer-events-none" />
+      {/* Shade only where text sits so the face stays bright: top (nav/headline)
+          and bottom (info/buttons) everywhere, plus the left side on desktop */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70 pointer-events-none" />
+      <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-black/50 via-black/15 via-45% to-transparent pointer-events-none" />
 
       {/* Top / Main Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24 sm:pt-28 lg:pt-32">
@@ -104,7 +118,8 @@ export default async function Hero() {
 
           {/* Right: Description & Action Buttons */}
           <div className="flex flex-col items-start gap-4">
-            <p className="text-base text-white leading-relaxed max-w-md font-normal">
+            {/* Hidden on phones — the buttons take its place */}
+            <p className="max-md:hidden text-base text-white leading-relaxed max-w-md font-normal">
               Ilaj Dental Care combines modern technology with gentle, affordable treatment — from routine checkups to advanced procedures.
             </p>
 
