@@ -51,37 +51,42 @@ export default function AboutIntroSection() {
           ====================================================== */}
           <div className="grid aspect-square grid-cols-2 gap-4 lg:aspect-9/8">
 
-            {/* Tall Image */}
+            {/* Tall Image (1st Image) */}
             <div className="reveal-image relative overflow-hidden rounded-2xl">
               <Image
-                src="/images/about/about-main.jpg"
-                alt="Dentist providing dental treatment"
+                src="/images/about/dentist-oral-examination.webp"
+                alt="Professional dentist performing a thorough oral examination at Ilaj Dental Care"
                 fill
                 priority
+                unoptimized
                 className="object-cover"
-                sizes="(max-width: 1024px) 50vw, 283px"
+                sizes="(max-width: 1024px) 50vw, 500px"
               />
             </div>
 
             {/* Two Stacked Images */}
             <div className="grid grid-rows-2 gap-4">
+              {/* 2nd Image */}
               <div className="reveal-image relative overflow-hidden rounded-2xl">
                 <Image
-                  src="/images/about/about-small-1.jpg"
-                  alt="Dental care model"
+                  src="/images/about/modern-dentistry-care.webp"
+                  alt="Modern dentistry treatments and care at Ilaj Dental Care"
                   fill
+                  unoptimized
                   className="object-cover"
-                  sizes="(max-width: 1024px) 50vw, 283px"
+                  sizes="(max-width: 1024px) 50vw, 500px"
                 />
               </div>
 
+              {/* 3rd Image */}
               <div className="reveal-image relative overflow-hidden rounded-2xl">
                 <Image
-                  src="/images/about/about-small-2.jpg"
-                  alt="Dental hygiene demonstration"
+                  src="/images/about/panoramic-xray-consultation.webp"
+                  alt="Dentist and patient reviewing panoramic dental X-ray consultation at Ilaj Dental Care"
                   fill
+                  unoptimized
                   className="object-cover"
-                  sizes="(max-width: 1024px) 50vw, 283px"
+                  sizes="(max-width: 1024px) 50vw, 500px"
                 />
               </div>
             </div>

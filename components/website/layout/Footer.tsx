@@ -70,7 +70,7 @@ const linkClass = "text-white/80 transition-colors duration-200 hover:text-white
 export default async function Footer() {
   const settings = await getSettings();
   const socialLinks = SOCIAL_LINKS(settings);
-  const clinicName = settings.clinicName ?? "";
+  const clinicName = "Ilaj Dental Care";
 
   return (
     <footer className="footer-parallax relative z-0 -mt-10 w-full bg-neutral-900 pt-10 text-white lg:-mt-12 lg:pt-12">
@@ -167,9 +167,9 @@ export default async function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-14 flex flex-col items-center gap-6 border-t border-white/15 pt-8 sm:flex-row sm:justify-between">
-          {clinicName && <span className="text-xl font-bold tracking-tight">{clinicName}</span>}
+          <span className="text-xl font-bold tracking-tight">{clinicName}</span>
           <p className="text-sm text-white/60">
-            © {new Date().getFullYear()}{clinicName && ` ${clinicName}`}. All rights reserved.
+            © {new Date().getFullYear()} {clinicName}. All rights reserved.
           </p>
           <BackToTopButton />
         </div>

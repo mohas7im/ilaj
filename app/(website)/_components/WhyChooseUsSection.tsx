@@ -75,7 +75,6 @@ export default async function WhyChooseUsSection() {
           ================================================== */}
           <div
             className="
-              relative
               h-96
               lg:col-span-5
               w-full
@@ -88,15 +87,19 @@ export default async function WhyChooseUsSection() {
               lg:h-[min(38rem,calc(100vh-9rem))]
             "
           >
-            <Image
-              src="/images/why-ilaj.webp"
-              alt="Dental specialists reviewing X-ray with patient at Ilaj Dental Care"
-              fill
-              priority
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 40vw"
-              quality={100}
-            />
+            {/* Inner relative wrapper — fill requires relative/absolute/fixed parent;
+                outer div uses lg:sticky which is not valid for fill images */}
+            <div className="relative h-full w-full overflow-hidden rounded-2xl">
+              <Image
+                src="/images/why-ilaj.webp"
+                alt="Dental specialists reviewing X-ray with patient at Ilaj Dental Care"
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                quality={100}
+              />
+            </div>
           </div>
 
         </div>

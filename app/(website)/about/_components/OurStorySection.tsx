@@ -64,11 +64,12 @@ export default async function OurStorySection() {
 
           <div className="reveal-image relative min-h-96 overflow-hidden rounded-2xl md:row-span-4 md:min-h-0">
             <Image
-              src="/images/story/our-story.jpg"
-              alt="Dentist providing dental treatment"
+              src="/images/story/joyful-smile.webp"
+              alt="Happy patient showing a healthy, radiant smile at Ilaj Dental Care"
               fill
+              unoptimized
               className="object-cover"
-              sizes="(max-width: 768px) 100vw, 395px"
+              sizes="(max-width: 768px) 100vw, 500px"
             />
           </div>
 
