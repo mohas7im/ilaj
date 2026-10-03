@@ -11,21 +11,24 @@ const CLIENT_AVATARS = [
   "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop&crop=faces",
 ];
 
-// Optimised (resized WebP) by next/image for the phone <source>
-const { props: { srcSet: mobileSrcSet } } = getImageProps({
-  src: "/images/hero/cinematic-dental-examination-mobile.webp",
-  alt: "",
-  width: 1122,
-  height: 1402,
-  sizes: "100vw",
-  quality: 90,
-});
+
 
 const HEADLINE = "Your Smile, Our Priority — Expert Dental Care You Trust";
 
 export default async function Hero() {
   const [settings, openingHours] = await Promise.all([getSettings(), getOpeningHours()]);
   const patients = toCounter(settings.totalPatients);
+
+  // Called inside the component body (not at module scope) so Vinext does not
+  // treat it as a client-reference during server-side module evaluation.
+  const { props: { srcSet: mobileSrcSet } } = getImageProps({
+    src: "/images/hero/cinematic-dental-examination-mobile.webp",
+    alt: "",
+    width: 1122,
+    height: 1402,
+    sizes: "100vw",
+    quality: 90,
+  });
 
   return (
     <section className="relative w-full min-h-screen flex flex-col justify-between bg-neutral-950 overflow-hidden">
