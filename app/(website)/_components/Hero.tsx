@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getImageProps } from "next/image";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import Button from "@/components/website/ui/Button";
 import { getOpeningHours, getSettings, toCounter } from "@/lib/data/settings";
@@ -19,29 +19,29 @@ export default async function Hero() {
   const [settings, openingHours] = await Promise.all([getSettings(), getOpeningHours()]);
   const patients = toCounter(settings.totalPatients);
 
-  // Called inside the component body (not at module scope) so Vinext does not
-  // treat it as a client-reference during server-side module evaluation.
-  const { props: { srcSet: mobileSrcSet } } = getImageProps({
-    src: "/images/hero/cinematic-dental-examination-mobile.webp",
-    alt: "",
-    width: 1122,
-    height: 1402,
-    sizes: "100vw",
-    quality: 90,
-  });
-
   return (
     <section className="relative w-full min-h-screen flex flex-col justify-between bg-neutral-950 overflow-hidden">
       {/* Background Image — wrapper drifts on scroll (parallax), image settles in (hero-image) */}
       <div className="parallax absolute inset-0">
-        <picture className="block w-full h-full">
-          <source media="(max-width: 767px)" srcSet={mobileSrcSet} sizes="100vw" />
-          <img
-            src="/images/hero/dramatic-dental-examination.webp"
-            alt="Dramatic Dental Examination at Ilaj Dental Care"
-            className="hero-image w-full h-full object-cover"
-          />
-        </picture>
+        {/* Portrait crop on phones, wide shot from md up — CSS shows one of them */}
+        <Image
+          src="/images/hero/cinematic-dental-examination-mobile.webp"
+          alt="Dental examination at Ilaj Dental Care"
+          fill
+          priority
+          sizes="100vw"
+          quality={90}
+          className="hero-image object-cover md:hidden"
+        />
+        <Image
+          src="/images/hero/dramatic-dental-examination.webp"
+          alt="Dramatic Dental Examination at Ilaj Dental Care"
+          fill
+          priority
+          sizes="100vw"
+          quality={90}
+          className="hero-image object-cover max-md:hidden"
+        />
       </div>
       {/* Shade only where text sits so the face stays bright: top (nav/headline)
           and bottom (info/buttons) everywhere, plus the left side on desktop */}
