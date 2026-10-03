@@ -7,15 +7,8 @@ export default defineConfig({
     compatibilityDate: "2026-10-03",
     compatibilityFlags: ["nodejs_compat"],
     workersDev: true,
-    routes: [
-      {
-        pattern: "ilajdentalcare.com",
-        zone_name: "ilajdentalcare.com",
-        custom_domain: true,
-        enabled: true,
-        previews_enabled: false,
-      },
-    ],
+    previewUrls: false,
+    domains: ["ilajdentalcare.com"],
     assets: { notFoundHandling: "none" },
     env: {
       ASSETS: bindings.assets(),
