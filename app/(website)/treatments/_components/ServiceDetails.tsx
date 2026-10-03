@@ -1,4 +1,3 @@
-import { ViewTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -30,20 +29,18 @@ export default function ServiceDetails({
           HERO BANNER — the Services page image flies in here
       ====================================================== */}
       <section className="relative w-full overflow-hidden bg-neutral-950">
-        <ViewTransition name={`service-image-${service.slug}`} share="morph" default="none">
-          <div className="absolute inset-0">
-            {service.image && (
-              <Image
-                src={service.image}
-                alt={service.imageAlt}
-                fill
-                priority
-                className="object-cover"
-                sizes="100vw"
-              />
-            )}
-          </div>
-        </ViewTransition>
+        <div className="absolute inset-0">
+          {service.image && (
+            <Image
+              src={service.image}
+              alt={service.imageAlt}
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
+            />
+          )}
+        </div>
         <div className="absolute inset-0 bg-black/55" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
 

@@ -1,4 +1,3 @@
-import { ViewTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -89,11 +88,9 @@ function ServiceRow({ service }: { service: WebsiteService }) {
         </Link>
       </div>
 
-      {/* Images — the first one flies into the detail page hero (view transition) */}
+      {/* Images */}
       <Link href={href} tabIndex={-1} aria-hidden="true" className="grid grid-cols-2 gap-4 lg:col-span-4">
-        <ViewTransition name={`service-image-${service.slug}`} share="morph" default="none">
-          <ServiceImage src={service.image} alt={service.imageAlt} />
-        </ViewTransition>
+        <ServiceImage src={service.image} alt={service.imageAlt} />
         <ServiceImage src={service.secondaryImage} alt={service.secondaryImageAlt} />
       </Link>
 

@@ -1,4 +1,3 @@
-import { ViewTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
@@ -15,19 +14,17 @@ export default function ServiceCard({ service, index = 0 }: { service: WebsiteSe
       style={{ "--i": index } as React.CSSProperties}
       className="panel reveal group relative isolate flex h-80 flex-col justify-end overflow-hidden rounded-2xl bg-neutral-900 p-6 lg:h-auto lg:p-7"
     >
-      <ViewTransition name={`service-image-${service.slug}`} share="morph" default="none">
-        <div className="absolute inset-0 -z-10">
-          {service.image && (
-            <Image
-              src={service.image}
-              alt={service.imageAlt}
-              fill
-              className="object-cover transition-[scale] duration-700 ease-out group-hover:scale-105"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
-          )}
-        </div>
-      </ViewTransition>
+      <div className="absolute inset-0 -z-10">
+        {service.image && (
+          <Image
+            src={service.image}
+            alt={service.imageAlt}
+            fill
+            className="object-cover transition-[scale] duration-700 ease-out group-hover:scale-105"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+          />
+        )}
+      </div>
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/30 to-black/5" />
 
       <span

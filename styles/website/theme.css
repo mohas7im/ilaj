@@ -283,57 +283,7 @@ html[data-website-theme]::-webkit-scrollbar-thumb:hover {
 }
 
 
-/* ─── Page transitions (React <ViewTransition>) ─────────────── */
-::view-transition {
-  pointer-events: none;
-}
-
-/* Page content: old page fades out fast, new page rises in */
-::view-transition-old(.page-out) {
-  animation: 150ms ease-in both page-fade-out;
-}
-::view-transition-new(.page-in) {
-  animation: 350ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both page-fade-in;
-}
-@keyframes page-fade-out {
-  to { opacity: 0; }
-}
-@keyframes page-fade-in {
-  from { opacity: 0; transform: translateY(12px); }
-}
-
-/* Service image flies from the card into the detail page hero */
-::view-transition-group(.morph) {
-  animation-duration: 500ms;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-::view-transition-image-pair(.morph) {
-  animation-name: via-blur;
-}
-@keyframes via-blur {
-  30% { filter: blur(3px); }
-}
-
-/* Navbar stays put while the page changes */
-::view-transition-group(site-header) {
-  animation: none;
-  z-index: 100;
-}
-::view-transition-old(site-header) {
-  display: none;
-}
-::view-transition-new(site-header) {
-  animation: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(*),
-  ::view-transition-new(*),
-  ::view-transition-group(*) {
-    animation-duration: 0s !important;
-    animation-delay: 0s !important;
-  }
-}
+/* ─── Page transitions (now handled by Motion in PageTransition.tsx) ─────── */
 
 /* FAQ accordion (<details class="faq-item">): answer slides open where the
    browser supports animating to height:auto; elsewhere it opens instantly. */
