@@ -16,9 +16,9 @@ export default defineConfig({
       VINEXT_KV_CACHE: bindings.kv({
         id: "0f285eb809d443fcbae8473403e17eb9",
       }),
-      DATABASE_URL: bindings.text(),
-      CLOUDINARY_URL: bindings.text(),
-      RESEND_API_KEY: bindings.text(),
+      DATABASE_URL: bindings.secret(),
+      CLOUDINARY_URL: bindings.secret(),
+      RESEND_API_KEY: bindings.secret(),
     },
   }),
 });
