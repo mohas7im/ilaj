@@ -49,3 +49,6 @@ dist/
 
 .vinext/
 .cloudflare/
+
+# generated Prisma client
+/lib/generated/

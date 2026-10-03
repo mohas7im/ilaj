@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { Prisma } from "@prisma/client"
+import { Prisma } from "@/lib/generated/prisma/client"
 
 export interface InquiryFilters {
   pageNumber?: number

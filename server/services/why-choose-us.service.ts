@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { Prisma } from "@prisma/client"
+import { Prisma } from "@/lib/generated/prisma/client"
 import type { WhyChooseUsItem } from "@/domain/why-choose-us/why-choose-us.types"
 import type { WhyChooseUsItemFormData } from "@/domain/why-choose-us/why-choose-us.schema"
 

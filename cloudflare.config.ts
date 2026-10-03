@@ -17,6 +17,7 @@ export default defineConfig({
         id: "0f285eb809d443fcbae8473403e17eb9",
       }),
       DATABASE_URL: bindings.secret(),
+      JWT_SECRET: bindings.secret(),
       CLOUDINARY_URL: bindings.secret(),
       RESEND_API_KEY: bindings.secret(),
     },

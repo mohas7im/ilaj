@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { Prisma } from "@prisma/client"
+import { Prisma } from "@/lib/generated/prisma/client"
 import type { Doctor } from "@/domain/doctor/doctor.types"
 import type { DoctorFormData } from "@/domain/doctor/doctor.schema"
 

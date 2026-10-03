@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { Prisma } from "@prisma/client"
+import { Prisma } from "@/lib/generated/prisma/client"
 import type { ClinicPhoto } from "@/domain/clinic-photo/clinic-photo.types"
 import type { ClinicPhotoInput } from "@/domain/clinic-photo/clinic-photo.schema"
 

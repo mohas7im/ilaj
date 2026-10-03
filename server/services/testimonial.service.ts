@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { Prisma } from "@prisma/client"
+import { Prisma } from "@/lib/generated/prisma/client"
 import type { Testimonial, TestimonialStatus } from "@/domain/testimonial/testimonial.types"
 import type { TestimonialFormData } from "@/domain/testimonial/testimonial.schema"
 

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import { Prisma } from "@prisma/client"
+import { Prisma } from "@/lib/generated/prisma/client"
 import type { Faq, FaqStatus } from "@/domain/faq/faq.types"
 import type { FaqFormData } from "@/domain/faq/faq.schema"
 

@@ -1,5 +1,9 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+  // Cloudflare Workers can't compile wasm at runtime; this target imports the
+  // query compiler as a bundled .wasm module instead
+  runtime  = "cloudflare"
 }
 
 datasource db {
