@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "ilaj",
+  "main": "dist/_worker.js/index.js",
+  "compatibility_date": "2026-10-03",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "preview_urls": false,
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "dist"
+  },
+  "routes": [
+    {
+      "pattern": "ilajdentalcare.com",
+      "custom_domain": true
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
