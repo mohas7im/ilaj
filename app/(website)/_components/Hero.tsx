@@ -5,10 +5,10 @@ import Button from "@/components/website/ui/Button";
 import { getOpeningHours, getSettings, toCounter } from "@/lib/data/settings";
 
 const CLIENT_AVATARS = [
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces",
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=faces",
-  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop&crop=faces",
-  "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop&crop=faces",
+  "/images/hero/avatars/avatar-1.webp",
+  "/images/hero/avatars/avatar-2.webp",
+  "/images/hero/avatars/avatar-3.webp",
+  "/images/hero/avatars/avatar-4.webp",
 ];
 
 
