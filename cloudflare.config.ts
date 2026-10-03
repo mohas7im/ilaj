@@ -7,7 +7,7 @@ export default defineConfig({
     compatibilityDate: "2026-10-03",
     compatibilityFlags: ["nodejs_compat"],
     workersDev: true,
-    previewUrls: true,
+    previewUrls: false,
     domains: ["ilajdentalcare.com"],
     assets: { notFoundHandling: "none" },
     env: {
