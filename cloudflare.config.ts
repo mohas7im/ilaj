@@ -6,7 +6,20 @@ export default defineConfig({
     entrypoint: "vinext/server/fetch-handler",
     compatibilityDate: "2026-10-03",
     compatibilityFlags: ["nodejs_compat"],
-    assets: { notFoundHandling: "none" },
+
+    routes: [
+      {
+        pattern: "ilajdentalcare.com",
+        custom_domain: true,
+      },
+    ],
+
+    keep_vars: true,
+
+    assets: {
+      notFoundHandling: "none",
+    },
+
     env: {
       ASSETS: bindings.assets(),
       IMAGES: bindings.images(),
@@ -14,6 +27,5 @@ export default defineConfig({
         id: "0f285eb809d443fcbae8473403e17eb9",
       }),
     },
-
   }),
 });
