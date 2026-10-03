@@ -1,17 +1,15 @@
 import { PrismaClient } from "@prisma/client/edge";
-import { PrismaNeon } from "@prisma/adapter-neon";
-import { neon } from "@neondatabase/serverless";
+import { PrismaNeonHttp } from "@prisma/adapter-neon";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
 function createPrismaClient(): PrismaClient {
-  // PrismaNeon uses Neon's serverless driver (HTTP/WebSocket) instead of raw
-  // TCP, which is required for Cloudflare Workers. PrismaPg would hang forever
-  // because Workers cannot open TCP sockets to external servers.
-  const sql = neon(process.env.DATABASE_URL!);
-  const adapter = new PrismaNeon(sql);
+  // PrismaNeonHttp uses Neon's HTTP transport (fetch-based), which is the
+  // correct adapter for Cloudflare Workers. PrismaNeon uses WebSockets (Pool)
+  // which hangs in Workers, and PrismaPg uses raw TCP which is blocked entirely.
+  const adapter = new PrismaNeonHttp(process.env.DATABASE_URL!);
   return new PrismaClient({ adapter });
 }
 
