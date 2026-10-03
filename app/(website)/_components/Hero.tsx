@@ -13,10 +13,10 @@ const CLIENT_AVATARS = [
 
 // Optimised (resized WebP) by next/image for the phone <source>
 const { props: { srcSet: mobileSrcSet } } = getImageProps({
-  src: "/images/hero/hero-mobile-smile.webp",
+  src: "/images/hero/cinematic-dental-examination-mobile.webp",
   alt: "",
-  width: 1534,
-  height: 1025,
+  width: 1122,
+  height: 1402,
   sizes: "100vw",
   quality: 90,
 });
@@ -31,13 +31,12 @@ export default async function Hero() {
     <section className="relative w-full min-h-screen flex flex-col justify-between bg-neutral-950 overflow-hidden">
       {/* Background Image — wrapper drifts on scroll (parallax), image settles in (hero-image) */}
       <div className="parallax absolute inset-0">
-        {/* Phones get their own photo, cropped around the face; desktop keeps the original */}
         <picture className="block w-full h-full">
           <source media="(max-width: 767px)" srcSet={mobileSrcSet} sizes="100vw" />
           <img
-            src="/images/hero-bg.png"
-            alt="Hero background"
-            className="hero-image w-full h-full object-cover max-md:object-[68%_center]"
+            src="/images/hero/dramatic-dental-examination.webp"
+            alt="Dramatic Dental Examination at Ilaj Dental Care"
+            className="hero-image w-full h-full object-cover"
           />
         </picture>
       </div>
