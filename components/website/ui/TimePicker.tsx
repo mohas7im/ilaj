@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Clock } from "lucide-react";
+import { Check, Clock, Moon, Sun, Sunset } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PickerField } from "./PickerField";
 
@@ -11,50 +11,51 @@ export interface TimePickerProps {
   name: string;
   required?: boolean;
   placeholder?: string;
-  /** First and last bookable slot, "HH:MM" 24h (default: clinic hours 9 AM–8 PM) */
-  from?: string;
-  to?: string;
-  /** Minutes between slots */
-  step?: number;
-  /** Layout only (e.g. grid span) */
   className?: string;
   error?: string;
 }
 
-const toMinutes = (time: string) => {
-  const [h, m] = time.split(":").map(Number);
-  return h * 60 + m;
-};
-
-const toValue = (minutes: number) =>
-  `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
-
-const toLabel = (minutes: number) => {
-  const h = Math.floor(minutes / 60);
-  const m = String(minutes % 60).padStart(2, "0");
-  return `${h % 12 || 12}:${m} ${h < 12 ? "AM" : "PM"}`;
-};
+export const TIME_PERIODS = [
+  {
+    id: "morning",
+    label: "Morning",
+    range: "9:00 AM – 12:00 PM",
+    value: "Morning (9:00 AM – 12:00 PM)",
+    icon: Sun,
+  },
+  {
+    id: "afternoon",
+    label: "Afternoon",
+    range: "12:00 PM – 4:00 PM",
+    value: "Afternoon (12:00 PM – 4:00 PM)",
+    icon: Sunset,
+  },
+  {
+    id: "evening",
+    label: "Evening",
+    range: "4:00 PM – 8:00 PM",
+    value: "Evening (4:00 PM – 8:00 PM)",
+    icon: Moon,
+  },
+];
 
 /**
- * Time field: click the field to open a panel of time slots within opening
- * hours. Submits "HH:MM" (24h), like a native time input.
+ * Clean, compact Time Picker dropdown:
+ * Matches the width of the field (w-full), opens downward into the space over notes,
+ * and fits in ~110px so it never extends past the bottom or causes scrolling.
  */
 export function TimePicker({
   id,
   label,
   name,
   required,
-  placeholder = "Select a time",
-  from = "09:00",
-  to = "19:30",
-  step = 30,
+  placeholder = "Select preferred time",
   className,
   error,
 }: TimePickerProps) {
   const [time, setTime] = useState("");
 
-  const slots: number[] = [];
-  for (let minutes = toMinutes(from); minutes <= toMinutes(to); minutes += step) slots.push(minutes);
+  const selectedPeriod = TIME_PERIODS.find((p) => p.value === time);
 
   return (
     <PickerField
@@ -63,37 +64,59 @@ export function TimePicker({
       name={name}
       required={required}
       value={time}
-      display={time ? toLabel(toMinutes(time)) : ""}
+      display={selectedPeriod ? selectedPeriod.value : ""}
       placeholder={placeholder}
       icon={<Clock className="size-4.5" />}
       onReset={() => setTime("")}
-      panelClassName="w-[min(22rem,calc(100vw-3rem))] p-3"
+      direction="down"
+      panelClassName="w-full p-1.5 shadow-xl border border-zinc-200"
       className={className}
       error={error}
     >
       {(close) => (
-        <div role="group" aria-label={label} className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-          {slots.map((minutes, index) => {
-            const value = toValue(minutes);
-            const selected = value === time;
+        <div role="listbox" aria-label={label} className="space-y-1">
+          {TIME_PERIODS.map((period) => {
+            const selected = period.value === time;
+            const Icon = period.icon;
             return (
               <button
-                key={value}
+                key={period.id}
                 type="button"
-                autoFocus={selected || (!time && index === 0)}
-                aria-pressed={selected}
+                role="option"
+                aria-selected={selected}
                 onClick={() => {
-                  setTime(value);
+                  setTime(period.value);
                   close();
                 }}
                 className={cn(
-                  "cursor-pointer rounded-full border px-2 py-2 text-xs font-medium transition-colors",
+                  "flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-left transition-colors outline-none",
                   selected
-                    ? "border-brand bg-brand text-white"
-                    : "border-zinc-200 text-zinc-800 hover:border-brand hover:text-brand"
+                    ? "bg-brand/10 text-brand font-medium"
+                    : "hover:bg-zinc-100 text-zinc-900"
                 )}
               >
-                {toLabel(minutes)}
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Icon
+                    className={cn(
+                      "size-4 shrink-0",
+                      selected ? "text-brand" : "text-zinc-500"
+                    )}
+                  />
+                  <span className="text-sm font-medium truncate">
+                    {period.label}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-xs shrink-0",
+                      selected ? "text-brand/80" : "text-zinc-500"
+                    )}
+                  >
+                    ({period.range})
+                  </span>
+                </div>
+                {selected && (
+                  <Check className="size-4 text-brand shrink-0 ml-2" />
+                )}
               </button>
             );
           })}

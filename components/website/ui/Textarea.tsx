@@ -6,17 +6,22 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   label: string;
   id: string;
   error?: string;
+  textareaClassName?: string;
 }
 
 /** Labelled underline textarea. `className` is for layout only (e.g. grid span). */
-export function Textarea({ label, id, className, error, ...props }: TextareaProps) {
+export function Textarea({ label, id, className, textareaClassName, error, ...props }: TextareaProps) {
   return (
     <div className={cn("group", className)}>
       <label htmlFor={id} className={error ? fieldLabelErrorClass : fieldLabelClass}>
         {label}
       </label>
       <div className="relative">
-        <textarea id={id} className={cn(error ? fieldControlErrorClass : fieldControlClass, "h-32 resize-none py-2")} {...props} />
+        <textarea
+          id={id}
+          className={cn(error ? fieldControlErrorClass : fieldControlClass, "h-32 resize-none py-2", textareaClassName)}
+          {...props}
+        />
         <FieldUnderline hasError={!!error} />
       </div>
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}

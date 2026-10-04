@@ -22,6 +22,10 @@ export interface PickerFieldProps {
   popupRole?: "dialog" | "listbox";
   /** Panel width / padding */
   panelClassName?: string;
+  /** Panel alignment relative to field: "left" or "right" (default "left") */
+  align?: "left" | "right";
+  /** Panel open direction: "down" or "up" (default "down") */
+  direction?: "down" | "up";
   /** Layout only (e.g. grid span) */
   className?: string;
   error?: string;
@@ -47,6 +51,8 @@ export function PickerField({
   onReset,
   popupRole = "dialog",
   panelClassName,
+  align = "left",
+  direction = "down",
   className,
   error,
   children,
@@ -138,7 +144,9 @@ export function PickerField({
       {open && (
         <div
           className={cn(
-            "absolute left-0 top-full z-30 mt-2 rounded-2xl border border-zinc-200 bg-white shadow-xl animate-in fade-in-0 zoom-in-95",
+            "absolute z-30 rounded-2xl border border-zinc-200 bg-white shadow-xl animate-in fade-in-0 zoom-in-95",
+            direction === "up" ? "bottom-full mb-2" : "top-full mt-2",
+            align === "right" ? "right-0" : "left-0",
             panelClassName
           )}
         >
