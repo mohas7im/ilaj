@@ -7,6 +7,7 @@ import SectionTitle, { Highlight } from "@/components/website/common/SectionTitl
 import SectionDescription from "@/components/website/common/SectionDescription";
 import Faq, { type FaqItem } from "@/components/website/common/Faq";
 import Button from "@/components/website/ui/Button";
+import TreatmentInquiryButton from "./TreatmentInquiryButton";
 import type { WebsiteService } from "../../_lib/services";
 import { toRichTextHtml } from "@/lib/rich-text";
 import ServiceCard from "./ServiceCard";
@@ -17,11 +18,14 @@ export default function ServiceDetails({
   service,
   others,
   faqs,
+  clinicPhone,
 }: {
   service: WebsiteService;
   others: WebsiteService[];
   /** Published FAQs for this treatment; the section is hidden when empty */
   faqs: FaqItem[];
+  /** Shown in the inquiry modal as a call-us fallback */
+  clinicPhone?: string;
 }) {
   return (
     <>
@@ -60,9 +64,11 @@ export default function ServiceDetails({
             </SectionDescription>
           </div>
 
-          <Link href="/contact#book-appointment" className="mt-8 w-fit">
-            <Button variant="primary">Book This Treatment</Button>
-          </Link>
+          <TreatmentInquiryButton
+            treatment={service.title}
+            clinicPhone={clinicPhone}
+            className="mt-8 w-fit"
+          />
         </Container>
       </section>
 

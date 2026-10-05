@@ -6,6 +6,7 @@ type Inquiry = {
   treatment: string;
   preferredDate: string | null;
   preferredTime: string | null;
+  type: string;
 };
 
 // Clinic name, phone, WhatsApp and address come from Admin → Settings;
@@ -16,12 +17,19 @@ export function buildConfirmationEmail(inquiry: Inquiry, settings: ClinicSetting
   const phone = settings.phone1?.trim() ?? "";
   const whatsapp = settings.whatsappNumber?.replace(/\D/g, "") ?? "";
 
+  const isQuestion = inquiry.type === "inquiry";
+  const atClinic = clinicName ? ` at <strong style="color:#18181b;">${clinicName}</strong>` : "";
+  const treatment = inquiry.treatment ? ` about <strong style="color:#18181b;">${esc(inquiry.treatment)}</strong>` : "";
+
   const content = [
-    eyebrow("Request received"),
+    eyebrow(isQuestion ? "Question received" : "Request received"),
     heading(`Thanks, ${firstName}. We&rsquo;ll be in touch soon.`),
     paragraph(
-      `We&rsquo;ve received your appointment request${clinicName ? ` at <strong style="color:#18181b;">${clinicName}</strong>` : ""}. ` +
-        `Our team will call you within <strong style="color:#18181b;">24 hours</strong> to confirm a time that works for you.`
+      isQuestion
+        ? `We&rsquo;ve received your question${treatment}${atClinic}. ` +
+            `Our team will get back to you within <strong style="color:#18181b;">24 hours</strong>.`
+        : `We&rsquo;ve received your appointment request${atClinic}. ` +
+            `Our team will call you within <strong style="color:#18181b;">24 hours</strong> to confirm a time that works for you.`
     ),
     details([
       ["Treatment", esc(inquiry.treatment)],
@@ -43,8 +51,10 @@ export function buildConfirmationEmail(inquiry: Inquiry, settings: ClinicSetting
     .join("<br />");
 
   return layout({
-    title: "We received your request",
-    preheader: "Thanks for reaching out. Our team will call you within 24 hours to confirm your appointment.",
+    title: isQuestion ? "We received your question" : "We received your request",
+    preheader: isQuestion
+      ? "Thanks for reaching out. Our team will get back to you within 24 hours."
+      : "Thanks for reaching out. Our team will call you within 24 hours to confirm your appointment.",
     brandName: clinicName,
     content,
     footer: footer + `<br /><br />You&rsquo;re receiving this because you submitted a request on our website.`,

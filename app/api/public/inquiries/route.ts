@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
       preferredDate: inquiry.preferredDate ?? null,
       preferredTime: inquiry.preferredTime ?? null,
       message: inquiry.message,
+      type: inquiry.type,
     }).catch((err) => console.error("[sendInquiryEmails]", err));
 
     // Return only the id so the visitor's submission isn't echoed back in full.

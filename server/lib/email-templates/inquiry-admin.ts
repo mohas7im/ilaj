@@ -8,6 +8,7 @@ type Inquiry = {
   preferredDate: string | null;
   preferredTime: string | null;
   message: string;
+  type: string;
 };
 
 export function buildAdminEmail(inquiry: Inquiry, clinicName: string): string {
@@ -31,13 +32,22 @@ export function buildAdminEmail(inquiry: Inquiry, clinicName: string): string {
     ? `<a href="mailto:${esc(inquiry.email)}" style="${linkStyle}">${esc(inquiry.email)}</a>`
     : "";
 
+  const isQuestion = inquiry.type === "inquiry";
+  const treatment = inquiry.treatment
+    ? `<strong style="color:#18181b;">${esc(inquiry.treatment)}</strong>`
+    : "";
+
   const content = [
-    eyebrow("New inquiry"),
+    eyebrow(isQuestion ? "New question" : "New appointment request"),
     heading(esc(inquiry.fullName)),
     paragraph(
-      inquiry.treatment
-        ? `Wants to book <strong style="color:#18181b;">${esc(inquiry.treatment)}</strong>. Reach out to confirm a slot.`
-        : "Submitted the contact form. Reach out to confirm a slot."
+      isQuestion
+        ? treatment
+          ? `Has a question about ${treatment}. Reply to answer it.`
+          : "Has a question. Reply to answer it."
+        : treatment
+          ? `Wants to book ${treatment}. Reach out to confirm a slot.`
+          : "Submitted the contact form. Reach out to confirm a slot."
     ),
     details([
       ["Phone", phoneLink],
@@ -46,7 +56,7 @@ export function buildAdminEmail(inquiry: Inquiry, clinicName: string): string {
       ["Preferred date", esc(formatDate(inquiry.preferredDate))],
       ["Preferred time", esc(formatTime(inquiry.preferredTime))],
     ]),
-    quote("Message", esc(inquiry.message)),
+    quote(isQuestion ? "Question" : "Message", esc(inquiry.message)),
     buttons([
       { label: "Open in dashboard", href: dashboardUrl },
       { label: "Reply on WhatsApp", href: whatsappUrl, variant: "secondary" },

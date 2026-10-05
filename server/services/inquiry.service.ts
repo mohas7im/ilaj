@@ -74,6 +74,7 @@ export async function getInquiries(params?: InquiryFilters) {
     preferredDate: inq.preferredDate,
     preferredTime: inq.preferredTime,
     message: inq.message,
+    type: inq.type,
     status: inq.status,
     createdAt: inq.createdAt instanceof Date ? inq.createdAt.toISOString() : String(inq.createdAt || ""),
     updatedAt: inq.updatedAt instanceof Date ? inq.updatedAt.toISOString() : String(inq.updatedAt || ""),
@@ -108,6 +109,7 @@ export async function createInquiry(data: {
   preferredDate?: string | null
   preferredTime?: string | null
   message: string
+  type?: string
   status?: string
 }) {
   const created = await prisma.inquiry.create({
@@ -119,6 +121,7 @@ export async function createInquiry(data: {
       preferredDate: data.preferredDate?.trim() || null,
       preferredTime: data.preferredTime?.trim() || null,
       message: data.message.trim(),
+      type: data.type || "appointment",
       status: data.status || "new",
     },
   })

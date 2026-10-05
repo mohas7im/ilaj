@@ -55,9 +55,23 @@ export interface AppointmentModalProps {
   isOpen: boolean;
   onClose: () => void;
   clinicPhone?: string;
+  /**
+   * "appointment" (default): booking form with treatment, date and time.
+   * "inquiry": a question about one treatment — no date/time, question required.
+   */
+  mode?: "appointment" | "inquiry";
+  /** Inquiry mode: the treatment being asked about (shown locked) */
+  treatment?: string;
 }
 
-export function AppointmentModal({ isOpen, onClose, clinicPhone }: AppointmentModalProps) {
+export function AppointmentModal({
+  isOpen,
+  onClose,
+  clinicPhone,
+  mode = "appointment",
+  treatment = "",
+}: AppointmentModalProps) {
+  const isInquiry = mode === "inquiry";
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [apiError, setApiError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -93,19 +107,23 @@ export function AppointmentModal({ isOpen, onClose, clinicPhone }: AppointmentMo
       fullName: value("fullName"),
       phone: value("phone"),
       email: value("email"),
-      treatment: value("treatment"),
+      treatment: isInquiry ? treatment : value("treatment"),
       preferredDate: value("date"),
       preferredTime: value("time"),
       message: value("message"),
     };
 
     const result = formSchema.safeParse(raw);
+    const errors: FieldErrors = {};
     if (!result.success) {
-      const errors: FieldErrors = {};
       for (const issue of result.error.issues) {
         const field = issue.path[0] as keyof FormFields;
         if (!errors[field]) errors[field] = issue.message;
       }
+    }
+    // The question is the whole point of an inquiry
+    if (isInquiry && !raw.message) errors.message = "Please enter your question";
+    if (!result.success || Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
     }
@@ -122,6 +140,7 @@ export function AppointmentModal({ isOpen, onClose, clinicPhone }: AppointmentMo
         preferredDate: result.data.preferredDate,
         preferredTime: result.data.preferredTime,
         message: result.data.message,
+        type: mode,
       });
 
       const firstName = result.data.fullName.split(/\s+/)[0];
@@ -164,14 +183,16 @@ export function AppointmentModal({ isOpen, onClose, clinicPhone }: AppointmentMo
           </h2>
 
           <p id="appointment-modal-desc" className="mx-auto mt-1 max-w-md text-xs sm:text-sm text-zinc-600">
-            Your appointment request has been received. Our clinic team will call you to confirm your visit.
+            {isInquiry
+              ? "Your question has been received. Our team will get back to you shortly."
+              : "Your appointment request has been received. Our clinic team will call you to confirm your visit."}
           </p>
 
           {/* Submission Details Card */}
           <div className="mx-auto mt-5 max-w-md rounded-2xl border border-zinc-200/90 bg-zinc-50/80 p-3.5 text-left sm:p-4">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
               <CalendarClock className="size-4 text-brand" />
-              <span>Requested Booking Summary</span>
+              <span>{isInquiry ? "Inquiry Summary" : "Requested Booking Summary"}</span>
             </div>
 
             <div className="mt-2.5 space-y-1.5 text-sm text-zinc-700">
@@ -207,7 +228,7 @@ export function AppointmentModal({ isOpen, onClose, clinicPhone }: AppointmentMo
               onClick={() => setSubmittedData(null)}
               className="w-full sm:w-auto"
             >
-              Book another appointment
+              {isInquiry ? "Ask another question" : "Book another appointment"}
             </Button>
             <Button
               variant="primary"
@@ -228,11 +249,17 @@ export function AppointmentModal({ isOpen, onClose, clinicPhone }: AppointmentMo
               id="appointment-modal-title"
               className="font-heading text-2xl font-medium tracking-tight text-zinc-950 sm:text-3xl"
             >
-              Book an <span className="text-brand">Appointment</span>
+              {isInquiry ? (
+                <>Ask about <span className="text-brand">{treatment}</span></>
+              ) : (
+                <>Book an <span className="text-brand">Appointment</span></>
+              )}
             </h2>
 
             <p id="appointment-modal-desc" className="mt-1 text-xs sm:text-sm text-zinc-500">
-              Select your preferred service and schedule. Our team will get in touch to confirm your visit.
+              {isInquiry
+                ? "Have a question about cost, duration or recovery? Send it to us and our team will get back to you."
+                : "Select your preferred service and schedule. Our team will get in touch to confirm your visit."}
             </p>
           </div>
 
@@ -269,38 +296,56 @@ export function AppointmentModal({ isOpen, onClose, clinicPhone }: AppointmentMo
                 onChange={() => clearError("email")}
               />
 
-              <Select
-                id="modal-treatment"
-                name="treatment"
-                label="Select Treatment"
-                placeholder="Choose a treatment"
-                options={TREATMENTS}
-                error={fieldErrors.treatment}
-              />
+              {isInquiry ? (
+                // The visitor is on this treatment's page, so it's fixed
+                <Input
+                  id="modal-treatment"
+                  type="text"
+                  label="Treatment"
+                  value={treatment}
+                  readOnly
+                  aria-readonly="true"
+                />
+              ) : (
+                <>
+                  <Select
+                    id="modal-treatment"
+                    name="treatment"
+                    label="Select Treatment"
+                    placeholder="Choose a treatment"
+                    options={TREATMENTS}
+                    error={fieldErrors.treatment}
+                  />
 
-              <DatePicker
-                id="modal-date"
-                name="date"
-                label="Preferred Date"
-                placeholder="Select a date"
-                error={fieldErrors.preferredDate}
-              />
+                  <DatePicker
+                    id="modal-date"
+                    name="date"
+                    label="Preferred Date"
+                    placeholder="Select a date"
+                    error={fieldErrors.preferredDate}
+                  />
 
-              <TimePicker
-                id="modal-time"
-                name="time"
-                label="Preferred Time"
-                placeholder="Select preferred time"
-                error={fieldErrors.preferredTime}
-              />
+                  <TimePicker
+                    id="modal-time"
+                    name="time"
+                    label="Preferred Time"
+                    placeholder="Select preferred time"
+                    error={fieldErrors.preferredTime}
+                  />
+                </>
+              )}
 
               <Textarea
                 id="modal-message"
                 name="message"
-                label="Additional Notes (Optional)"
-                placeholder="Enter your message"
+                label={isInquiry ? "Your Question *" : "Additional Notes (Optional)"}
+                placeholder={
+                  isInquiry
+                    ? "Ask about cost, duration, recovery, or whether this treatment is right for you"
+                    : "Enter your message"
+                }
                 className="sm:col-span-2"
-                textareaClassName="h-16"
+                textareaClassName={isInquiry ? "h-24" : "h-16"}
                 error={fieldErrors.message}
                 onChange={() => clearError("message")}
               />
@@ -316,7 +361,7 @@ export function AppointmentModal({ isOpen, onClose, clinicPhone }: AppointmentMo
             >
               <span className="relative inline-flex items-center justify-center">
                 <span className={status === "submitting" ? "invisible" : undefined}>
-                  Confirm Appointment Request
+                  {isInquiry ? "Send Inquiry" : "Confirm Appointment Request"}
                 </span>
                 {status === "submitting" && (
                   <>
@@ -336,7 +381,7 @@ export function AppointmentModal({ isOpen, onClose, clinicPhone }: AppointmentMo
             {clinicPhone && (
               <div className="mt-3.5 flex items-center justify-center gap-1.5 text-xs text-zinc-500">
                 <PhoneCall className="size-3 text-brand" />
-                <span>Prefer to book by phone? Call us at </span>
+                <span>{isInquiry ? "Prefer to talk? Call us at " : "Prefer to book by phone? Call us at "}</span>
                 <a
                   href={`tel:${clinicPhone}`}
                   className="font-semibold text-zinc-800 hover:text-brand transition-colors underline underline-offset-2"

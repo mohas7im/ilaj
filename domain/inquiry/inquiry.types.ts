@@ -7,6 +7,7 @@ export interface Inquiry {
   preferredDate: string | null;
   preferredTime: string | null;
   message: string;
+  type: string;
   status: string;
   createdAt: string;
   updatedAt: string;

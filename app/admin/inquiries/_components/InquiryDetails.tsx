@@ -78,6 +78,8 @@ type InquiryDetailsViewProps = { inquiry: Inquiry }
 function InquiryDetailsView({ inquiry: inq }: InquiryDetailsViewProps) {
   const displayName = inq.fullName
   const treatmentName = inq.treatment
+  // "inquiry" = question sent from a treatment page; otherwise a booking request
+  const isQuestion = inq.type === "inquiry"
 
   return (
     <div className="space-y-5">
@@ -86,14 +88,19 @@ function InquiryDetailsView({ inquiry: inq }: InquiryDetailsViewProps) {
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
             <Stethoscope className="h-4 w-4 text-primary" />
-            Requested Treatment &amp; Slot
+            {isQuestion ? "Treatment Question" : <>Requested Treatment &amp; Slot</>}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <dl className="divide-y">
+            <DetailRow label="Type" value={isQuestion ? "Question (from treatment page)" : "Appointment request"} />
             <DetailRow icon={Stethoscope} label="Treatment" value={treatmentName} />
-            <DetailRow icon={Calendar} label="Preferred Date" value={inq.preferredDate || "Not specified"} />
-            <DetailRow icon={Clock} label="Preferred Time" value={inq.preferredTime || "Flexible"} />
+            {!isQuestion && (
+              <>
+                <DetailRow icon={Calendar} label="Preferred Date" value={inq.preferredDate || "Not specified"} />
+                <DetailRow icon={Clock} label="Preferred Time" value={inq.preferredTime || "Flexible"} />
+              </>
+            )}
           </dl>
         </CardContent>
       </Card>
@@ -120,7 +127,7 @@ function InquiryDetailsView({ inquiry: inq }: InquiryDetailsViewProps) {
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
             <MessageSquare className="h-4 w-4 text-primary" />
-            Patient Message
+            {isQuestion ? "Patient Question" : "Patient Message"}
           </CardTitle>
         </CardHeader>
         <CardContent>

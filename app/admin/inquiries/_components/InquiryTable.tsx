@@ -12,6 +12,7 @@ import {
 } from "@/components/admin/ui/table"
 import { Button } from "@/components/admin/ui/button"
 import { Avatar, AvatarFallback } from "@/components/admin/ui/avatar"
+import { Badge } from "@/components/admin/ui/badge"
 import { EmptyState } from "@/components/admin/ui/empty-state"
 import { ConfirmDialog } from "@/components/admin/ui/confirm-dialog"
 import { TableLoadingState } from "@/components/admin/ui/loading-state"
@@ -136,7 +137,10 @@ export function InquiryTable({
                     </div>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                    {inq.treatment}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span>{inq.treatment}</span>
+                      {inq.type === "inquiry" && <Badge variant="secondary">Question</Badge>}
+                    </div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                     {slot}

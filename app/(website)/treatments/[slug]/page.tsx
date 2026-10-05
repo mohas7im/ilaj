@@ -4,6 +4,7 @@ import AppointmentCTA from "../../_components/AppointmentCTA";
 import { getWebsiteService, getWebsiteServices } from "../../_lib/services";
 import { getTreatmentFaqs } from "../../_lib/faqs";
 import { generateTreatmentMetadata } from "@/lib/seo";
+import { getSettings } from "@/lib/data/settings";
 import ServiceDetails from "../_components/ServiceDetails";
 
 // Rebuilt in the background at most every 5 minutes, so admin edits show up
@@ -34,11 +35,19 @@ export default async function ServiceDetailPage({
   const result = await getWebsiteService(slug);
   if (!result) notFound();
 
-  const faqs = await getTreatmentFaqs(result.service.id);
+  const [faqs, settings] = await Promise.all([
+    getTreatmentFaqs(result.service.id),
+    getSettings(),
+  ]);
 
   return (
     <main className="pt-20">
-      <ServiceDetails service={result.service} others={result.others} faqs={faqs} />
+      <ServiceDetails
+        service={result.service}
+        others={result.others}
+        faqs={faqs}
+        clinicPhone={settings.phone1 ?? ""}
+      />
       <AppointmentCTA />
     </main>
   );

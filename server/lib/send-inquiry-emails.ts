@@ -11,6 +11,7 @@ type InquiryEmailPayload = {
   preferredDate: string | null;
   preferredTime: string | null;
   message: string;
+  type: string;
 };
 
 export async function sendInquiryEmails(inquiry: InquiryEmailPayload) {
@@ -26,9 +27,11 @@ export async function sendInquiryEmails(inquiry: InquiryEmailPayload) {
     resend.emails.send({
       from,
       to: toClinic,
-      subject: inquiry.treatment
-        ? `New inquiry: ${inquiry.fullName} · ${inquiry.treatment}`
-        : `New inquiry: ${inquiry.fullName}`,
+      subject: [
+        inquiry.type === "inquiry" ? "New question" : "New appointment request",
+        `: ${inquiry.fullName}`,
+        inquiry.treatment ? ` · ${inquiry.treatment}` : "",
+      ].join(""),
       html: buildAdminEmail(inquiry, clinicName),
     }),
 

@@ -9,6 +9,7 @@ export const inquirySchema = z.object({
   preferredDate: z.string().optional().default(""),
   preferredTime: z.string().optional().default(""),
   message: z.string().optional().default(""),
+  type: z.enum(["appointment", "inquiry"]).optional().default("appointment"),
   status: z.string().optional(),
 })
 
