@@ -51,4 +51,7 @@ export const PAGE_OPTIONS: PageOption[] = [
   { value: "smile-gallery", label: "Smile Gallery", path: "/smile-gallery" },
   { value: "testimonials",  label: "Testimonials",  path: "/testimonials" },
   { value: "contact",       label: "Contact",       path: "/contact" },
+  { value: "privacy",            label: "Privacy Policy",     path: "/privacy" },
+  { value: "terms",              label: "Terms of Use",       path: "/terms" },
+  { value: "medical-disclaimer", label: "Medical Disclaimer", path: "/medical-disclaimer" },
 ]

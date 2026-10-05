@@ -18,6 +18,9 @@ const PAGE_SETTINGS: Record<string, Pick<SitemapEntry, "changeFrequency" | "prio
   "/smile-gallery": { changeFrequency: "monthly", priority: 0.7 },
   "/gallery":       { changeFrequency: "monthly", priority: 0.6 },
   "/testimonials":  { changeFrequency: "monthly", priority: 0.6 },
+  "/privacy":            { changeFrequency: "yearly", priority: 0.3 },
+  "/terms":              { changeFrequency: "yearly", priority: 0.3 },
+  "/medical-disclaimer": { changeFrequency: "yearly", priority: 0.3 },
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

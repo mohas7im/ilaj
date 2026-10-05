@@ -13,8 +13,9 @@ const NAV_LINKS = [
 ];
 
 const LEGAL_LINKS = [
-  { label: "Legal notice", href: "/terms" },
   { label: "Privacy policy", href: "/privacy" },
+  { label: "Terms of use", href: "/terms" },
+  { label: "Medical disclaimer", href: "/medical-disclaimer" },
 ];
 
 // Settings store bare handles ("ilajdental"), not full URLs — the admin
@@ -70,7 +71,7 @@ const linkClass = "text-white/80 transition-colors duration-200 hover:text-white
 export default async function Footer() {
   const settings = await getSettings();
   const socialLinks = SOCIAL_LINKS(settings);
-  const clinicName = "Ilaj Dental Care";
+  const clinicName = settings.clinicName?.trim() || "Ilaj Dental Care";
 
   return (
     <footer className="footer-parallax relative z-0 -mt-10 w-full bg-neutral-900 pt-10 text-white lg:-mt-12 lg:pt-12">
