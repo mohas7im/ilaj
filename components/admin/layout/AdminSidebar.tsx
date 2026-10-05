@@ -222,8 +222,8 @@ export function AdminSidebar() {
           <SidebarMenuItem>
             <div
               className={cn(
-                "flex items-center gap-2 px-1 py-1.5",
-                isCollapsed && "justify-center"
+                "flex items-center gap-2 py-1.5",
+                isCollapsed ? "flex-col justify-center" : "relative px-1"
               )}
             >
               {/* Logo mark — only when collapsed */}
@@ -238,20 +238,24 @@ export function AdminSidebar() {
               {/* Full logo + toggle — only when expanded */}
               {!isCollapsed && (
                 <>
-                  <div className="flex-1 min-w-0">
+                  {/* Side padding reserves room for the absolutely positioned
+                      collapse button, so the logo stays centered */}
+                  <div className="flex flex-1 min-w-0 justify-center px-8">
                     <img
                       src={ADMIN_BRANDING.logo}
                       alt={branding.name}
-                      className="h-10 w-auto select-none"
+                      className="h-10 w-auto max-w-full select-none"
                     />
                   </div>
                   {/* Collapse button — inside sidebar header */}
-                  <SidebarTrigger
-                    className="ml-auto h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
-                    aria-label="Collapse sidebar"
-                  >
-                    <PanelLeftClose className="h-4 w-4" />
-                  </SidebarTrigger>
+                  <div className="absolute inset-y-0 right-1 flex items-center">
+                    <SidebarTrigger
+                      className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
+                      aria-label="Collapse sidebar"
+                    >
+                      <PanelLeftClose className="h-4 w-4" />
+                    </SidebarTrigger>
+                  </div>
                 </>
               )}
 

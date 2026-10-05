@@ -101,11 +101,11 @@ function TwoFactorContent() {
   return (
     <div
       data-admin-theme
-      className="min-h-screen w-full bg-background text-foreground flex flex-col lg:flex-row antialiased"
+      className="min-h-dvh w-full bg-background text-foreground flex flex-col lg:flex-row antialiased"
     >
       {/* ── Left Side: Dental Clinic Visual Showcase ── */}
       <div className="hidden lg:flex lg:w-1/2 p-3 lg:p-4 shrink-0">
-        <div className="relative w-full h-full min-h-[calc(100vh-2rem)] rounded-3xl border border-border/60 overflow-hidden flex flex-col justify-between p-10 xl:p-12 shadow-md">
+        <div className="relative w-full h-full min-h-[calc(100dvh-2rem)] rounded-3xl border border-border/60 overflow-hidden flex flex-col justify-between p-10 xl:p-12 shadow-md">
           {/* Background Photo */}
           <img
             src="/images/admin/login-showcase.webp"
@@ -144,12 +144,12 @@ function TwoFactorContent() {
       </div>
 
       {/* ── Right Side: 2FA Verification Form ── */}
-      <div className="flex flex-1 flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-16 min-h-screen">
+      <div className="flex flex-1 flex-col justify-between gap-8 px-5 py-6 sm:px-10 sm:py-10 lg:p-12 xl:p-16 min-h-dvh">
         {/* Top Header Navigation */}
         <div className="flex items-center justify-between w-full max-w-sm mx-auto">
           <Link
             href="/admin/login"
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="-ml-2 inline-flex items-center gap-1.5 rounded-md px-2 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="size-3.5" />
             Back to login
@@ -157,14 +157,14 @@ function TwoFactorContent() {
 
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="-mr-2 inline-flex items-center gap-1.5 rounded-md px-2 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Back to website
           </Link>
         </div>
 
         {/* 2FA Form Container */}
-        <div className="w-full max-w-sm mx-auto my-auto py-8">
+        <div className="w-full max-w-sm mx-auto my-auto">
           {/* Security Icon Badge */}
           <div className="mb-5 inline-flex items-center justify-center size-12 rounded-2xl bg-primary/10 border border-primary/20 text-primary shadow-xs">
             <ShieldCheck className="size-6" />
@@ -172,14 +172,14 @@ function TwoFactorContent() {
 
           {/* Title & Description */}
           <div className="space-y-1.5 mb-6">
-            <h1 className="text-2xl font-semibold tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
               Two-Factor Authentication
             </h1>
             <p className="text-sm text-muted-foreground">
               Enter the 6-digit verification code from your authenticator app
               {emailParam && (
                 <>
-                  {" "}for <span className="font-medium text-foreground">{emailParam}</span>
+                  {" "}for <span className="font-medium text-foreground break-all">{emailParam}</span>
                 </>
               )}
             </p>
@@ -196,7 +196,7 @@ function TwoFactorContent() {
             {/* 6-Digit OTP Box Grid */}
             <div className="space-y-2">
               <Label htmlFor="otp-0">Verification Code</Label>
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center justify-between gap-1.5 sm:gap-2">
                 {otp.map((digit, index) => (
                   <input
                     key={index}
@@ -212,7 +212,7 @@ function TwoFactorContent() {
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
                     onPaste={handlePaste}
-                    className="size-11 sm:size-12 text-center text-lg font-mono font-semibold rounded-lg border border-input bg-transparent focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 outline-none transition-all dark:bg-input/30"
+                    className="min-w-0 flex-1 aspect-square max-w-12 text-center text-lg font-mono font-semibold rounded-lg border border-input bg-transparent focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 outline-none transition-all dark:bg-input/30"
                     aria-label={`Digit ${index + 1} of verification code`}
                     autoComplete={index === 0 ? "one-time-code" : "off"}
                   />
@@ -226,7 +226,7 @@ function TwoFactorContent() {
                 type="submit"
                 size="lg"
                 disabled={loading}
-                className="w-full"
+                className="w-full h-11 sm:h-10 px-4"
               >
                 {loading ? (
                   <span className="inline-flex items-center gap-2">
@@ -256,7 +256,7 @@ export default function AdminTwoFactorPage() {
   return (
     <Suspense
       fallback={
-        <div data-admin-theme className="min-h-screen w-full flex items-center justify-center bg-background text-foreground">
+        <div data-admin-theme className="min-h-dvh w-full flex items-center justify-center bg-background text-foreground">
           <Loader2 className="size-6 animate-spin text-primary" />
         </div>
       }

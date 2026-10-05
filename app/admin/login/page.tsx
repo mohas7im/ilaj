@@ -22,6 +22,10 @@ import { Checkbox } from "@/components/admin/ui/checkbox"
 import { authService } from "@/lib/auth/auth.api"
 import { getApiErrorMessage } from "@/lib/api/errors"
 
+// Shared sizing so inputs and the submit button line up: taller touch
+// targets on mobile, the usual compact height from sm up.
+const CONTROL_HEIGHT = "h-11 sm:h-10"
+
 export default function AdminLoginPage() {
   const router = useRouter()
   const branding = useAdminBranding()
@@ -52,11 +56,11 @@ export default function AdminLoginPage() {
   return (
     <div
       data-admin-theme
-      className="min-h-screen w-full bg-background text-foreground flex flex-col lg:flex-row antialiased"
+      className="min-h-dvh w-full bg-background text-foreground flex flex-col lg:flex-row antialiased"
     >
       {/* ── Left Side: Dental Clinic Visual Showcase ── */}
       <div className="hidden lg:flex lg:w-1/2 p-3 lg:p-4 shrink-0">
-        <div className="relative w-full h-full min-h-[calc(100vh-2rem)] rounded-3xl border border-border/60 overflow-hidden flex flex-col justify-between p-10 xl:p-12 shadow-md">
+        <div className="relative w-full h-full min-h-[calc(100dvh-2rem)] rounded-3xl border border-border/60 overflow-hidden flex flex-col justify-between p-10 xl:p-12 shadow-md">
           {/* Background Photo */}
           <img
             src="/images/admin/login-showcase.webp"
@@ -95,18 +99,18 @@ export default function AdminLoginPage() {
       </div>
 
       {/* ── Right Side: Authentication Form ── */}
-      <div className="flex flex-1 flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-16 min-h-screen">
+      <div className="flex flex-1 flex-col justify-between gap-8 px-5 py-6 sm:px-10 sm:py-10 lg:p-12 xl:p-16 min-h-dvh">
         {/* Top Header */}
         <div className="flex items-center justify-between w-full max-w-sm mx-auto">
           <img
             src={ADMIN_BRANDING.logo}
             alt={branding.name}
-            className="lg:hidden h-10 w-auto"
+            className="lg:hidden h-9 sm:h-10 w-auto"
           />
 
           <Link
             href="/"
-            className="ml-auto inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="ml-auto -mr-2 inline-flex items-center gap-1.5 rounded-md px-2 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="size-3.5" />
             Back to website
@@ -114,9 +118,9 @@ export default function AdminLoginPage() {
         </div>
 
         {/* Form Container */}
-        <div className="w-full max-w-sm mx-auto my-auto py-8">
+        <div className="w-full max-w-sm mx-auto my-auto">
           <div className="space-y-1.5 mb-6">
-            <h1 className="text-2xl font-semibold tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
               Sign in
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -140,20 +144,17 @@ export default function AdminLoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 required
+                className={`${CONTROL_HEIGHT} px-3`}
               />
             </div>
 
             {/* Password Field */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <span className="text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-                  Forgot password?
-                </span>
-              </div>
+              <Label htmlFor="password">Password</Label>
 
-              <InputGroup>
+              <InputGroup className={CONTROL_HEIGHT}>
                 <InputGroupInput
+                  className="h-full pl-3"
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -163,7 +164,7 @@ export default function AdminLoginPage() {
                 />
                 <InputGroupAddon align="inline-end">
                   <InputGroupButton
-                    size="icon-xs"
+                    size="icon-sm"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
@@ -187,12 +188,12 @@ export default function AdminLoginPage() {
                 type="submit"
                 size="lg"
                 disabled={loading}
-                className="w-full gap-2"
+                className={`w-full gap-2 px-4 ${CONTROL_HEIGHT}`}
               >
                 {loading ? (
                   <>
-                    <Spinner className="mr-2" />
-                    Signing in...
+                    <Spinner />
+                    Signing in
                   </>
                 ) : (
                   "Sign in"
