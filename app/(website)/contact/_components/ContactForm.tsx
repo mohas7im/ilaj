@@ -10,12 +10,10 @@ import SectionDescription from "@/components/website/common/SectionDescription";
 import Input from "@/components/website/ui/Input";
 import Select from "@/components/website/ui/Select";
 import Textarea from "@/components/website/ui/Textarea";
-import DatePicker from "@/components/website/ui/DatePicker";
-import TimePicker from "@/components/website/ui/TimePicker";
 import { submitContactInquiry } from "../_api/contactApi";
 
 type Status = "idle" | "submitting" | "error";
-type Sent = { firstName: string; treatment: string };
+type Sent = { firstName: string };
 
 const TREATMENTS = [
   "Teeth Cleaning",
@@ -26,6 +24,7 @@ const TREATMENTS = [
   "Other",
 ];
 
+// General enquiry form (bookings go through the appointment modal).
 // Client-side validation schema — mirrors the server schema but with
 // user-friendly messages for each field.
 const formSchema = z.object({
@@ -38,12 +37,9 @@ const formSchema = z.object({
     .string()
     .min(1, "Phone number is required")
     .regex(/^[+]?[\d\s\-().]{7,15}$/, "Enter a valid phone number"),
-  // Everything below is optional — only name and phone are required.
   email: z.union([z.literal(""), z.string().email("Enter a valid email address")]),
   treatment: z.string(),
-  preferredDate: z.string(),
-  preferredTime: z.string(),
-  message: z.string(),
+  message: z.string().min(1, "Please enter your message"),
 });
 
 type FormFields = z.infer<typeof formSchema>;
@@ -89,8 +85,6 @@ export default function ContactForm() {
       phone: value("phone"),
       email: value("email"),
       treatment: value("treatment"),
-      preferredDate: value("date"),
-      preferredTime: value("time"),
       message: value("message"),
     };
 
@@ -116,19 +110,19 @@ export default function ContactForm() {
         phone: result.data.phone,
         email: result.data.email,
         treatment: result.data.treatment,
-        preferredDate: result.data.preferredDate,
-        preferredTime: result.data.preferredTime,
+        preferredDate: "",
+        preferredTime: "",
         message: result.data.message,
+        type: "inquiry",
       });
       formElement.reset();
       const firstName = result.data.fullName.split(/\s+/)[0];
       setSent({
         firstName: firstName.charAt(0).toUpperCase() + firstName.slice(1),
-        treatment: result.data.treatment === "Other" ? "" : result.data.treatment,
       });
       setStatus("idle");
     } catch (err) {
-      setApiError(getApiErrorMessage(err, "Could not send your request. Please try again or call us."));
+      setApiError(getApiErrorMessage(err, "Could not send your message. Please try again or call us."));
       setStatus("error");
     }
   };
@@ -150,7 +144,7 @@ export default function ContactForm() {
           id="fullName"
           name="fullName"
           type="text"
-          label="Full Name"
+          label="Full Name *"
           placeholder="Enter Your Full Name"
           error={fieldErrors.fullName}
           onChange={() => clearError("fullName")}
@@ -160,7 +154,7 @@ export default function ContactForm() {
           id="phone"
           name="phone"
           type="tel"
-          label="Phone Number"
+          label="Phone Number *"
           placeholder="Enter your phone number"
           error={fieldErrors.phone}
           onChange={() => clearError("phone")}
@@ -179,31 +173,17 @@ export default function ContactForm() {
         <Select
           id="treatment"
           name="treatment"
-          label="Select Treatment"
+          label="Related Treatment (Optional)"
           placeholder="Choose a treatment"
           options={TREATMENTS}
           error={fieldErrors.treatment}
         />
 
-        <DatePicker
-          id="date"
-          name="date"
-          label="Preferred Date"
-          error={fieldErrors.preferredDate}
-        />
-
-        <TimePicker
-          id="time"
-          name="time"
-          label="Preferred Time"
-          error={fieldErrors.preferredTime}
-        />
-
         <Textarea
           id="message"
           name="message"
-          label="Message"
-          placeholder="Enter your message"
+          label="Your Message *"
+          placeholder="How can we help you?"
           className="sm:col-span-2"
           error={fieldErrors.message}
           onChange={() => clearError("message")}
@@ -222,7 +202,7 @@ export default function ContactForm() {
       >
         {/* While sending, the label stays in place (invisible) so the button keeps its size */}
         <span className="relative inline-flex items-center justify-center">
-          <span className={status === "submitting" ? "invisible" : undefined}>Book Appointment</span>
+          <span className={status === "submitting" ? "invisible" : undefined}>Send Message</span>
           {status === "submitting" && (
             <>
               <LoaderCircle aria-hidden="true" className="absolute size-5 animate-spin" />
@@ -253,9 +233,7 @@ export default function ContactForm() {
             </span>
           </SectionTitle>
           <SectionDescription tone="light" className="mt-3 max-w-md">
-            {sent.treatment
-              ? `Request submitted! Thank you for choosing us.`
-              : "Request submitted! Thank you for choosing us."}
+            Your message has been sent. Our team will get back to you shortly.
           </SectionDescription>
           <Button
             variant="secondary"
@@ -265,7 +243,7 @@ export default function ContactForm() {
             }}
             className="mt-8"
           >
-            Send another request
+            Send another message
           </Button>
         </div>
       </div>

@@ -126,12 +126,12 @@ export default async function ContactPage() {
                 ))}
               </div>
 
-              {/* Appointment Form */}
+              {/* Enquiry Form */}
               <div
-                id="book-appointment"
+                id="contact-form"
                 className="relative scroll-mt-28 rounded-2xl lg:col-span-5 border border-zinc-200 bg-white p-3.5"
               >
-                <CardTitle as="h2">Book Your Appointment</CardTitle>
+                <CardTitle as="h2">Send Us a Message</CardTitle>
 
                 <ContactForm />
               </div>

@@ -1,6 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
-import Button from "@/components/website/ui/Button";
+import BookConsultationButton from "./BookConsultationButton";
 import SectionLabel from "@/components/website/common/SectionLabel";
 import SectionTitle from "@/components/website/common/SectionTitle";
 
@@ -31,9 +30,7 @@ export default function AppointmentCTA() {
         </SectionTitle>
 
         {/* mt-4 matches the label's mb-4, so the heading has equal space above and below */}
-        <Link href="/contact#book-appointment" className="mt-4">
-          <Button variant="primary">Book a Consultation</Button>
-        </Link>
+        <BookConsultationButton className="mt-4" />
 
       </div>
     </section>
