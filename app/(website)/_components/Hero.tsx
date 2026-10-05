@@ -25,7 +25,7 @@ export default async function Hero() {
       <div className="parallax absolute inset-0">
         {/* Portrait crop on phones, wide shot from md up — CSS shows one of them */}
         <Image
-          src="/images/hero/cinematic-dental-examination-mobile.webp"
+          src="/images/hero/ilaj-dental-care-dentist-checkup-smiling-patient.webp"
           alt="Dental examination at Ilaj Dental Care"
           fill
           priority
@@ -34,7 +34,7 @@ export default async function Hero() {
           className="hero-image object-cover md:hidden"
         />
         <Image
-          src="/images/hero/dramatic-dental-examination.webp"
+          src="/images/hero/ilaj-dental-care-dentist-checkup-smiling-patient.webp"
           alt="Dramatic Dental Examination at Ilaj Dental Care"
           fill
           priority
