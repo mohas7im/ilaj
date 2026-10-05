@@ -174,7 +174,8 @@ export default function Navbar({ clinicName, clinicPhone }: NavbarProps) {
             <div className="pt-2">
               <Button
                 variant="primary"
-                className="w-full justify-center"
+                // Full width: label on the left, arrow pinned to the right edge
+                className="w-full flex-row-reverse justify-between pl-6 pr-2 py-2 text-base"
                 onClick={() => {
                   setMobileOpen(false);
                   setAppointmentModalOpen(true);
