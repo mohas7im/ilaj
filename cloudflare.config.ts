@@ -10,6 +10,11 @@ export default defineConfig({
     previewUrls: true,
     domains: ["ilajdentalcare.com"],
     assets: { notFoundHandling: "none" },
+    // Matches the dashboard (Workers Logs on) so deploys don't switch it off
+    observability: {
+      logs: { enabled: true },
+      issues: { enabled: false },
+    },
     env: {
       ASSETS: bindings.assets(),
       IMAGES: bindings.images(),
