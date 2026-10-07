@@ -16,7 +16,6 @@ export default defineConfig({
       issues: { enabled: false },
     },
     env: {
-      
       ASSETS: bindings.assets(),
       IMAGES: bindings.images(),
       VINEXT_KV_CACHE: bindings.kv({
