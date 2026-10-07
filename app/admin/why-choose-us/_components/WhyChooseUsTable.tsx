@@ -176,7 +176,7 @@ export function WhyChooseUsTable() {
                   <TableCell className="font-medium text-sm">
                     {item.title}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground line-clamp-1 max-w-xs">
+                  <TableCell className="text-sm text-muted-foreground min-w-[240px] max-w-md lg:max-w-xl whitespace-normal leading-relaxed break-words">
                     {item.description || "—"}
                   </TableCell>
                   <TableCell className="text-right">
