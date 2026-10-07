@@ -1,41 +1,37 @@
-import { AsyncLocalStorage } from "node:async_hooks";
 import { PrismaClient } from "@/lib/generated/prisma/client";
-import { PrismaNeon } from "@prisma/adapter-neon";
-
-// WebSocket mode supports transactions. On Cloudflare a connection from one
-// request can't be reused by another, so each request gets its own client.
-
-type PrismaScope = { client?: PrismaClient };
+import { PrismaNeon, PrismaNeonHttp } from "@prisma/adapter-neon";
 
 const globalForPrisma = globalThis as unknown as {
-  prismaScope?: AsyncLocalStorage<PrismaScope>;
-  prisma?: PrismaClient;
+  prisma: PrismaClient | undefined;
 };
 
-const prismaScope = (globalForPrisma.prismaScope ??= new AsyncLocalStorage<PrismaScope>());
-
 function createPrismaClient(): PrismaClient {
-  const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
+  // PrismaNeonHttp uses Neon's HTTP transport (fetch-based): stateless, so one
+  // client can be shared by every request on Cloudflare Workers. It can't run
+  // transactions though — use withTransactionalPrisma for those writes.
+  const adapter = new PrismaNeonHttp(process.env.DATABASE_URL!, {});
   return new PrismaClient({ adapter });
 }
 
-/** Gives everything inside `fn` its own Prisma client (used by worker.ts). */
-export function runWithPrismaScope<T>(fn: () => T): T {
-  return prismaScope.run({}, fn);
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
 }
 
-function getPrismaClient(): PrismaClient {
-  const scope = prismaScope.getStore();
-  if (scope) return (scope.client ??= createPrismaClient());
-  // Local dev / scripts: one shared client is fine
-  return (globalForPrisma.prisma ??= createPrismaClient());
+/**
+ * Runs `fn` with a short-lived WebSocket client, which supports transactions
+ * (e.g. nested writes). Workers can't share sockets across requests, so the
+ * client is created per call and always disconnected to free its memory.
+ */
+export async function withTransactionalPrisma<T>(
+  fn: (client: PrismaClient) => Promise<T>
+): Promise<T> {
+  const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
+  const client = new PrismaClient({ adapter });
+  try {
+    return await fn(client);
+  } finally {
+    await client.$disconnect();
+  }
 }
-
-/** Use `prisma` exactly like before; it picks the current request's client. */
-export const prisma = new Proxy({} as PrismaClient, {
-  get(_target, prop) {
-    const client = getPrismaClient();
-    const value = Reflect.get(client, prop, client);
-    return typeof value === "function" ? value.bind(client) : value;
-  },
-});

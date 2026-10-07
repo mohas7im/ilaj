@@ -3,7 +3,7 @@ import { bindings, defineConfig, defineWorker } from "cf/config";
 export default defineConfig({
   worker: defineWorker({
     name: "ilaj",
-    entrypoint: "./worker.ts",
+    entrypoint: "vinext/server/fetch-handler",
     compatibilityDate: "2026-10-03",
     compatibilityFlags: ["nodejs_compat"],
     workersDev: true,
