@@ -20,6 +20,8 @@ export default defineConfig({
       JWT_SECRET: bindings.secret(),
       CLOUDINARY_URL: bindings.secret(),
       RESEND_API_KEY: bindings.secret(),
+      RESEND_FROM_EMAIL: bindings.secret(),
+      RESEND_TO_EMAIL: bindings.secret(),
     },
   }),
 });

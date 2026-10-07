@@ -212,6 +212,9 @@ model Inquiry {
   // "appointment" (booking form) or "inquiry" (question from a treatment page)
   type          String   @default("appointment")
   status        String   @default("new")
+  // "pending" until the notification emails finish, then "sent" or "failed".
+  // "unknown" for inquiries created before this was tracked.
+  emailStatus   String   @default("pending")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
