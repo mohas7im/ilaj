@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { sizedImage } from "@/lib/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -104,7 +105,7 @@ function ServiceImage({ src, alt }: { src: string; alt: string }) {
     <div className="reveal-image relative aspect-square w-full overflow-hidden rounded-xl bg-zinc-100">
       {src && (
         <Image
-          src={src}
+          src={sizedImage(src, 480)}
           alt={alt}
           fill
           className="object-cover transition-[scale] duration-500 hover:scale-105"

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
+import { sizedImage } from "@/lib/image";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Container } from "@/components/website/common/Section";
@@ -308,7 +309,7 @@ export default function ClinicCameraTour({ photos, className }: { photos: Clinic
                   className="relative aspect-3/2 w-full overflow-hidden rounded-md bg-zinc-100"
                 >
                   <Image
-                    src={photo.image}
+                    src={sizedImage(photo.image, 1920)}
                     alt={photo.alt}
                     fill
                     className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"

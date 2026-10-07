@@ -178,10 +178,14 @@ html[data-website-theme]::-webkit-scrollbar-thumb:hover {
     vertical-align: top;
     padding-bottom: 0.08em;
   }
-  .hero-word > span {
-    display: inline-block;
-    animation: word-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: calc(var(--i, 0) * 60ms + 100ms);
+  /* Desktop only: the headline is the LCP element on phones, and hiding its
+     words until they rise in delays LCP by ~2s on a mobile CPU. */
+  @media (min-width: 1024px) {
+    .hero-word > span {
+      display: inline-block;
+      animation: word-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: calc(var(--i, 0) * 60ms + 100ms);
+    }
   }
   .hero-image {
     animation: hero-zoom 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -424,9 +428,11 @@ html[data-website-theme]::-webkit-scrollbar-thumb:hover {
 /* Footer parallax: as the footer scrolls in, its content starts higher (hidden
    behind the page's bottom edge) and settles into place, moving more
    slowly than the page. Driven by the footer's own view timeline. */
+/* Translate only — fading the text too made contrast checkers (Lighthouse)
+   read the off-screen footer as 20%-opacity text and fail it. */
 @keyframes footer-rise {
-  from { translate: 0 -30%; opacity: 0.2; }
-  to { translate: 0 0; opacity: 1; }
+  from { translate: 0 -30%; }
+  to { translate: 0 0; }
 }
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {

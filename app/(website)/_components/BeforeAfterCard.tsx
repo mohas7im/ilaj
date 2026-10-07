@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { sizedImage } from "@/lib/image";
 import { useState } from "react";
 import MetaText from "@/components/website/common/MetaText";
 
@@ -21,7 +22,7 @@ export default function BeforeAfterCard({
     <div className="relative aspect-9/5 w-full overflow-hidden rounded-2xl">
       {/* AFTER IMAGE - Background */}
       <Image
-        src={after}
+        src={sizedImage(after, 1000)}
         alt={`${alt} after`}
         fill
         className="object-cover"
@@ -35,7 +36,7 @@ export default function BeforeAfterCard({
       >
         <div className="relative h-full w-full">
           <Image
-            src={before}
+            src={sizedImage(before, 1000)}
             alt={`${alt} before`}
             fill
             className="object-cover"

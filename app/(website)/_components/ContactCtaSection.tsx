@@ -13,11 +13,8 @@ export default function ContactCtaSection() {
         src="/images/contact/relaxing-dental-checkup.webp"
         alt="Patient relaxing during a dental checkup in a modern, comfortable dental clinic at Ilaj Dental Care"
         fill
-        priority
         className="object-cover object-center"
         sizes="100vw"
-        quality={100}
-        unoptimized
       />
 
       {/* Dark Overlay */}

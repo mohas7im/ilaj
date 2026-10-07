@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { sizedImage } from "@/lib/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import CardTitle from "@/components/website/common/CardTitle";
@@ -17,7 +18,7 @@ export default function ServiceCard({ service, index = 0 }: { service: WebsiteSe
       <div className="absolute inset-0 -z-10">
         {service.image && (
           <Image
-            src={service.image}
+            src={sizedImage(service.image, 1200)}
             alt={service.imageAlt}
             fill
             className="object-cover transition-[scale] duration-700 ease-out group-hover:scale-105"

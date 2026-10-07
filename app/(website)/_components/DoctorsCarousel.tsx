@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { sizedImage } from "@/lib/image";
 import { cn } from "@/lib/utils";
 import CardTitle from "@/components/website/common/CardTitle";
 import MetaText from "@/components/website/common/MetaText";
@@ -106,7 +107,7 @@ export default function DoctorsCarousel({
             <div className="relative mt-auto aspect-9/10 w-full overflow-hidden bg-zinc-100">
               {doctor.image && (
                 <Image
-                  src={doctor.image}
+                  src={sizedImage(doctor.image, 800)}
                   alt={doctor.imageAlt}
                   fill
                   className="object-cover transition-[scale] duration-700 ease-out group-hover:scale-105"

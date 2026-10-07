@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { sizedImage } from "@/lib/image";
 import { cn } from "@/lib/utils";
 import CardTitle from "@/components/website/common/CardTitle";
 import CardText from "@/components/website/common/CardText";
@@ -18,7 +19,7 @@ export default function ClinicPhotoList({ photos, className }: { photos: ClinicP
           <figure>
             <div className="reveal-door relative aspect-4/5 w-full overflow-hidden rounded-2xl bg-zinc-100 sm:aspect-3/2">
               <Image
-                src={photo.image}
+                src={sizedImage(photo.image, 1200)}
                 alt={photo.alt}
                 fill
                 className="object-cover"
