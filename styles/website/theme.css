@@ -78,6 +78,7 @@
      clear of the fixed h-20 navbar. */
   html[data-website-theme] {
     scroll-padding-top: 5rem;
+    
   }
 }
 
