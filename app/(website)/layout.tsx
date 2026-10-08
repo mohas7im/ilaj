@@ -7,6 +7,7 @@ import Footer from "@/components/website/layout/Footer";
 import SmoothScroll from "@/components/website/layout/SmoothScroll";
 import PageTransition from "@/components/website/layout/PageTransition";
 import WhatsAppButton from "@/components/website/layout/WhatsAppButton";
+import LeadTracker from "@/components/website/layout/LeadTracker";
 import { getSettings } from "@/lib/data/settings";
 import "@/styles/website/theme.css";
 
@@ -53,7 +54,10 @@ export default async function WebsiteRootLayout({
         <WhatsAppButton />
       </body>
       {process.env.NEXT_PUBLIC_GA_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        <>
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+          <LeadTracker />
+        </>
       )}
     </html>
   );

@@ -24,7 +24,7 @@ export function BarList({ title, description, items, formatLabel }: BarListProps
           <ul className="space-y-1">
             {items.map((item) => (
               <li
-                key={item.label}
+                key={`${item.sublabel ?? ""}|${item.label}`}
                 className="relative flex items-center justify-between gap-3 px-2 py-1.5 text-sm"
               >
                 <div
@@ -32,8 +32,15 @@ export function BarList({ title, description, items, formatLabel }: BarListProps
                   style={{ width: `${(item.value / max) * 100}%` }}
                   aria-hidden="true"
                 />
-                <span className="relative truncate" title={item.label}>
-                  {formatLabel ? formatLabel(item.label) : item.label}
+                <span className="relative min-w-0" title={item.sublabel ?? item.label}>
+                  <span className="block truncate">
+                    {formatLabel ? formatLabel(item.label) : item.label}
+                  </span>
+                  {item.sublabel && item.sublabel !== item.label && (
+                    <span className="block truncate text-xs text-muted-foreground">
+                      {item.sublabel}
+                    </span>
+                  )}
                 </span>
                 <span className="relative shrink-0 font-medium tabular-nums">
                   {item.value.toLocaleString()}

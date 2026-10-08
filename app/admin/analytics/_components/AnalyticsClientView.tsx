@@ -1,38 +1,36 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Clock, Eye, MousePointerClick, Users } from "lucide-react"
+import { Clock, Download, Eye, MousePointerClick, Users } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
-import { toast } from "sonner"
-import { getApiErrorMessage } from "@/lib/api/errors"
+import { Button } from "@/components/admin/ui/button"
 import { Card, CardContent } from "@/components/admin/ui/card"
 import { Skeleton } from "@/components/admin/ui/skeleton"
-import { Tabs, TabsList, TabsTrigger } from "@/components/admin/ui/tabs"
 import { fetchAnalytics } from "../_services/analytics.api"
-import type { AnalyticsRange, AnalyticsResponse } from "../_types/analytics.types"
+import type { AnalyticsDateRange, AnalyticsResponse } from "../_types/analytics.types"
+import { DateRangeControls, presetRange, type Preset } from "./DateRangeControls"
+import { exportAnalyticsCsv } from "./exportCsv"
 import { MetricCard } from "./MetricCard"
+import { LeadsCard } from "./LeadsCard"
 import { VisitorsChart } from "./VisitorsChart"
 import { BarList } from "./BarList"
+import { SearchQueriesCard } from "./SearchQueriesCard"
 import { SetupNotice } from "./SetupNotice"
-
-const RANGES: { value: AnalyticsRange; label: string }[] = [
-  { value: 7, label: "7 days" },
-  { value: 28, label: "28 days" },
-  { value: 90, label: "90 days" },
-]
 
 function formatDuration(seconds: number) {
   const s = Math.round(seconds)
   return s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${s % 60}s`
 }
 
-const formatPage = (path: string) => (path === "/" ? "/ (Home)" : path)
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
+const formatPath = (path: string) => (path === "/" ? "/ (Home)" : path)
+const formatSource = (source: string) => (source === "(direct)" ? "Direct" : source)
 
 export function AnalyticsClientView() {
-  const [range, setRange] = useState<AnalyticsRange>(28)
+  const [preset, setPreset] = useState<Preset | null>(28)
+  const [range, setRange] = useState<AnalyticsDateRange>(() => presetRange(28))
   const [data, setData] = useState<AnalyticsResponse | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [failed, setFailed] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -41,14 +39,12 @@ export function AnalyticsClientView() {
     async function load() {
       try {
         setLoading(true)
-        setError(null)
+        setFailed(false)
         const result = await fetchAnalytics(range)
         if (isMounted) setData(result)
       } catch (err) {
         console.error("Failed to load analytics:", err)
-        const message = getApiErrorMessage(err, "Failed to load analytics")
-        if (isMounted) setError(message)
-        toast.error(message)
+        if (isMounted) setFailed(true)
       } finally {
         if (isMounted) setLoading(false)
       }
@@ -61,42 +57,46 @@ export function AnalyticsClientView() {
     }
   }, [range])
 
-  if (data && !data.configured) return <SetupNotice />
+  if ((failed && !loading) || (data && !data.configured)) return <SetupNotice />
 
   const report = data?.configured ? data : null
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Tabs value={range} onValueChange={(v) => setRange(v as AnalyticsRange)}>
-          <TabsList>
-            {RANGES.map((r) => (
-              <TabsTrigger key={r.value} value={r.value} disabled={loading}>
-                {r.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <DateRangeControls
+          preset={preset}
+          range={range}
+          disabled={loading}
+          onPresetChange={(p) => {
+            setPreset(p)
+            setRange(presetRange(p))
+          }}
+          onCustomChange={(r) => {
+            setPreset(null)
+            setRange(r)
+          }}
+        />
         {report && (
-          <div className="flex items-center gap-2 text-sm">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-            </span>
-            <span className="font-semibold tabular-nums">{report.realtimeActiveUsers}</span>
-            <span className="text-muted-foreground">active right now</span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+              </span>
+              <span className="font-semibold tabular-nums">{report.realtimeActiveUsers}</span>
+              <span className="text-muted-foreground">active right now</span>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => exportAnalyticsCsv(report)}>
+              <Download data-icon="inline-start" aria-hidden="true" />
+              Download CSV
+            </Button>
           </div>
         )}
       </div>
 
-      {error && !loading && (
-        <Card>
-          <CardContent className="p-5 text-sm text-red-600">{error}</CardContent>
-        </Card>
-      )}
-
       {loading || !report ? (
-        !error && <AnalyticsSkeleton />
+        <AnalyticsSkeleton />
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -130,6 +130,8 @@ export function AnalyticsClientView() {
             />
           </div>
 
+          <LeadsCard leads={report.leads} visitors={report.summary.activeUsers} />
+
           <VisitorsChart data={report.timeseries} />
 
           <div className="grid gap-4 lg:grid-cols-2">
@@ -137,12 +139,24 @@ export function AnalyticsClientView() {
               title="Top pages"
               description="Most viewed pages"
               items={report.topPages}
-              formatLabel={formatPage}
+              formatLabel={formatPath}
+            />
+            <BarList
+              title="Landing pages"
+              description="First page visitors arrived on (sessions)"
+              items={report.landingPages}
+              formatLabel={formatPath}
+            />
+            <BarList
+              title="Traffic channels"
+              description="How visitors found the website (sessions)"
+              items={report.channels}
             />
             <BarList
               title="Traffic sources"
-              description="Where visitors came from (sessions)"
+              description="Websites and apps that sent visitors (sessions)"
               items={report.sources}
+              formatLabel={formatSource}
             />
             <BarList
               title="Devices"
@@ -150,12 +164,20 @@ export function AnalyticsClientView() {
               items={report.devices}
               formatLabel={capitalize}
             />
+            <BarList
+              title="New vs returning"
+              description="First-time visitors and people who came back"
+              items={report.newVsReturning}
+              formatLabel={capitalize}
+            />
             <BarList title="Top cities" description="Where visitors are located" items={report.cities} />
           </div>
 
+          <SearchQueriesCard queries={report.searchQueries} />
+
           <p className="text-xs text-muted-foreground">
             Reports updated {formatDistanceToNow(new Date(report.fetchedAt), { addSuffix: true })}.
-            Google Analytics data can take up to 48 hours to appear.
+            Google Analytics data can take up to 48 hours to appear, and Search Console up to 3 days.
           </p>
         </>
       )}
@@ -177,6 +199,7 @@ function AnalyticsSkeleton() {
           </Card>
         ))}
       </div>
+      <Skeleton className="h-40 w-full rounded-xl" />
       <Skeleton className="h-72 w-full rounded-xl" />
       <div className="grid gap-4 lg:grid-cols-2">
         {Array.from({ length: 4 }).map((_, i) => (

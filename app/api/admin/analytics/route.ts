@@ -1,24 +1,22 @@
 import { NextRequest, NextResponse } from "next/server"
-import {
-  getAnalyticsReport,
-  ANALYTICS_RANGES,
-  type AnalyticsRange,
-} from "@/server/services/analytics.service"
+import { getAnalyticsReport, isValidRange } from "@/server/services/analytics.service"
 import { requireAdmin } from "@/lib/auth/require-admin"
 
 export const dynamic = "force-dynamic"
 
+// GET /api/admin/analytics?start=YYYY-MM-DD&end=YYYY-MM-DD (inclusive)
 export async function GET(req: NextRequest) {
   const denied = await requireAdmin()
   if (denied) return denied
 
-  const days = Number(req.nextUrl.searchParams.get("days") ?? 28)
-  const range = (ANALYTICS_RANGES as readonly number[]).includes(days)
-    ? (days as AnalyticsRange)
-    : 28
+  const start = req.nextUrl.searchParams.get("start") ?? ""
+  const end = req.nextUrl.searchParams.get("end") ?? ""
+  if (!isValidRange(start, end)) {
+    return NextResponse.json({ error: "Invalid date range" }, { status: 400 })
+  }
 
   try {
-    const report = await getAnalyticsReport(range)
+    const report = await getAnalyticsReport(start, end)
     return NextResponse.json(report)
   } catch (error) {
     console.error("GET /api/admin/analytics error:", error)
