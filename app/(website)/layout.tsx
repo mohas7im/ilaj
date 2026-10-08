@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Manrope } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import { generateRootMetadata } from "@/lib/seo";
 import Navbar from "@/components/website/layout/Navbar";
 import Footer from "@/components/website/layout/Footer";
@@ -8,6 +7,7 @@ import SmoothScroll from "@/components/website/layout/SmoothScroll";
 import PageTransition from "@/components/website/layout/PageTransition";
 import WhatsAppButton from "@/components/website/layout/WhatsAppButton";
 import LeadTracker from "@/components/website/layout/LeadTracker";
+import GoogleAnalytics from "@/components/website/layout/GoogleAnalytics";
 import { getSettings } from "@/lib/data/settings";
 import "@/styles/website/theme.css";
 
