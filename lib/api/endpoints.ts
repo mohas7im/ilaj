@@ -20,6 +20,7 @@ export const ENDPOINTS = {
 
   admin: {
     dashboard: { stats: "/api/admin/dashboard/stats" },
+    analytics: "/api/admin/analytics",
     doctors: crud("/api/admin/doctors"),
     services: crud("/api/admin/services"),
     testimonials: crud("/api/admin/testimonials"),

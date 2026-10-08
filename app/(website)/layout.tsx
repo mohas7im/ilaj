@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Manrope } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { generateRootMetadata } from "@/lib/seo";
 import Navbar from "@/components/website/layout/Navbar";
 import Footer from "@/components/website/layout/Footer";
@@ -51,6 +52,9 @@ export default async function WebsiteRootLayout({
         <Footer />
         <WhatsAppButton />
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   );
 }
