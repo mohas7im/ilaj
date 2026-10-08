@@ -28,6 +28,10 @@ export default defineConfig({
       RESEND_API_KEY: bindings.secret(),
       RESEND_FROM_EMAIL: bindings.secret(),
       RESEND_TO_EMAIL: bindings.secret(),
+      GA_PROPERTY_ID: bindings.secret(),
+      GA_CLIENT_EMAIL: bindings.secret(),
+      GA_PRIVATE_KEY: bindings.secret(),
+      GSC_SITE_URL: bindings.secret(),
     },
   }),
 });
