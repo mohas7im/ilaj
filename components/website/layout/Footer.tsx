@@ -77,12 +77,40 @@ export default async function Footer() {
     <footer className="footer-parallax relative z-0 -mt-10 w-full bg-neutral-900 pt-10 text-white lg:-mt-12 lg:pt-12">
       <div className="footer-rise mx-auto max-w-7xl px-5 pb-8 pt-14 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20">
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-12 lg:gap-10">
 
-          {/* Social links — hairline-bordered list */}
-          <div className="lg:col-span-3">
+          {/* Social links — round icon row on mobile, hairline-bordered list on desktop */}
+          <div className="col-span-2 lg:col-span-3">
             {socialLinks.length > 0 && (
-              <ul className="divide-y divide-white/15 border-y border-white/15">
+              <ul className="flex gap-3 border-b border-white/15 pb-8 lg:hidden">
+                {socialLinks.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={link.label}
+                      className="flex size-11 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors duration-200 hover:border-white/40 hover:text-white"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                        className="size-5"
+                      >
+                        {link.icon}
+                      </svg>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {socialLinks.length > 0 && (
+              <ul className="hidden divide-y divide-white/15 border-y border-white/15 lg:block">
                 {socialLinks.map((link) => (
                   <li key={link.label}>
                     <a
@@ -117,8 +145,8 @@ export default async function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
-          <div className="lg:col-span-3">
+          {/* Contact — full width and last on mobile so the long email fits */}
+          <div className="order-last col-span-2 lg:order-0 lg:col-span-3">
             <h3><MetaText as="span" tone="light">Contact</MetaText></h3>
             <ul className="mt-5 space-y-2.5">
               {settings.primaryEmail && (
@@ -169,7 +197,7 @@ export default async function Footer() {
         {/* Bottom bar */}
         <div className="mt-14 flex flex-col items-center gap-6 border-t border-white/15 pt-8 sm:flex-row sm:justify-between">
           <span className="text-xl font-bold tracking-tight">{clinicName}</span>
-          <p className="text-sm text-white/60">
+          <p className="text-center text-sm text-white/60 sm:text-left">
             © {new Date().getFullYear()} {clinicName}. All rights reserved.
           </p>
           <BackToTopButton />
