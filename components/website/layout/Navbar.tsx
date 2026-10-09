@@ -63,7 +63,9 @@ export default function Navbar({ clinicName, clinicPhone }: NavbarProps) {
           "fixed top-0 inset-x-0 z-50 transition-all duration-300",
           solid
             ? "bg-white shadow-sm border-b border-zinc-200"
-            : "bg-transparent border-b border-gray-300"
+            : "bg-transparent border-b border-gray-300",
+          // Open mobile menu: bar + drawer share one background so they read as one panel
+          mobileOpen && !solid && "bg-neutral-950/95 backdrop-blur-md border-white/10 md:bg-transparent md:backdrop-blur-none md:border-gray-300"
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -146,14 +148,7 @@ export default function Navbar({ clinicName, clinicPhone }: NavbarProps) {
 
         {/* Mobile Drawer */}
         {mobileOpen && (
-          <div
-            className={cn(
-              "md:hidden border-b px-6 pt-3 pb-8 space-y-5 backdrop-blur-md",
-              solid
-                ? "bg-white/95 border-zinc-200"
-                : "bg-neutral-950/95 border-white/10"
-            )}
-          >
+          <div className="md:hidden px-6 pt-3 pb-8 space-y-5">
             <div className="flex flex-col space-y-3.5">
               {NAV_LINKS.map((link) => (
                 <Link

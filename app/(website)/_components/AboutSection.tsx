@@ -38,7 +38,7 @@ export default async function AboutSection() {
               personalized treatment plans.
             </SectionDescription>
 
-            <div className="mt-20 flex justify-start">
+            <div className="mt-20 flex justify-center lg:justify-start">
               <Link href="/about">
                 <Button variant="primary">
                   Our Story

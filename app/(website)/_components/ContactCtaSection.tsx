@@ -64,7 +64,7 @@ export default function ContactCtaSection() {
           </div>
 
           {/* Button */}
-          <div className="shrink-0">
+          <div className="shrink-0 self-center lg:self-auto">
             <Link href="/contact">
               <Button variant="primary">
                 Contact Us
