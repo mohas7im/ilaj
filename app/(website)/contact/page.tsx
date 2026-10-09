@@ -96,7 +96,7 @@ export default async function ContactPage() {
         </div>
 
         <div className="relative mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-          <div className="rounded-3xl bg-neutral-100/85 p-5 sm:p-8">
+          <div className="rounded-3xl bg-neutral-100/85 p-3 sm:p-8">
 
             <div className="grid grid-cols-1 gap-7 lg:grid-cols-8">
 
@@ -129,7 +129,7 @@ export default async function ContactPage() {
               {/* Enquiry Form */}
               <div
                 id="contact-form"
-                className="relative order-first scroll-mt-28 rounded-2xl lg:order-0 lg:col-span-5 border border-zinc-200 bg-white p-3.5"
+                className="relative order-first scroll-mt-28 rounded-2xl lg:order-0 lg:col-span-5 border border-zinc-200 bg-white p-5 sm:p-3.5"
               >
                 <CardTitle as="h2">Send Us a Message</CardTitle>
 
