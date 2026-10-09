@@ -129,7 +129,7 @@ export default async function ContactPage() {
               {/* Enquiry Form */}
               <div
                 id="contact-form"
-                className="relative scroll-mt-28 rounded-2xl lg:col-span-5 border border-zinc-200 bg-white p-3.5"
+                className="relative order-first scroll-mt-28 rounded-2xl lg:order-0 lg:col-span-5 border border-zinc-200 bg-white p-3.5"
               >
                 <CardTitle as="h2">Send Us a Message</CardTitle>
 
