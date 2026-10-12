@@ -25,12 +25,7 @@ import { Switch } from "@/components/admin/ui/switch"
 import { Label } from "@/components/admin/ui/label"
 import { Button } from "@/components/admin/ui/button"
 import { Badge } from "@/components/admin/ui/badge"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-  InputGroupText,
-} from "@/components/admin/ui/input-group"
+
 import { Spinner } from "@/components/admin/ui/spinner"
 import type { ClinicSettings } from "@/domain/settings/settings.types"
 import { settingsSchema, type SettingsFormData } from "@/domain/settings/settings.schema"
@@ -407,85 +402,55 @@ function SettingsFormFields({ initialSettings }: { initialSettings: ClinicSettin
           {/* Facebook */}
           <div className="space-y-1.5">
             <Label htmlFor="facebook">Facebook :</Label>
-            <InputGroup>
-              <InputGroupAddon>
-                <InputGroupText>https://facebook.com/</InputGroupText>
-              </InputGroupAddon>
-              <InputGroupInput
-                id="facebook"
-                {...register("facebook")}
-              />
-            </InputGroup>
+            <Input
+              id="facebook"
+              {...register("facebook")}
+            />
           </div>
 
           {/* Instagram */}
           <div className="space-y-1.5">
             <Label htmlFor="instagram">Instagram :</Label>
-            <InputGroup>
-              <InputGroupAddon>
-                <InputGroupText>https://instagram.com/</InputGroupText>
-              </InputGroupAddon>
-              <InputGroupInput
-                id="instagram"
-                {...register("instagram")}
-              />
-            </InputGroup>
+            <Input
+              id="instagram"
+              {...register("instagram")}
+            />
           </div>
 
           {/* Linkedin */}
           <div className="space-y-1.5">
             <Label htmlFor="linkedin">Linkedin :</Label>
-            <InputGroup>
-              <InputGroupAddon>
-                <InputGroupText>https://linkedin.com/</InputGroupText>
-              </InputGroupAddon>
-              <InputGroupInput
-                id="linkedin"
-                {...register("linkedin")}
-              />
-            </InputGroup>
+            <Input
+              id="linkedin"
+              {...register("linkedin")}
+            />
           </div>
 
           {/* Twitter */}
           <div className="space-y-1.5">
             <Label htmlFor="twitter">Twitter :</Label>
-            <InputGroup>
-              <InputGroupAddon>
-                <InputGroupText>https://x.com/</InputGroupText>
-              </InputGroupAddon>
-              <InputGroupInput
-                id="twitter"
-                {...register("twitter")}
-              />
-            </InputGroup>
+            <Input
+              id="twitter"
+              {...register("twitter")}
+            />
           </div>
 
           {/* Pinterest */}
           <div className="space-y-1.5">
             <Label htmlFor="pinterest">Pinterest :</Label>
-            <InputGroup>
-              <InputGroupAddon>
-                <InputGroupText>https://pinterest.com/</InputGroupText>
-              </InputGroupAddon>
-              <InputGroupInput
-                id="pinterest"
-                {...register("pinterest")}
-              />
-            </InputGroup>
+            <Input
+              id="pinterest"
+              {...register("pinterest")}
+            />
           </div>
 
           {/* Google Maps Link */}
           <div className="space-y-1.5">
             <Label htmlFor="mapLink">Map Link :</Label>
-            <InputGroup>
-              <InputGroupAddon>
-                <InputGroupText>https://www.google.com/maps/</InputGroupText>
-              </InputGroupAddon>
-              <InputGroupInput
-                id="mapLink"
-                {...register("mapLink")}
-              />
-            </InputGroup>
+            <Input
+              id="mapLink"
+              {...register("mapLink")}
+            />
           </div>
         </CardContent>
       </Card>
