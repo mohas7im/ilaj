@@ -30,7 +30,7 @@ export type PageOption = {
 // ─── Share image formats ────────────────────────────────────────────────────────
 // Social apps (Facebook, WhatsApp, X) don't show SVG or GIF share images.
 
-export const OG_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"]
+export const OG_IMAGE_TYPES = ["image/png", "image/webp"]
 
 // ─── Batch shape (common + every page in one call) ────────────────────────────
 

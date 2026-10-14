@@ -1,8 +1,6 @@
 import { v2 as cloudinary } from "cloudinary"
 
 const ALLOWED_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/jpg",
   "image/png",
   "image/webp",
   "image/gif",
@@ -26,7 +24,7 @@ export async function saveUploadedFile(file: File, folder: string = "general"): 
   }
 
   if (!ALLOWED_MIME_TYPES.has(file.type)) {
-    throw new Error("Invalid file type. Only JPEG, PNG, WebP, GIF, and SVG images are allowed.")
+    throw new Error("Invalid file type. Only PNG, WebP, GIF, and SVG images are allowed.")
   }
 
   if (file.size > MAX_FILE_SIZE_BYTES) {

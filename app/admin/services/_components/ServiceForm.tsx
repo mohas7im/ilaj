@@ -124,8 +124,8 @@ function ServiceFormFields({
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select a valid image file")
+    if (!file.type.startsWith("image/") || file.type === "image/jpeg" || file.type === "image/jpg") {
+      toast.error("JPEG/JPG is not allowed. Please upload PNG, WebP, GIF, or SVG.")
       return
     }
 
@@ -363,7 +363,7 @@ function ServiceFormFields({
                   <input
                     ref={primaryFileInputRef}
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/webp,image/gif,image/svg+xml"
                     className="hidden"
                     disabled={isSubmitting}
                     onChange={(e) => handleImageChange("image", e)}
@@ -427,7 +427,7 @@ function ServiceFormFields({
                   <input
                     ref={secondaryFileInputRef}
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/webp,image/gif,image/svg+xml"
                     className="hidden"
                     disabled={isSubmitting}
                     onChange={(e) => handleImageChange("secondaryImage", e)}

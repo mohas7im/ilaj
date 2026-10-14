@@ -103,8 +103,8 @@ function ClinicPhotoFormFields({
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select a valid image file")
+    if (!file.type.startsWith("image/") || file.type === "image/jpeg" || file.type === "image/jpg") {
+      toast.error("JPEG/JPG is not allowed. Please upload PNG, WebP, GIF, or SVG.")
       return
     }
     setImageFile(file)
@@ -232,7 +232,7 @@ function ClinicPhotoFormFields({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/png,image/webp,image/gif,image/svg+xml"
                 className="hidden"
                 disabled={isSubmitting}
                 onChange={handleImageFile}
