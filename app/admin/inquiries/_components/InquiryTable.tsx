@@ -157,7 +157,7 @@ export function InquiryTable({
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <Button
+                      {/* <Button
                         variant="outline"
                         size="icon-sm"
                         title="Delete inquiry"
@@ -166,7 +166,7 @@ export function InquiryTable({
                         onClick={() => setDeleteId(inq.id)}
                       >
                         <Trash2 className="h-4 w-4" aria-hidden="true" />
-                      </Button>
+                      </Button> */}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -259,7 +259,7 @@ export function InquiryTable({
         </div>
       </div>
 
-      <ConfirmDialog
+      {/* <ConfirmDialog
         open={deleteId !== null}
         onOpenChange={(open) => !open && !isDeleting && setDeleteId(null)}
         title="Delete inquiry?"
@@ -268,7 +268,7 @@ export function InquiryTable({
         isLoading={isDeleting}
         variant="destructive"
         onConfirm={handleDelete}
-      />
+      /> */}
     </div>
   )
 }
