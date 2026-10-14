@@ -10,7 +10,13 @@ export default defineConfig({
     previewUrls: true,
     domains: ["ilajdentalcare.com"],
     assets: { notFoundHandling: "none" },
+    // Matches the dashboard (Workers Logs on) so deploys don't switch it off
+    observability: {
+      logs: { enabled: true },
+      issues: { enabled: false },
+    },
     env: {
+      
       ASSETS: bindings.assets(),
       IMAGES: bindings.images(),
       VINEXT_KV_CACHE: bindings.kv({
@@ -20,6 +26,12 @@ export default defineConfig({
       JWT_SECRET: bindings.secret(),
       CLOUDINARY_URL: bindings.secret(),
       RESEND_API_KEY: bindings.secret(),
+      RESEND_FROM_EMAIL: bindings.secret(),
+      RESEND_TO_EMAIL: bindings.secret(),
+      GA_PROPERTY_ID: bindings.secret(),
+      GA_CLIENT_EMAIL: bindings.secret(),
+      GA_PRIVATE_KEY: bindings.secret(),
+      GSC_SITE_URL: bindings.secret(),
     },
   }),
 });

@@ -90,7 +90,7 @@ export default async function OurStorySection() {
 
           <StatsList stats={stats} className="lg:w-2/3" />
 
-          <Link href="/treatments" className="shrink-0">
+          <Link href="/treatments" className="shrink-0 self-center lg:self-auto">
             <Button variant="primary">
               Check Our Treatments
             </Button>

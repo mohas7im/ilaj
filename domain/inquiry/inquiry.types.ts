@@ -9,6 +9,8 @@ export interface Inquiry {
   message: string;
   type: string;
   status: string;
+  // "pending" | "sent" | "failed" | "unknown"
+  emailStatus: string;
   createdAt: string;
   updatedAt: string;
 }

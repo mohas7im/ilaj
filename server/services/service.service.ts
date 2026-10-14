@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma"
+import { prisma, withTransactionalPrisma } from "@/lib/prisma"
 import type { Service, ServiceFaq } from "@/domain/service/service.types"
 import type { ServiceFormData } from "@/domain/service/service.schema"
 import { sanitizeRichText } from "@/server/lib/sanitize"
@@ -80,7 +80,8 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
 export async function createService(data: ServiceFormData): Promise<Service> {
   const slug = await getUniqueSlug(data.slug?.trim() || data.name)
 
-  const created = await prisma.service.create({
+  // Nested FAQ create needs a transaction, which the HTTP client can't do
+  const created = await withTransactionalPrisma((tx) => tx.service.create({
     data: {
       name: data.name,
       slug,
@@ -98,7 +99,7 @@ export async function createService(data: ServiceFormData): Promise<Service> {
       ...(data.faqs?.length && { faqs: { create: toFaqRows(data.faqs) } }),
     },
     include: { faqs: faqsInOrder },
-  })
+  }))
 
   return created as Service
 }
@@ -117,7 +118,7 @@ export async function updateService(
     slug = await getUniqueSlug(data.name, id)
   }
 
-  const updated = await prisma.service.update({
+  const updated = await withTransactionalPrisma((tx) => tx.service.update({
     where: { id },
     data: {
       ...(data.name !== undefined && { name: data.name }),
@@ -139,7 +140,7 @@ export async function updateService(
       }),
     },
     include: { faqs: faqsInOrder },
-  })
+  }))
 
   return updated as Service
 }

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { sizedImage } from "@/lib/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Container } from "@/components/website/common/Section";
@@ -36,7 +37,7 @@ export default function ServiceDetails({
         <div className="absolute inset-0">
           {service.image && (
             <Image
-              src={service.image}
+              src={sizedImage(service.image, 1920)}
               alt={service.imageAlt}
               fill
               priority

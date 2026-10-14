@@ -13,11 +13,8 @@ export default function ContactCtaSection() {
         src="/images/contact/relaxing-dental-checkup.webp"
         alt="Patient relaxing during a dental checkup in a modern, comfortable dental clinic at Ilaj Dental Care"
         fill
-        priority
         className="object-cover object-center"
         sizes="100vw"
-        quality={100}
-        unoptimized
       />
 
       {/* Dark Overlay */}
@@ -67,7 +64,7 @@ export default function ContactCtaSection() {
           </div>
 
           {/* Button */}
-          <div className="shrink-0">
+          <div className="shrink-0 self-center lg:self-auto">
             <Link href="/contact">
               <Button variant="primary">
                 Contact Us

@@ -32,6 +32,13 @@ function DetailRow({
   )
 }
 
+const EMAIL_STATUS_LABELS: Record<string, string> = {
+  pending: "Sending…",
+  sent: "Sent",
+  failed: "Failed — contact the patient directly",
+  unknown: "Not tracked",
+}
+
 type InquiryDetailsProps = { id: string }
 
 export function InquiryDetails({ id }: InquiryDetailsProps) {
@@ -150,6 +157,7 @@ function InquiryDetailsView({ inquiry: inq }: InquiryDetailsViewProps) {
           <dl className="divide-y text-xs">
             <DetailRow label="Inquiry ID" value={inq.id} />
             <DetailRow label="Submitted At" value={new Date(inq.createdAt).toLocaleString()} />
+            <DetailRow label="Email Notification" value={EMAIL_STATUS_LABELS[inq.emailStatus] ?? inq.emailStatus} />
           </dl>
         </CardContent>
       </Card>

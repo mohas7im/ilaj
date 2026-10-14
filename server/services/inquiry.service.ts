@@ -76,6 +76,7 @@ export async function getInquiries(params?: InquiryFilters) {
     message: inq.message,
     type: inq.type,
     status: inq.status,
+    emailStatus: inq.emailStatus,
     createdAt: inq.createdAt instanceof Date ? inq.createdAt.toISOString() : String(inq.createdAt || ""),
     updatedAt: inq.updatedAt instanceof Date ? inq.updatedAt.toISOString() : String(inq.updatedAt || ""),
   }))
@@ -144,6 +145,13 @@ export async function updateInquiryStatus(id: string, status: string) {
     createdAt: updated.createdAt instanceof Date ? updated.createdAt.toISOString() : String(updated.createdAt || ""),
     updatedAt: updated.updatedAt instanceof Date ? updated.updatedAt.toISOString() : String(updated.updatedAt || ""),
   }
+}
+
+export async function updateInquiryEmailStatus(id: string, emailStatus: "sent" | "failed") {
+  await prisma.inquiry.update({
+    where: { id },
+    data: { emailStatus },
+  })
 }
 
 export async function deleteInquiry(id: string): Promise<boolean> {

@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createInquiry } from "@/server/services/inquiry.service";
+import { NextRequest, NextResponse, after } from "next/server";
+import { createInquiry, updateInquiryEmailStatus } from "@/server/services/inquiry.service";
 import { inquirySchema } from "@/domain/inquiry/inquiry.schema";
 import { sendInquiryEmails } from "@/server/lib/send-inquiry-emails";
 
@@ -30,17 +30,31 @@ export async function POST(req: NextRequest) {
       status: "new",
     });
 
-    // Fire-and-forget — email failure never blocks saving the record or the form response.
-    void sendInquiryEmails({
-      fullName: inquiry.fullName,
-      email: inquiry.email,
-      phone: inquiry.phone ?? "",
-      treatment: inquiry.treatment,
-      preferredDate: inquiry.preferredDate ?? null,
-      preferredTime: inquiry.preferredTime ?? null,
-      message: inquiry.message,
-      type: inquiry.type,
-    }).catch((err) => console.error("[sendInquiryEmails]", err));
+    // Runs after the response (waitUntil on Workers). The inquiry is already saved,
+    // so an email failure is only recorded on it — never surfaced to the visitor.
+    after(async () => {
+      let emailStatus: "sent" | "failed";
+      try {
+        const ok = await sendInquiryEmails({
+          fullName: inquiry.fullName,
+          email: inquiry.email,
+          phone: inquiry.phone ?? "",
+          treatment: inquiry.treatment,
+          preferredDate: inquiry.preferredDate ?? null,
+          preferredTime: inquiry.preferredTime ?? null,
+          message: inquiry.message,
+          type: inquiry.type,
+        });
+        emailStatus = ok ? "sent" : "failed";
+      } catch (err) {
+        console.error("[sendInquiryEmails]", err);
+        emailStatus = "failed";
+      }
+
+      await updateInquiryEmailStatus(inquiry.id, emailStatus).catch((err) =>
+        console.error("[updateInquiryEmailStatus]", err)
+      );
+    });
 
     // Return only the id so the visitor's submission isn't echoed back in full.
     return NextResponse.json({ id: inquiry.id }, { status: 201 });

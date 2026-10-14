@@ -140,6 +140,7 @@ export function InquiryTable({
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span>{inq.treatment}</span>
                       {inq.type === "inquiry" && <Badge variant="secondary">Question</Badge>}
+                      {inq.emailStatus === "failed" && <Badge variant="destructive">Email failed</Badge>}
                     </div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground">

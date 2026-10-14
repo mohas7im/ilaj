@@ -12,9 +12,6 @@ type Inquiry = {
 };
 
 export function buildAdminEmail(inquiry: Inquiry, clinicName: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
-  const dashboardUrl = `${baseUrl}/admin/inquiries`;
-
   // WhatsApp reply goes to the patient's own number.
   const patientDigits = inquiry.phone.replace(/\D/g, "");
   const whatsappText = encodeURIComponent(
@@ -57,10 +54,7 @@ export function buildAdminEmail(inquiry: Inquiry, clinicName: string): string {
       ["Preferred time", esc(formatTime(inquiry.preferredTime))],
     ]),
     quote(isQuestion ? "Question" : "Message", esc(inquiry.message)),
-    buttons([
-      { label: "Open in dashboard", href: dashboardUrl },
-      { label: "Reply on WhatsApp", href: whatsappUrl, variant: "secondary" },
-    ]),
+    buttons([{ label: "Reply on WhatsApp", href: whatsappUrl }]),
   ].join("");
 
   return layout({

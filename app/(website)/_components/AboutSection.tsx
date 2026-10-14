@@ -38,7 +38,7 @@ export default async function AboutSection() {
               personalized treatment plans.
             </SectionDescription>
 
-            <div className="mt-20 flex justify-start">
+            <div className="mt-20 flex justify-center lg:justify-start">
               <Link href="/about">
                 <Button variant="primary">
                   Our Story
@@ -58,7 +58,6 @@ export default async function AboutSection() {
                 src="/images/about-dental.webp"
                 alt="Dentist performing a dental procedure under operatory light at Ilaj Dental Care"
                 fill
-                priority
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 33vw"
               />

@@ -136,7 +136,7 @@ export default function ContactForm() {
 
   return (
     <>
-    <form className="mt-3" onSubmit={handleSubmit} noValidate inert={sent !== null}>
+    <form className="mt-5 sm:mt-3" onSubmit={handleSubmit} noValidate inert={sent !== null}>
 
       <div className="grid grid-cols-1 gap-x-3.5 gap-y-4 sm:grid-cols-2">
 

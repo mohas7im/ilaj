@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import Button from "@/components/website/ui/Button";
 import { getOpeningHours, getSettings, toCounter } from "@/lib/data/settings";
+import HeroImage from "./HeroImage";
 
 const CLIENT_AVATARS = [
   "/images/hero/avatars/avatar-1.webp",
@@ -10,8 +10,6 @@ const CLIENT_AVATARS = [
   "/images/hero/avatars/avatar-3.webp",
   "/images/hero/avatars/avatar-4.webp",
 ];
-
-
 
 const HEADLINE = "Your Smile, Our Priority: Expert Dental Care You Trust";
 
@@ -23,25 +21,7 @@ export default async function Hero() {
     <section className="relative w-full min-h-svh flex flex-col justify-between bg-neutral-950 overflow-hidden">
       {/* Background Image — wrapper drifts on scroll (parallax), image settles in (hero-image) */}
       <div className="parallax absolute inset-0">
-        {/* Portrait crop on phones and tablets, wide shot from lg up — CSS shows one of them */}
-        <Image
-          src="/images/hero/ilaj-dental-care-dentist-checkup-smiling-patient-mobile.webp"
-          alt="Dental examination at Ilaj Dental Care"
-          fill
-          priority
-          sizes="100vw"
-          quality={90}
-          className="hero-image object-cover lg:hidden"
-        />
-        <Image
-          src="/images/hero/ilaj-dental-care-dentist-checkup-smiling-patient.webp"
-          alt="Dramatic Dental Examination at Ilaj Dental Care"
-          fill
-          priority
-          sizes="100vw"
-          quality={90}
-          className="hero-image object-cover max-lg:hidden"
-        />
+        <HeroImage />
       </div>
       {/* Shade only where text sits so the face stays bright: top (nav/headline)
           and bottom (info/buttons) everywhere, plus the left side on desktop */}
