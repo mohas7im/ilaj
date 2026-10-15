@@ -86,10 +86,12 @@ export function Modal({
           role="presentation"
           data-lenis-prevent
           className={cn(
-            "fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 overflow-y-auto",
+            "fixed inset-0 z-[100] overflow-y-auto",
             className
           )}
         >
+          {/* inner centering wrapper — scrolls, never clips */}
+          <div className="flex min-h-full items-center justify-center p-3 sm:p-6">
           {/* Backdrop overlay */}
           <motion.div
             key="modal-backdrop"
@@ -137,8 +139,7 @@ export function Modal({
               },
             }}
             className={cn(
-              "relative z-10 w-full max-w-2xl rounded-3xl bg-white shadow-2xl border border-zinc-200/80 my-auto",
-              "max-h-[calc(100dvh-2rem)] sm:max-h-[92vh] overflow-y-auto",
+              "relative z-10 w-full max-w-2xl rounded-3xl bg-white shadow-2xl border border-zinc-200/80",
               cardClassName
             )}
           >
@@ -156,6 +157,7 @@ export function Modal({
 
             {children}
           </motion.div>
+          </div>
         </div>
       )}
     </AnimatePresence>,

@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { FieldUnderline, fieldControlClass, fieldLabelClass, fieldLabelErrorClass } from "./Input";
 
@@ -62,6 +63,10 @@ export function PickerField({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const onResetRef = useRef(onReset);
+  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({});
+  const [mounted, setMounted] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { setMounted(true); }, []);
   useEffect(() => {
     onResetRef.current = onReset;
   });
@@ -70,7 +75,12 @@ export function PickerField({
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (e: PointerEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+      if (
+        !rootRef.current?.contains(e.target as Node) &&
+        !panelRef.current?.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
     };
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -99,6 +109,35 @@ export function PickerField({
     setOpen(false);
     triggerRef.current?.focus();
   };
+
+  // Recalculate the panel position whenever it opens
+  useLayoutEffect(() => {
+    if (!open || !triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    const MARGIN = 8; // gap between field and panel
+    const MAX_PANEL_W = Math.min(360, window.innerWidth - 16);
+
+    let top: number;
+    let bottom: string | undefined;
+    if (direction === "up") {
+      // panel sits above the trigger
+      bottom = window.innerHeight - rect.top + MARGIN;
+      top = 0; // unused when we set bottom
+    } else {
+      top = rect.bottom + MARGIN;
+    }
+
+    // Horizontal: align to left or right edge of the trigger
+    let left = align === "right" ? rect.right - MAX_PANEL_W : rect.left;
+    // Clamp so panel never bleeds off the right edge
+    left = Math.max(8, Math.min(left, window.innerWidth - MAX_PANEL_W - 8));
+
+    if (direction === "up") {
+      setPanelStyle({ position: "fixed", bottom: window.innerHeight - rect.top + MARGIN, left, width: Math.max(rect.width, Math.min(MAX_PANEL_W, window.innerWidth - 16)), maxWidth: MAX_PANEL_W, zIndex: 9999 });
+    } else {
+      setPanelStyle({ position: "fixed", top, left, width: Math.max(rect.width, Math.min(MAX_PANEL_W, window.innerWidth - 16)), maxWidth: MAX_PANEL_W, zIndex: 9999 });
+    }
+  }, [open, align, direction]);
 
   return (
     <div ref={rootRef} className={cn("group relative", className)}>
@@ -141,17 +180,18 @@ export function PickerField({
       </div>
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
 
-      {open && (
+      {mounted && open && createPortal(
         <div
+          ref={panelRef}
+          style={panelStyle}
           className={cn(
-            "absolute z-30 rounded-2xl border border-zinc-200 bg-white shadow-xl animate-in fade-in-0 zoom-in-95",
-            direction === "up" ? "bottom-full mb-2" : "top-full mt-2",
-            align === "right" ? "right-0" : "left-0",
+            "rounded-2xl border border-zinc-200 bg-white shadow-xl animate-in fade-in-0 zoom-in-95",
             panelClassName
           )}
         >
           {children(close)}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
