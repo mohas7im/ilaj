@@ -166,7 +166,7 @@ export function AppointmentModal({
       onClose={handleModalClose}
       ariaLabelledBy="appointment-modal-title"
       ariaDescribedBy="appointment-modal-desc"
-      cardClassName="p-4 sm:p-7 sm:px-8 pb-5 sm:pb-8"
+      cardClassName="p-6 sm:p-7 sm:px-8 pb-7 sm:pb-8"
     >
       {submittedData ? (
         /* Confirmation screen */

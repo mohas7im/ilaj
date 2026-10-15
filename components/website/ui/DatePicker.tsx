@@ -55,22 +55,22 @@ export function DatePicker({ id, label, name, required, placeholder = "Select a 
           weekStartsOn={1}
           showOutsideDays
           classNames={{
-            root: "relative text-sm w-full",
+            root: "relative text-sm",
             months: "relative",
-            month: "space-y-2",
+            month: "space-y-3",
             month_caption: "flex h-9 items-center px-1",
             caption_label: "font-heading text-base font-medium text-zinc-950",
             nav: "absolute right-0 top-0 z-10 flex gap-1",
             button_previous:
-              "flex size-8 cursor-pointer items-center justify-center rounded-full text-zinc-700 transition-colors hover:bg-zinc-100 disabled:cursor-default disabled:opacity-30",
+              "flex size-9 cursor-pointer items-center justify-center rounded-full text-zinc-700 transition-colors hover:bg-zinc-100 disabled:cursor-default disabled:opacity-30",
             button_next:
-              "flex size-8 cursor-pointer items-center justify-center rounded-full text-zinc-700 transition-colors hover:bg-zinc-100 disabled:cursor-default disabled:opacity-30",
+              "flex size-9 cursor-pointer items-center justify-center rounded-full text-zinc-700 transition-colors hover:bg-zinc-100 disabled:cursor-default disabled:opacity-30",
             chevron: "size-4 fill-current",
-            month_grid: "border-collapse w-full",
-            weekday: "size-8 text-[10px] font-medium uppercase text-zinc-500",
-            day: "group/day p-0 text-center",
+            month_grid: "border-collapse",
+            weekday: "size-10 text-xs font-medium uppercase text-zinc-500",
+            day: "group/day p-0.5 text-center",
             day_button: [
-              "size-8 cursor-pointer rounded-full text-xs text-zinc-900 transition-colors hover:bg-zinc-100",
+              "size-9 cursor-pointer rounded-full text-sm text-zinc-900 transition-colors hover:bg-zinc-100",
               "group-data-[today=true]/day:ring-1 group-data-[today=true]/day:ring-brand",
               "group-data-[selected=true]/day:bg-brand group-data-[selected=true]/day:text-white group-data-[selected=true]/day:hover:bg-brand-hover",
               "group-data-[outside=true]/day:text-zinc-300",
